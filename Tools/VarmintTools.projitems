@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>f89fa038-229b-42d6-8844-afc7c045a9e3</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>MonoVarmint.Tools</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)VarmintCrypto.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)VarmintId.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)VarmintSerializer.cs" />
+  </ItemGroup>
+</Project>

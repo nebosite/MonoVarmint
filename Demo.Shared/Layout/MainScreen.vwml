@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Grid
+  Size="{ScreenSize}"
+  ForegroundColor="Black"
+  BackgroundColor="{GlobalBackgroundColor}">
+  <StackPanel >
+    <Label
+      Size=".8,.8"
+      FontSize=".15"
+      HorizontalContentAlignment="Center"
+      BackgroundColor="#FF8080"
+      Content="Hello there"/>
+    <Label Content="{DynamicText}" FontSize=".04" Size =".4,.07" Margin="0,0.02" BackgroundColor="LightBlue" />
+  </StackPanel>
+
+</Grid>

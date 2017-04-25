@@ -1,0 +1,26 @@
+MonoVarmint is a helpful framework for working with MonoGame.  
+It is:
+	- open-source (MIT License)
+	- Provided as a shared-code project (not dll) to simplify distribution
+
+To get started:
+
+	- Download the MonoVarmint code from github
+	- Create a MonoGame project for one of the supported platforms: Windows, Android, ios, etc...
+	- Create a Monogame shared code project
+	- Unload your monogame project and edit the csproj file
+	- Add shared project references to your monogame project:
+		- Open the csproj file in a text editor
+		- Add these lines near the other imports (you will have to corret the relative paths and project names)
+			<Import Project="..\..\MonoVarmint\Tools\VarmintTools.projitems" Label="Shared" />
+			<Import Project="..\..\MonoVarmint\Widgets\VarmintWidgets.projitems" Label="Shared" />
+			<Import Project="..\[Replace with SharedMonoGameProject]" Label="Shared" />
+	- Reload your monogame project
+	- Delete the Game1 class in the shared code project and replace with the one in MonoVarmint/Demo.Shared/GameRunner.cs
+		- Fix the namespace to match your own
+	- Delete the Game1 class in the Monogame project and add a new class:  [Platform]GameRunner  
+		- E.g.   WindowsGameRunner or AndroidGameRunner, etc.
+		- Make sure to fix the references to Game1 to be [Platform]GameRunner
+	- Add vwml files as embeded resources (VarmintWidget.LoadLayout will find these automatically)
+	
+	

@@ -1,0 +1,56 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.7
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Stuff", "Stuff", "{00DBFC4F-5E84-4386-A95E-C34E74C5C680}"
+	ProjectSection(SolutionItems) = preProject
+		GetStarted.txt = GetStarted.txt
+		License.txt = License.txt
+	EndProjectSection
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "VarmintTools", "Tools\VarmintTools.shproj", "{F89FA038-229B-42D6-8844-AFC7C045A9E3}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "VarmintWidgets", "Widgets\VarmintWidgets.shproj", "{5EBC5C7F-BCB6-48EB-9950-A468DA4DAE5D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsDemo", "WindowsDemo\WindowsDemo.csproj", "{B535FF48-4023-422D-8501-A5ADFA10C541}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{CA303E85-5E76-47DF-B81E-85127FFD3010}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Demo.Shared", "Demo.Shared\Demo.Shared.shproj", "{A0CDBD0E-3A41-42B7-9425-A838BC2C7383}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Widgets\VarmintWidgets.projitems*{5ebc5c7f-bcb6-48eb-9950-a468da4dae5d}*SharedItemsImports = 13
+		Demo.Shared\Demo.Shared.projitems*{a0cdbd0e-3a41-42b7-9425-a838bc2c7383}*SharedItemsImports = 13
+		Demo.Shared\Demo.Shared.projitems*{b535ff48-4023-422d-8501-a5adfa10c541}*SharedItemsImports = 4
+		Tools\VarmintTools.projitems*{b535ff48-4023-422d-8501-a5adfa10c541}*SharedItemsImports = 4
+		Widgets\VarmintWidgets.projitems*{b535ff48-4023-422d-8501-a5adfa10c541}*SharedItemsImports = 4
+		Tools\VarmintTools.projitems*{f89fa038-229b-42d6-8844-afc7c045a9e3}*SharedItemsImports = 13
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B535FF48-4023-422D-8501-A5ADFA10C541}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{B535FF48-4023-422D-8501-A5ADFA10C541}.Debug|x86.ActiveCfg = Debug|x86
+		{B535FF48-4023-422D-8501-A5ADFA10C541}.Debug|x86.Build.0 = Debug|x86
+		{B535FF48-4023-422D-8501-A5ADFA10C541}.Release|Any CPU.ActiveCfg = Release|x86
+		{B535FF48-4023-422D-8501-A5ADFA10C541}.Release|x86.ActiveCfg = Release|x86
+		{B535FF48-4023-422D-8501-A5ADFA10C541}.Release|x86.Build.0 = Release|x86
+		{CA303E85-5E76-47DF-B81E-85127FFD3010}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA303E85-5E76-47DF-B81E-85127FFD3010}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA303E85-5E76-47DF-B81E-85127FFD3010}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CA303E85-5E76-47DF-B81E-85127FFD3010}.Debug|x86.Build.0 = Debug|Any CPU
+		{CA303E85-5E76-47DF-B81E-85127FFD3010}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA303E85-5E76-47DF-B81E-85127FFD3010}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA303E85-5E76-47DF-B81E-85127FFD3010}.Release|x86.ActiveCfg = Release|Any CPU
+		{CA303E85-5E76-47DF-B81E-85127FFD3010}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
