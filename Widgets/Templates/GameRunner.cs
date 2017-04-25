@@ -13,16 +13,17 @@ using System.IO;
 
 #endregion
 
-namespace Demo.Shared
+namespace ChangeThisToYourNameSpace
 {
-    /// <summary>
-    /// Your game control starts here
-    /// </summary>
-    public abstract class GameRunner: IDisposable
+    //-----------------------------------------------------------------------------------------------
+    // GameRunner - THis is your basic game controller class.  There is little need to subclass
+    // this for simple games.  You can control several screens and functions from the this 
+    // class. See the WindowsDemo project for a simple example of how to show and operate multiple 
+    // screens in a game context. 
+    //-----------------------------------------------------------------------------------------------
+    public partial class GameRunner: IDisposable
     {
         GameController _controller;
-        public Color GlobalBackgroundColor { get { return Color.DarkGray; } }
-        public string DynamicText {  get { return "Current Time: " + DateTime.Now.ToLongTimeString(); } }
         public Vector2 ScreenSize { get { return _controller.ScreenSize; } }
 
         //-----------------------------------------------------------------------------------------------
@@ -31,11 +32,15 @@ namespace Demo.Shared
         public GameRunner()
         {
 #if WINDOWS
-            _controller = new GameController(500, 900);
+            // For windows, we will show a windowed version that looks like a phone app
+            _controller = new GameController(500,900);
 #else
             _controller = new GameController();
 #endif
-            _controller.OnLoaded += () => _controller.SetScreen("MainScreen");
+
+            // TODO: uncomment this line and put in the name of the screen you
+            // want to start with.
+            //_controller.OnLoaded += () => _controller.SetScreen("MyStartScreenName");
         }
 
         //-----------------------------------------------------------------------------------------------

@@ -14,7 +14,7 @@ namespace WindowsDemo
         [STAThread]
         static void Main()
         {
-            using (var game = new WindowsGameRunner())
+            using (var game = new GameRunner())
                 game.Run();
         }
     }

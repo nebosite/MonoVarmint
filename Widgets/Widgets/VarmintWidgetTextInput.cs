@@ -11,7 +11,7 @@ namespace MonoVarmint.Widgets
     public class VarmintWidgetTextInput : VarmintWidget
     {
         public float FontSize { get; set; }
-        public string Font { get; set; }
+        public string FontName { get; set; }
         public int CursorSpot { get; set; }
 
         float _margin;
@@ -42,7 +42,7 @@ namespace MonoVarmint.Widgets
             var text = GetTextToDisplay();
             for(int i = 0; i< text.Length; i++)
             {
-                startOffset += Renderer.MeasureText(FontSize, text[i].ToString());
+                startOffset += Renderer.MeasureText(text[i].ToString(), FontName, FontSize);
                 if(location.X < startOffset.X)
                 {
                     CursorSpot = i;
@@ -89,7 +89,7 @@ namespace MonoVarmint.Widgets
             Vector2 alignedOffset = Vector2.Zero;
             _margin = 0f;
             if (WrapContent) _margin = Size.X;
-            Vector2 textSize = Renderer.MeasureText(FontSize, GetTextToDisplay(), _margin);
+            Vector2 textSize = Renderer.MeasureText(GetTextToDisplay(), FontName, FontSize, _margin);
 
             switch (HorizontalContentAlignment)
             {
@@ -134,9 +134,9 @@ namespace MonoVarmint.Widgets
 
             var leftOfCursor = textToDisplay.Substring(0, CursorSpot);
             var rightOfCusor = textToDisplay.Substring(CursorSpot);
-            var leftSize = Renderer.MeasureText(FontSize, leftOfCursor);
-            Renderer.DrawText(alignedOffset, FontSize, leftOfCursor, ForegroundColor, _margin);
-            Renderer.DrawText(alignedOffset + new Vector2(leftSize.X, 0), FontSize, rightOfCusor, ForegroundColor, _margin);
+            var leftSize = Renderer.MeasureText(leftOfCursor, FontName, FontSize);
+            Renderer.DrawText(leftOfCursor, FontName, FontSize, alignedOffset, ForegroundColor, _margin);
+            Renderer.DrawText(rightOfCusor, FontName, FontSize, alignedOffset + new Vector2(leftSize.X, 0), ForegroundColor, _margin);
 
             if((gameTime.TotalGameTime.TotalSeconds * 2) % 2.0 > 1.0)
             {

@@ -11,6 +11,7 @@ namespace MonoVarmint.Widgets
     public class VarmintWidgetLabel : VarmintWidget
     {
         public float FontSize { get; set; }
+        public string FontName { get; set; }
 
         //--------------------------------------------------------------------------------------
         /// <summary>
@@ -36,7 +37,7 @@ namespace MonoVarmint.Widgets
             Vector2 alignedOffset = AbsoluteOffset;
             var margin = 0f;
             if (WrapContent) margin = Size.X;
-            Vector2 textSize = Renderer.MeasureText(FontSize, textToDisplay, margin);
+            Vector2 textSize = Renderer.MeasureText(textToDisplay, FontName, FontSize, margin);
             switch (HorizontalContentAlignment)
             {
                 case HorizontalContentAlignment.Left: break;
@@ -51,7 +52,7 @@ namespace MonoVarmint.Widgets
                 case VerticalContentAlignment.Bottom: alignedOffset.Y += (Size.Y - textSize.Y);  break;
             }
 
-            Renderer.DrawText(alignedOffset, FontSize, textToDisplay, ForegroundColor, margin);
+            Renderer.DrawText(textToDisplay, FontName, FontSize, alignedOffset, ForegroundColor, margin);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace MonoVarmint.Widgets
         ///                 
         /// </summary>
         //--------------------------------------------------------------------------------------
-        internal static Dictionary<string, VarmintWidget> LoadLayout(IVarmintWidgetInjector injector)
+        internal static Dictionary<string, VarmintWidget> LoadLayout(IVarmintWidgetInjector injector, object bindingContext = null)
         {
             var output = new Dictionary<string, VarmintWidget>();
             var assembly = injector.GetType().GetTypeInfo().Assembly;
@@ -45,6 +45,11 @@ namespace MonoVarmint.Widgets
                     var rootWidget = LoadLayoutFromVwml(injector, assembly.GetManifestResourceStream(resourceName), defaultName);
                     rootWidget.UpdateChildFormatting(true);
                     output.Add(rootWidget.Name, rootWidget);
+                    if(bindingContext != null)
+                    {
+                        rootWidget.BindingContext = bindingContext;
+                        rootWidget.Init();
+                    }
                 }
             }
 

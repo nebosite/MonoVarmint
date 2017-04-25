@@ -15,10 +15,13 @@
     <Compile Include="$(MSBuildThisFileDirectory)Base\VarmintWidgetSerialization.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Base\VarmintWidgetUserInput.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Base\VarmintWidgetWidgetMargin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)EmbeddedContentManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GameController\GameController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IMediaRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IVarmintWidgetInjector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Base\TouchMemory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GameController\GameControllerRendering.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Templates\GameRunner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetGrid.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetImage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetInjectAttribute.cs" />
@@ -30,5 +33,11 @@
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Interfaces\" />
     <Folder Include="$(MSBuildThisFileDirectory)Widgets\" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)EmbeddedContent\_utility_circle.xnb" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)EmbeddedContent\_default_screen_.vwml" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)EmbeddedContent\_utility_SegoeUI.xnb" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)EmbeddedContent\_utility_block.xnb" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Grid
+  Size="{ScreenSize}"
+  ForegroundColor="Black"
+  BackgroundColor="White">
+  <StackPanel >
+    <Label
+      Size=".9,.5"
+      Margin=".05,.1"
+      FontSize=".07"
+      WrapContent="true"
+      Content="Hi, you are running Varmint Widgets!  Next steps: Set up new screens in embedded .vwml files and call GameController.SetScreen()"/>
+    <Label
+      Size=".9,.5"
+      Margin=".05,.1"
+      FontSize=".07"
+      WrapContent="true"
+      Content="See GetStarted.txt for more info."/>
+  </StackPanel>
+
+</Grid>
