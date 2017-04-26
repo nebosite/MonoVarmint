@@ -538,8 +538,16 @@ namespace MonoVarmint.Widgets
                 switch (HorizontalContentAlignment)
                 {
                     case HorizontalContentAlignment.Left:
-                        newOffset.X = child.Margin.Left?? 0;
-                        if (child.Margin.Right != null) newSize.X += availableSize.X;
+                        if (child.Margin.Left != null)
+                        {
+                            newOffset.X = child.Margin.Left.Value;
+                            if (child.Margin.Right != null) newSize.X += availableSize.X;
+                        }
+                        else
+                        {
+                            newOffset.X = availableSize.X - newSize.X;
+                        }
+
                         break;
                     case HorizontalContentAlignment.Center:
                         var width = newSize.X + (child.Margin.Left ?? 0) + (child.Margin.Right ?? 0);
@@ -557,8 +565,15 @@ namespace MonoVarmint.Widgets
                 switch (VerticalContentAlignment)
                 {
                     case VerticalContentAlignment.Top:
-                        newOffset.Y = child.Margin.Top?? 0;
-                        if (child.Margin.Bottom != null) newSize.Y += availableSize.Y;
+                        if(child.Margin.Top != null)
+                        {
+                            newOffset.Y = child.Margin.Top.Value;
+                            if (child.Margin.Bottom != null) newSize.Y += availableSize.Y;
+                        }
+                        else
+                        {
+                            newOffset.Y = availableSize.Y - newSize.Y;
+                        }
                         break;
                     case VerticalContentAlignment.Center:
                         var height = newSize.Y + (child.Margin.Top ?? 0) + (child.Margin.Bottom ?? 0);

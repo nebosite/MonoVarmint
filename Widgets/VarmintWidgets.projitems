@@ -22,6 +22,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Base\TouchMemory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GameController\GameControllerRendering.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Templates\GameRunner.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetButton.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetGrid.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetImage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetInjectAttribute.cs" />
@@ -32,7 +33,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Interfaces\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Widgets\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)EmbeddedContent\_utility_circle.xnb" />

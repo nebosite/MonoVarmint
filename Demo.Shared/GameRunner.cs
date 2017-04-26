@@ -22,7 +22,7 @@ namespace Demo.Shared
     {
         GameController _controller;
         public Color GlobalBackgroundColor { get { return Color.DarkGray; } }
-        public string DynamicText {  get { return "Current Time: " + DateTime.Now.ToLongTimeString(); } }
+        public string TimeText {  get { return "Current Time: " + DateTime.Now.ToLongTimeString(); } }
         public Vector2 ScreenSize { get { return _controller.ScreenSize; } }
 
         //-----------------------------------------------------------------------------------------------
@@ -31,11 +31,20 @@ namespace Demo.Shared
         public GameRunner()
         {
 #if WINDOWS
-            _controller = new GameController(500, 900);
+            _controller = new GameController(this, 500, 900);
 #else
-            _controller = new GameController();
+            _controller = new GameController(this);
 #endif
             _controller.OnLoaded += () => _controller.SetScreen("MainScreen");
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        // PlayButtonOnTap - shift screen to the game screen
+        //-----------------------------------------------------------------------------------------------
+        public VarmintWidget.EventHandledState PlayButtonOnTap(VarmintWidget tappedObject, Vector2 tapPosition)
+        {
+            _controller.SetScreen("GameScreen");
+            return VarmintWidget.EventHandledState.Handled;
         }
 
         //-----------------------------------------------------------------------------------------------

@@ -13,7 +13,6 @@ namespace MonoVarmint.Widgets
     {
         GraphicsDeviceManager _graphics;
         SpriteBatch _spriteBatch;
-        ContentManager _content;
 
         public double SoundVolume { get; set; }
 

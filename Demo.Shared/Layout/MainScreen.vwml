@@ -2,15 +2,36 @@
 <Grid
   Size="{ScreenSize}"
   ForegroundColor="Black"
+  HorizontalContentAlignment="Center"
   BackgroundColor="{GlobalBackgroundColor}">
   <StackPanel >
     <Label
-      Size=".8,.8"
+      Size=".8,.15"
       FontSize=".15"
-      HorizontalContentAlignment="Center"
       BackgroundColor="#FF8080"
-      Content="Hello there"/>
-    <Label Content="{DynamicText}" FontSize=".04" Size =".4,.07" Margin="0,0.02" BackgroundColor="LightBlue" />
+      Content="Hello"/>
+    <Label 
+      Content="The current time is:" 
+      FontSize=".04" 
+      Size =".4,.07" 
+      VerticalContentAlignment="Center" />
+    <Label 
+      Content="{TimeText}" 
+      FontSize=".04" 
+      Size =".4,.07" 
+      Margin="0,0.02"  
+      VerticalContentAlignment="Center" 
+      BackgroundColor="LightBlue" />
   </StackPanel>
+    <Button
+      Name="PlayButton"
+      Content="Play"
+      Margin=",,,.1"
+      Size =".4,.2"
+      FontSize=".2"
+      HasBorder="true"
+      BackgroundColor="Yellow"
+      OnTap="PlayButtonOnTap"
+      />
 
 </Grid>

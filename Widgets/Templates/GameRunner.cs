@@ -33,9 +33,9 @@ namespace ChangeThisToYourNameSpace
         {
 #if WINDOWS
             // For windows, we will show a windowed version that looks like a phone app
-            _controller = new GameController(500,900);
+            _controller = new GameController(this, 500, 900);
 #else
-            _controller = new GameController();
+            _controller = new GameController(this);
 #endif
 
             // TODO: uncomment this line and put in the name of the screen you

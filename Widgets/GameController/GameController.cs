@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Input.Touch;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,29 +21,34 @@ namespace MonoVarmint.Widgets
     public partial class GameController : Game, IVarmintWidgetInjector
     {
         public Color GlobalBackgroundColor { get { return Color.DarkGray; } }
-        public string DynamicText { get { return "Current Time: " + DateTime.Now.ToLongTimeString(); } }
-        public Vector2 ScreenSize { get { return new Vector2(_backBufferWidth, _backBufferHeight); } }
+        public Vector2 ScreenSize { get { return new Vector2(1.0f, (float)_backBufferHeight/_backBufferWidth); } }
+        public int CurrentFrameNumber { get; set; }
+        public bool PauseInput { get; set; }
 
+        // events
         public event Action OnLoaded;
+        public event Action<GameTime> OnUpdate;
+        public event Action<Keys, bool, char> OnTypedCharacter;
+
 
         Dictionary<string, VarmintWidget> _screensByName = new Dictionary<string, VarmintWidget>();
-
+        object _bindingContext;
+        
       
         //-----------------------------------------------------------------------------------------------
         // ctor 
         //-----------------------------------------------------------------------------------------------
-        public GameController()
+        public GameController(object bindingContext)
         {
-
             _graphics = new GraphicsDeviceManager(this);
             _graphics.IsFullScreen = true;
-            
+            _bindingContext = bindingContext;
         }
 
         //-----------------------------------------------------------------------------------------------
         // Force a windowed, non-native resolution 
         //-----------------------------------------------------------------------------------------------
-        public GameController(int width, int height) : this()
+        public GameController(object bindingContext, int width, int height) : this(bindingContext)
         {
             _graphics.IsFullScreen = false;
             _graphics.PreferredBackBufferWidth = width;
@@ -51,6 +57,28 @@ namespace MonoVarmint.Widgets
 #if WINDOWS
             this.IsMouseVisible = true;
 #endif
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// Initialize
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        protected override void Initialize()
+        {
+            // Monotouch doesn't handle flick and drag gestures well, so we are going
+            // to ignore them and just process touches
+            //TouchPanel.EnabledGestures = GestureType.DoubleTap
+            //    | GestureType.Tap
+            //    | GestureType.FreeDrag
+            //    | GestureType.DragComplete
+            //    | GestureType.Flick
+            //    | GestureType.Hold;
+
+            TouchPanel.EnableMouseTouchPoint = true;
+            TouchPanel.EnableMouseGestures = true;
+
+            base.Initialize();
         }
 
         //-----------------------------------------------------------------------------------------------
@@ -91,17 +119,23 @@ namespace MonoVarmint.Widgets
             SelectFont();
 
             // Widgets
-            _screensByName = VarmintWidget.LoadLayout(this, this);
+            _screensByName = VarmintWidget.LoadLayout(this, _bindingContext);
 
             _visualTree = _screensByName["_default_screen_"];
             OnLoaded?.Invoke();
         }
+
+#if WINDOWS
+        Dictionary<Keys, bool> _pressedKeys = new Dictionary<Keys, bool>();
+#endif
 
         //-----------------------------------------------------------------------------------------------
         // 
         //-----------------------------------------------------------------------------------------------
         protected override void Update(GameTime gameTime)
         {
+            CurrentFrameNumber++;
+
             // For Mobile devices, this logic will close the Game when the Back button is pressed
             // Exit() is obsolete on iOS
 #if !__IOS__ && !__TVOS__
@@ -111,9 +145,114 @@ namespace MonoVarmint.Widgets
                 Exit();
             }
 #endif
-            // TODO: Add your update logic here			
+
+#if WINDOWS
+            // In windows, we want to use keystrokes to mimic mobile buttons
+            KeyboardState state = Keyboard.GetState();
+            foreach (var key in state.GetPressedKeys())
+            {
+                _pressedKeys[key] = true;
+            }
+
+            bool shifted = state.IsKeyDown(Keys.LeftShift) || state.IsKeyDown(Keys.RightShift);
+
+            var wasPressed = new List<Keys>(_pressedKeys.Keys);
+            foreach (var key in wasPressed)
+            {
+                if (state.IsKeyUp(key))
+                {
+                    _pressedKeys.Remove(key);
+
+                    var c = CharFromKey(key, shifted);
+                    if (c != null) HandleNativeInputCharacter(c.Value);
+                    OnTypedCharacter?.Invoke(key, shifted, c ?? '\0');
+                }
+            }
+
+#endif
+            HandleUserInput(gameTime);
+
+            OnUpdate?.Invoke(gameTime);
             base.Update(gameTime);
         }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// CharFromKey - Convert windows key character to an actual character
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public static char? CharFromKey(Keys key, bool shifted)
+        {
+            string output = null;
+            if (key >= Keys.A && key <= Keys.Z) output = key.ToString();
+            else if (key >= Keys.NumPad0 && key <= Keys.NumPad9) output = ((int)(key - Keys.NumPad0)).ToString();
+            else if (key >= Keys.D0 && key <= Keys.D9)
+            {
+                string num = ((int)(key - Keys.D0)).ToString();
+                if (shifted)
+                {
+                    switch (num)
+                    {
+                        case "1": num = "!"; break;
+                        case "2": num = "@"; break;
+                        case "3": num = "#"; break;
+                        case "4": num = "$"; break;
+                        case "5": num = "%"; break;
+                        case "6": num = "^"; break;
+                        case "7": num = "&"; break;
+                        case "8": num = "*"; break;
+                        case "9": num = "("; break;
+                        case "0": num = ")"; break;
+                        default: break;
+                    }
+                }
+                output = num;
+            }
+            else if (key == Keys.OemPeriod) output = ".";
+            else if (key == Keys.OemTilde) output = "'";
+            else if (key == Keys.Space) output = " ";
+            else if (key == Keys.OemMinus) output = "-";
+            else if (key == Keys.OemPlus) output = "+";
+            else if (key == Keys.OemQuestion && shifted) output = "?";
+            else if (key == Keys.Back) output = "\b";
+
+            if (!shifted && output != null) output = output.ToLower();
+
+            if (output == null) return null;
+            return output[0];
+        }
+
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// HandleUserInput
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        private void HandleUserInput(GameTime gameTime)
+        {
+            // Varmint Widgets does it's own gesture handling because the built-in gesture handling
+            // for mono does a bad job with flicking and dragging
+            foreach (var touch in TouchPanel.GetState())
+            {
+                var hitSpot = touch.Position / _backBufferWidth;
+                hitSpot.X -= (float)_backBufferXOffset / _backBufferWidth;
+                var adjustedTouch = new TouchLocation(touch.Id, touch.State, hitSpot);
+                if (PauseInput) continue;
+                _visualTree.HandleTouch(adjustedTouch);
+            }
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// HandleNativeInputCharacter
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        void HandleNativeInputCharacter(char c)
+        {
+            if (PauseInput) return;
+            _visualTree.HandleInputCharacter(c);
+        }
+
 
         //-----------------------------------------------------------------------------------------------
         // 
