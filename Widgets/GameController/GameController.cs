@@ -43,6 +43,7 @@ namespace MonoVarmint.Widgets
             _graphics = new GraphicsDeviceManager(this);
             _graphics.IsFullScreen = true;
             _bindingContext = bindingContext;
+            SoundVolume = 1.0;
         }
 
         //-----------------------------------------------------------------------------------------------
@@ -81,49 +82,6 @@ namespace MonoVarmint.Widgets
             base.Initialize();
         }
 
-        //-----------------------------------------------------------------------------------------------
-        // 
-        //-----------------------------------------------------------------------------------------------
-        protected override void LoadContent()
-        {
-            Content = new EmbeddedContentManager(_graphics.GraphicsDevice);
-            Content.RootDirectory = "Content";
-
-            // Set up a back buffer to render to
-            _backBufferWidth = GraphicsDevice.PresentationParameters.BackBufferWidth;
-            _backBufferHeight = GraphicsDevice.PresentationParameters.BackBufferHeight;
-            if ((float)_backBufferHeight / _backBufferWidth < 1.6)
-            {
-                _backBufferWidth = (int)(_backBufferHeight / 1.6);
-                _backBufferXOffset = (GraphicsDevice.PresentationParameters.BackBufferWidth - _backBufferWidth) / 2;
-            }
-
-            _backBuffer = new RenderTarget2D(
-                _graphics.GraphicsDevice,
-                _backBufferWidth,
-                _backBufferHeight,
-                false,
-                SurfaceFormat.Color,
-                DepthFormat.None);
-
-            var scaleFactor = _backBufferWidth / 1000.0f;
-            _scaleToNativeResolution = Matrix.CreateScale(new Vector3(scaleFactor, scaleFactor, 1));
-
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
-
-            _utilityBlockTexture = Content.Load<Texture2D>("_utility_block");
-            _circleTexture = Content.Load<Texture2D>("_utility_circle");
-            _defaultFont = Content.Load<SpriteFont>("_utility_SegoeUI");
-
-            _fontsByName.Add("_utility_SegoeUI", _defaultFont);
-            SelectFont();
-
-            // Widgets
-            _screensByName = VarmintWidget.LoadLayout(this, _bindingContext);
-
-            _visualTree = _screensByName["_default_screen_"];
-            OnLoaded?.Invoke();
-        }
 
 #if WINDOWS
         Dictionary<Keys, bool> _pressedKeys = new Dictionary<Keys, bool>();

@@ -2,6 +2,30 @@
 <Grid
   Size="{ScreenSize}"
   ForegroundColor="Black"
-  BackgroundColor="{GlobalBackgroundColor}">
-
+  HorizontalContentAlignment="Center"
+  BackgroundColor="White">
+  <Grid
+    Name="GameContainer"
+    Size=".8,.6"
+    Margin=",.1"/>
+  <StackPanel Orientation="Horizontal" Margin=",.1">
+    <Label
+      Size=".2,.1"
+      HorizontalContentAlignment="Right"
+      FontSize=".1"
+      Content="Score:" />
+    <Label
+      Size=".2,.1"
+      FontSize=".1"
+      Content="{Score}" />
+  </StackPanel>
+  <Button
+    Content="Quit"
+    Margin=",,,.1"
+    Size =".2,.12"
+    FontSize=".1"
+    HasBorder="true"
+    BackgroundColor="White"
+    OnTap="GameQuitButtonOnTap"
+      />
 </Grid>

@@ -19,5 +19,7 @@ namespace MonoVarmint.Widgets
         void DrawGlyph(string name, Vector2 offset, Vector2 size, Color color, float rotation, Vector2 origin);
         void DrawSprite(string name, int spriteFrame, Vector2 offset, Vector2 size, Color color);
         void PlaySound(string name, double volume = 1.0);
+        void BeginClipping(Vector2 position, Vector2 size);
+        void EndClipping();
     }
 }

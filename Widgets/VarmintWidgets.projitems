@@ -17,6 +17,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Base\VarmintWidgetWidgetMargin.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EmbeddedContentManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GameController\GameController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GameController\GameControllerContent.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IMediaRenderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IVarmintWidgetInjector.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Base\TouchMemory.cs" />

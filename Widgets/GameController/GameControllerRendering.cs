@@ -30,11 +30,12 @@ namespace MonoVarmint.Widgets
         SpriteFont _selectedFont;
         SpriteFont _defaultFont;
 
+        internal VarmintWidget GetVisibleWidgetByName(string widgetName)
+        {
+            return _visualTree.FindWidgetByName(widgetName);
+        }
+
         bool _inSpriteBatch = false;
-        Dictionary<string, SpriteFont> _fontsByName = new Dictionary<string, SpriteFont>();
-        Dictionary<string, VarmintSoundEffect> _soundsByName = new Dictionary<string, VarmintSoundEffect>();
-        Dictionary<string, Texture2D> _texturesByName = new Dictionary<string, Texture2D>();
-        Dictionary<string, VarmintSprite> _spritesByName = new Dictionary<string, VarmintSprite>();
 
         //--------------------------------------------------------------------------------------
         /// <summary>
@@ -102,17 +103,31 @@ namespace MonoVarmint.Widgets
 
         //--------------------------------------------------------------------------------------
         /// <summary>
-        /// Ensure_spriteBatch
+        /// Start a spritebatch session if not already started
         /// </summary>
         //--------------------------------------------------------------------------------------
-        void Ensure_spriteBatch()
+        void EnsureSpriteBatch(RasterizerState rasterizerState = null)
         {
             if (!_inSpriteBatch)
             {
-                _spriteBatch.Begin(transformMatrix: Matrix.CreateScale(new Vector3(_backBufferWidth, _backBufferWidth, 1)));
+                _spriteBatch.Begin(rasterizerState: rasterizerState);
                 _inSpriteBatch = true;
             }
 
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// End a spritebatch session if there is one
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        void EndSpriteBatch()
+        {
+            if (_inSpriteBatch)
+            {
+                _spriteBatch.End();
+                _inSpriteBatch = false;
+            }
         }
 
         //--------------------------------------------------------------------------------------
@@ -134,12 +149,12 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void DrawBox(Vector2 offset, Vector2 size, Color color)
         {
-            Vector2 scale = size / new Vector2(_utilityBlockTexture.Width, _utilityBlockTexture.Height);
-            Ensure_spriteBatch();
+            Vector2 scale = size * _backBufferWidth / new Vector2(_utilityBlockTexture.Width, _utilityBlockTexture.Height);
+            EnsureSpriteBatch();
 
             _spriteBatch.Draw(
                 texture: _utilityBlockTexture,
-                position: offset,
+                position: offset * _backBufferWidth,
                 sourceRectangle: null,
                 color: color,
                 rotation: 0,
@@ -156,12 +171,12 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void DrawEllipse(Vector2 offset, Vector2 size, Color color)
         {
-            Vector2 scale = size / new Vector2(_circleTexture.Width, _circleTexture.Height);
-            Ensure_spriteBatch();
+            Vector2 scale = size * _backBufferWidth / new Vector2(_circleTexture.Width, _circleTexture.Height);
+            EnsureSpriteBatch();
 
             _spriteBatch.Draw(
               texture: _circleTexture,
-              position: offset,
+              position: offset * _backBufferWidth,
               sourceRectangle: null,
               color: color,
               rotation: 0,
@@ -217,8 +232,8 @@ namespace MonoVarmint.Widgets
         public void DrawText(string text, string fontName, float fontSize, Vector2 offset, Color color, float wrapWidth = 0)
         {
             text = FixText(text);
-            float scale = fontSize / _selectedFontPixelSize;
-            var cursor = offset;
+            float scale = fontSize * _backBufferWidth / _selectedFontPixelSize;
+            var cursor = offset * _backBufferWidth;
 
             Action<string> drawTextSegment = (segment) =>
             {
@@ -234,7 +249,7 @@ namespace MonoVarmint.Widgets
                     layerDepth: 0);
             };
 
-            Ensure_spriteBatch();
+            EnsureSpriteBatch();
             if (wrapWidth == 0)
             {
                 drawTextSegment(text);
@@ -244,7 +259,7 @@ namespace MonoVarmint.Widgets
                 foreach (var line in BreakIntoWrappedLines(text, fontSize, wrapWidth))
                 {
                     drawTextSegment(line);
-                    cursor.Y += fontSize;
+                    cursor.Y += fontSize * _backBufferWidth;
                 }
             }
         }
@@ -286,7 +301,7 @@ namespace MonoVarmint.Widgets
             text = FixText(text);
             if (text == null || text == "")
             {
-                var size = _selectedFont.MeasureString("I") * fontSize / _selectedFontPixelSize;
+                var size = _selectedFont.MeasureString("I") * fontSize * _backBufferWidth / _selectedFontPixelSize;
                 size.X = 0;
                 return size;
             }
@@ -312,11 +327,14 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void DrawLine(Vector2 start, Vector2 end, float lineWidth, Color color)
         {
-            Ensure_spriteBatch();
+            EnsureSpriteBatch();
             Vector2 rotationOrigin = new Vector2(0, _utilityBlockTexture.Height / 2);
 
+            start = start * _backBufferWidth;
+            end = end *_backBufferWidth;
+
             float length = (start - end).Length();
-            Vector2 scale = new Vector2(length / _utilityBlockTexture.Width, lineWidth / _utilityBlockTexture.Height);
+            Vector2 scale = new Vector2(length / _utilityBlockTexture.Width, lineWidth * _backBufferWidth / _utilityBlockTexture.Height);
 
             float rotationAngle = (float)Math.Atan2(end.Y - start.Y, end.X - start.X);
 
@@ -343,7 +361,7 @@ namespace MonoVarmint.Widgets
         {
             if (SoundVolume == 0) return;
             var effect = _soundsByName[soundName];
-            if ((DateTime.Now - effect.LastPlayTime).TotalMilliseconds > 40)
+            if ((DateTime.Now - effect.LastPlayTime).TotalMilliseconds > 20)
             {
                 var volume = effect.PreferredVolume;
                 volume *= SoundVolume;
@@ -367,26 +385,27 @@ namespace MonoVarmint.Widgets
 
         public void DrawGlyph(string glyphName, Vector2 offset, Vector2 size, Color color, float rotation, Vector2 origin)
         {
-            Texture2D texture = _texturesByName[glyphName];
+            Texture2D texture = _glyphsByName[glyphName];
             DrawGlyph(texture, offset, size, color, rotation, origin);
         }
 
         public void DrawGlyph(Texture2D texture, Vector2 offset, Vector2 size, Color color, float rotation, Vector2 origin)
         {
-            Vector2 scale = size / new Vector2(texture.Width, texture.Height);
+            Vector2 scale = size * _backBufferWidth / new Vector2(texture.Width, texture.Height);
 
-            Ensure_spriteBatch();
+            EnsureSpriteBatch();
 
             _spriteBatch.Draw(
                 texture: texture,
-                position: offset,
+                position: offset * _backBufferWidth,
                 sourceRectangle: null,
                 color: color,
-                rotation: rotation,
-                origin: origin,
+                rotation: 0,
+                origin: Vector2.Zero,
                 scale: scale,
                 effects: SpriteEffects.None,
                 layerDepth: 0);
+
         }
 
 
@@ -400,13 +419,13 @@ namespace MonoVarmint.Widgets
             var sprite = _spritesByName[spriteName];
             Texture2D texture = sprite.Texture;
             var sourceRect = sprite.GetRectangle(spriteNumber);
-            Vector2 scale = size / new Vector2(sprite.Width, sprite.Height);
+            Vector2 scale = size * _backBufferWidth / new Vector2(sprite.Width, sprite.Height);
 
-            Ensure_spriteBatch();
+            EnsureSpriteBatch();
 
             _spriteBatch.Draw(
                   texture: texture,
-                  position: offset,
+                  position: offset * _backBufferWidth,
                   sourceRectangle: sourceRect,
                   color: color,
                   rotation: 0,
@@ -414,6 +433,35 @@ namespace MonoVarmint.Widgets
                   scale: scale,
                   effects: SpriteEffects.None,
                   layerDepth: 0);
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// Clip any drawing outside of the specified area
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public void BeginClipping(Vector2 position, Vector2 size)
+        {
+            EndSpriteBatch();
+
+            _graphics.GraphicsDevice.ScissorRectangle = 
+                new Rectangle(
+                    (int)(position.X * _backBufferWidth),
+                    (int)(position.Y * _backBufferWidth),
+                    (int)(size.X * _backBufferWidth),
+                    (int)(size.Y * _backBufferWidth));
+
+            EnsureSpriteBatch(new RasterizerState() { ScissorTestEnable = true });
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// allow drawing on the entire area
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public void EndClipping()
+        {
+            EndSpriteBatch();
         }
     }
 }

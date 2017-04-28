@@ -21,7 +21,7 @@ namespace ChangeThisToYourNameSpace
     // class. See the WindowsDemo project for a simple example of how to show and operate multiple 
     // screens in a game context. 
     //-----------------------------------------------------------------------------------------------
-    public partial class GameRunner: IDisposable
+    public abstract partial class GameRunner: IDisposable
     {
         GameController _controller;
         public Vector2 ScreenSize { get { return _controller.ScreenSize; } }

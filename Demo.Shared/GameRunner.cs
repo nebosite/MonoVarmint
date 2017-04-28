@@ -18,7 +18,7 @@ namespace Demo.Shared
     /// <summary>
     /// Your game control starts here
     /// </summary>
-    public abstract class GameRunner: IDisposable
+    public abstract partial class GameRunner: IDisposable
     {
         GameController _controller;
         public Color GlobalBackgroundColor { get { return Color.DarkGray; } }
@@ -35,7 +35,19 @@ namespace Demo.Shared
 #else
             _controller = new GameController(this);
 #endif
-            _controller.OnLoaded += () => _controller.SetScreen("MainScreen");
+            _controller.OnLoaded += () =>
+            {
+                _controller.LoadGlyphs("Images/Mountains", "Images/Trees", "Images/Ground");
+                _controller.LoadSprite("Images/Bunny", 100, 100);
+                _controller.LoadSprite("Images/Monster", 100, 100);
+                _controller.LoadSounds("Sounds/Cowbell", "Sounds/Jump", "Sounds/Thump");
+                _controller.SetScreen("MainScreen");
+            };
+
+            _controller.OnUpdate += (gameTime) =>
+            {
+                if (_currentGame != null) _currentGame.Update(gameTime);
+            };
         }
 
         //-----------------------------------------------------------------------------------------------
@@ -43,7 +55,7 @@ namespace Demo.Shared
         //-----------------------------------------------------------------------------------------------
         public VarmintWidget.EventHandledState PlayButtonOnTap(VarmintWidget tappedObject, Vector2 tapPosition)
         {
-            _controller.SetScreen("GameScreen");
+            StartGame();
             return VarmintWidget.EventHandledState.Handled;
         }
 

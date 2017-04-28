@@ -9,6 +9,8 @@
     <Import_RootNamespace>Demo.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)GameState.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GameRunner_GameScreen.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GameRunner.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -23,5 +25,15 @@
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)EmbeddedContent\circle.xnb" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)EmbeddedContent\SegoeUI.xnb" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)EmbeddedContent\utilityblock.xnb" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Content\Images\Bunny.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Images\Ground.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Images\Monster.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Images\Mountains.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Images\Trees.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Sounds\Cowbell.wav" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Sounds\Jump.wav" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Sounds\Thump.wav" />
   </ItemGroup>
 </Project>
