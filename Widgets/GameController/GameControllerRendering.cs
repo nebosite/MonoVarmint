@@ -16,6 +16,8 @@ namespace MonoVarmint.Widgets
 
         public double SoundVolume { get; set; }
 
+        public Vector2 DrawOffset { get; set; }
+
         // these are used to allow a portrait-oriented app on any resolution
         Matrix _scaleToNativeResolution;
         int _backBufferWidth;
@@ -149,6 +151,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void DrawBox(Vector2 offset, Vector2 size, Color color)
         {
+            offset -= DrawOffset; 
             Vector2 scale = size * _backBufferWidth / new Vector2(_utilityBlockTexture.Width, _utilityBlockTexture.Height);
             EnsureSpriteBatch();
 
@@ -171,6 +174,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void DrawEllipse(Vector2 offset, Vector2 size, Color color)
         {
+            offset -= DrawOffset;
             Vector2 scale = size * _backBufferWidth / new Vector2(_circleTexture.Width, _circleTexture.Height);
             EnsureSpriteBatch();
 
@@ -231,6 +235,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void DrawText(string text, string fontName, float fontSize, Vector2 offset, Color color, float wrapWidth = 0)
         {
+            offset -= DrawOffset;
             text = FixText(text);
             float scale = fontSize * _backBufferWidth / _selectedFontPixelSize;
             var cursor = offset * _backBufferWidth;
@@ -327,6 +332,8 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void DrawLine(Vector2 start, Vector2 end, float lineWidth, Color color)
         {
+            start -= DrawOffset;
+            end -= DrawOffset;
             EnsureSpriteBatch();
             Vector2 rotationOrigin = new Vector2(0, _utilityBlockTexture.Height / 2);
 
@@ -380,7 +387,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void DrawGlyph(string glyphName, Vector2 offset, Vector2 size, Color color)
         {
-            DrawGlyph(glyphName, offset, size, color, 0, Vector2.Zero);
+             DrawGlyph(glyphName, offset, size, color, 0, Vector2.Zero);
         }
 
         public void DrawGlyph(string glyphName, Vector2 offset, Vector2 size, Color color, float rotation, Vector2 origin)
@@ -391,6 +398,7 @@ namespace MonoVarmint.Widgets
 
         public void DrawGlyph(Texture2D texture, Vector2 offset, Vector2 size, Color color, float rotation, Vector2 origin)
         {
+            offset -= DrawOffset;
             Vector2 scale = size * _backBufferWidth / new Vector2(texture.Width, texture.Height);
 
             EnsureSpriteBatch();
@@ -416,6 +424,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void DrawSprite(string spriteName, int spriteNumber, Vector2 offset, Vector2 size, Color color)
         {
+            offset -= DrawOffset;
             var sprite = _spritesByName[spriteName];
             Texture2D texture = sprite.Texture;
             var sourceRect = sprite.GetRectangle(spriteNumber);
@@ -442,6 +451,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void BeginClipping(Vector2 position, Vector2 size)
         {
+            position -= DrawOffset;
             EndSpriteBatch();
 
             _graphics.GraphicsDevice.ScissorRectangle = 

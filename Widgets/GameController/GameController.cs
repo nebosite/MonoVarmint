@@ -47,6 +47,14 @@ namespace MonoVarmint.Widgets
         }
 
         //-----------------------------------------------------------------------------------------------
+        // GetScreen - return a screen object by name 
+        //-----------------------------------------------------------------------------------------------
+        internal VarmintWidget GetScreen(string startScreen)
+        {
+            return _screensByName[startScreen];
+        }
+
+        //-----------------------------------------------------------------------------------------------
         // Force a windowed, non-native resolution 
         //-----------------------------------------------------------------------------------------------
         public GameController(object bindingContext, int width, int height) : this(bindingContext)
@@ -192,7 +200,7 @@ namespace MonoVarmint.Widgets
             // for mono does a bad job with flicking and dragging
             foreach (var touch in TouchPanel.GetState())
             {
-                var hitSpot = touch.Position / _backBufferWidth;
+                var hitSpot = (touch.Position / _backBufferWidth) + DrawOffset;
                 hitSpot.X -= (float)_backBufferXOffset / _backBufferWidth;
                 var adjustedTouch = new TouchLocation(touch.Id, touch.State, hitSpot);
                 if (PauseInput) continue;
@@ -247,6 +255,14 @@ namespace MonoVarmint.Widgets
                 return this;
             }
             throw new ApplicationException("Don't know how to inject a " + property.PropertyType);
+        }
+
+        //--------------------------------------------------------------------------------------
+        // 
+        //--------------------------------------------------------------------------------------
+        public void SetScreen(VarmintWidget screen)
+        {
+            _visualTree = screen;
         }
 
         //--------------------------------------------------------------------------------------

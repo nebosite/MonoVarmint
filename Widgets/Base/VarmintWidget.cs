@@ -72,7 +72,7 @@ namespace MonoVarmint.Widgets
         }
 
         private Vector2 _offset;
-        public Vector2 Offset
+        public virtual Vector2 Offset
         {
             get
             {
@@ -517,7 +517,11 @@ namespace MonoVarmint.Widgets
         ///                         the children of this widget
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public virtual void UpdateChildFormatting(bool recurse = false)
+        public virtual void UpdateChildFormatting()
+        {
+            UpdateChildFormatting(false);
+        }
+        public virtual void UpdateChildFormatting(bool recurse)
         {
             if (recurse)
             {
