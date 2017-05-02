@@ -9,8 +9,9 @@ namespace MonoVarmint.Widgets
     /// MoveOffsetLinear - animate an offset from one value to another
     /// </summary>
     //--------------------------------------------------------------------------------------
-    public partial class VarmintWidgetAnimation 
+    public partial class VarmintWidgetAnimation
     {
+
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// ForegroundColorFade - Smooth transition from one color to another
@@ -42,6 +43,24 @@ namespace MonoVarmint.Widgets
             return new VarmintWidgetAnimation(durationSeconds, (widget, delta) =>
             {
                 widget.Offset = startPosition + (endPosition - startPosition) * (float)delta;
+            });
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// MoveOffsetNaturalLinear - animate an offset from one value to another in a 
+        ///                           straight line, with some acceleration and deceleration
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public static VarmintWidgetAnimation MoveOffsetNaturalLinear(
+            double durationSeconds,
+            Vector2 startPosition,
+            Vector2 endPosition)
+        {
+            return new VarmintWidgetAnimation(durationSeconds, (widget, delta) =>
+            {
+                var acceleratedDelta = (2 - (Math.Cos(delta * Math.PI) + 1)) / 2;
+                widget.Offset = startPosition + (endPosition - startPosition) * (float)acceleratedDelta;
             });
         }
 

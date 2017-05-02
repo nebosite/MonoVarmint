@@ -24,6 +24,8 @@ namespace MonoVarmint.Widgets
         public Vector2 ScreenSize { get { return new Vector2(1.0f, (float)_backBufferHeight/_backBufferWidth); } }
         public int CurrentFrameNumber { get; set; }
         public bool PauseInput { get; set; }
+        public double Fps { get { return _fps; } }
+        public bool ShowFps { get; set; }
 
         // events
         public event Action OnLoaded;
@@ -33,8 +35,12 @@ namespace MonoVarmint.Widgets
 
         Dictionary<string, VarmintWidget> _screensByName = new Dictionary<string, VarmintWidget>();
         object _bindingContext;
-        
-      
+        int _frameCount = 0;
+        DateTime _lastFrameMeasureTime = DateTime.Now;
+        double _fps = 0;
+
+
+
         //-----------------------------------------------------------------------------------------------
         // ctor 
         //-----------------------------------------------------------------------------------------------
@@ -225,12 +231,26 @@ namespace MonoVarmint.Widgets
         //-----------------------------------------------------------------------------------------------
         protected override void Draw(GameTime gameTime)
         {
+            _frameCount++;
+            if(_frameCount == 30)
+            {
+                var span = DateTime.Now - _lastFrameMeasureTime;
+                _lastFrameMeasureTime = DateTime.Now;
+                _frameCount = 0;
+                _fps = 30 / span.TotalSeconds;
+            }
             base.Draw(gameTime);
 
             // First, We render the game to a backbuffer to be resolution independent
             GraphicsDevice.SetRenderTarget(_backBuffer);
             GraphicsDevice.Clear(Color.Blue);
             _visualTree.RenderMe(gameTime);
+
+            if(ShowFps)
+            {
+                DrawText("Fps: " + _fps.ToString(".0"), null, .05f, DrawOffset + new Vector2(0.01f, 0.01f), Color.Black);
+            }
+
             if (_inSpriteBatch)
             {
                 _spriteBatch.End();
