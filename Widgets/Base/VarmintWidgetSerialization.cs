@@ -105,7 +105,7 @@ namespace MonoVarmint.Widgets
             {
                 if (!probableMatch.IsSubclassOf(typeof(VarmintWidget)))
                 {
-                    throw new ApplicationException("Widget node '" + typeName + "' is not a VarmintWidget");
+                    throw new ApplicationException("Widget node '" + typeName + "' is not a VarmintWidget. (Make sure your shortcut attribute does not match a real type.");
                 }
                 _cachedWidgetTypes[typeName] = probableMatch;
                 return probableMatch;
