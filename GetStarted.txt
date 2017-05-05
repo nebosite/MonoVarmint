@@ -29,5 +29,13 @@ To get started (Windows Example):
 		- The name of this screen will be the filename without extension by default, unless you 
 		  explicitely set a name in the vwml file on the root element.
 	- In your code call GameController.SetScreen(screenName) to set your screen as the visual element
+
+	Adding content
+		Note:  If you put a content folder in your share project, make sure this code is in
+		your .projitems file:
+		  <ItemGroup>
+			<MonoGameContentReference Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
+		  </ItemGroup>
+
 	
 	

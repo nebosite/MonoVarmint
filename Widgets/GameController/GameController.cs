@@ -293,6 +293,14 @@ namespace MonoVarmint.Widgets
         {
             _visualTree = _screensByName[screenName];
         }
+
+        //--------------------------------------------------------------------------------------
+        // GetService 
+        //--------------------------------------------------------------------------------------
+        public object GetService(Type serviceType)
+        {
+            return Services.GetService(serviceType);
+        }
     }
 
 }

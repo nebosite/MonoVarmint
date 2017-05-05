@@ -424,6 +424,10 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void DrawSprite(string spriteName, int spriteNumber, Vector2 offset, Vector2 size, Color color)
         {
+            DrawSprite(spriteName, spriteNumber, offset, size, color, 0, Vector2.Zero);
+        }
+        public void DrawSprite(string spriteName, int spriteNumber, Vector2 offset, Vector2 size, Color color, float rotation, Vector2 rotationOrigin)
+        {
             offset -= DrawOffset;
             var sprite = _spritesByName[spriteName];
             Texture2D texture = sprite.Texture;
@@ -437,8 +441,8 @@ namespace MonoVarmint.Widgets
                   position: offset * _backBufferWidth,
                   sourceRectangle: sourceRect,
                   color: color,
-                  rotation: 0,
-                  origin: Vector2.Zero,
+                  rotation: rotation,
+                  origin: rotationOrigin,
                   scale: scale,
                   effects: SpriteEffects.None,
                   layerDepth: 0);
