@@ -16,9 +16,6 @@ namespace MonoVarmint.Widgets
     //--------------------------------------------------------------------------------------
     public partial class VarmintWidget
     {
-        const string BindingContextPropertyName = "BindingContext";
-
-
         [VarmintWidgetInject]
         public IMediaRenderer Renderer { get; set; }
 
