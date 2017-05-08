@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Grid
+  Size="{ScreenSize}"
+  ForegroundColor="Black"
+  HorizontalContentAlignment="Center"
+  BackgroundColor="#e0e0e0">
+  <StackPanel >
+    <Label
+      Size=".8,.15"
+      FontSize=".15"
+      BackgroundColor="#FF8080"
+      Content="Title"/>
+  </StackPanel>
+
+  <Button
+    Content="Go!"
+    Margin=",,,.1"
+    Size =".3,.09"
+    FontSize=".08"
+    HasBorder="true"
+    BackgroundColor="Yellow"
+    OnTap="GoOnTap"
+      />
+</Grid>

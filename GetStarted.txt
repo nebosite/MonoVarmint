@@ -3,34 +3,67 @@ It is:
 	- open-source (MIT License)
 	- Provided as a shared-code project (not dll) to simplify distribution
 
-To get started (Windows Example):
+To get started (Windows Desktop Example):
 
+==== STEP 1: Set up the project
 	- Download the MonoVarmint code from github
+	- Create a Monogame Shared code project 
+		- This will hold the majority of your code and will be shared among the platform project
+		- Best practice: Name this the name of your app
+	- Add these monovarmint shared code projects to your solution:
+		- VarmintTools
+		- VarmintWidgets
 	- Create a MonoGame project for Windows Desktop
-	- Create a Monogame Shared code project
-	- Unload your monogame for Windows project, edit the csproj file, and Add shared project references 
-	  to your monogame project by adding these lines near the other imports (you will have to corret
-	  the relative paths and project names)
-			<Import Project="..\..\MonoVarmint\Tools\VarmintTools.projitems" Label="Shared" />
-			<Import Project="..\..\MonoVarmint\Widgets\VarmintWidgets.projitems" Label="Shared" />
-			<Import Project="..\[Replace with SharedMonoGameProject]" Label="Shared" />
-	- Reload your monogame for windows project and make these changes
+		- Best Practice: Name this "ForWindowsDesktop"
+		- Add a reference to the three shared code projects:
+			- For VS 2017 and later: simple right-click and "add reference", then choose from shared projects
+			- For VS 2015 or earlier,  Unload your monogame for Windows project, edit the csproj file, and Add shared project references 
+			  to your monogame project by adding these lines near the other imports (you will have to corret
+			  the relative paths and project names)
+					<Import Project="..\..\MonoVarmint\Tools\VarmintTools.projitems" Label="Shared" />
+					<Import Project="..\..\MonoVarmint\Widgets\VarmintWidgets.projitems" Label="Shared" />
+					<Import Project="..\[Replace with SharedMonoGameProject]" Label="Shared" />
+			  Then Reload your monogame for windows project and make these changes
+	- Modify the Shared code project:
 		- Delete the Game1 class 
 		- Copy in MonoVarmint/VarmintWidgets/Templates/GameRunner.cs
+		- Change the project namespace to be what you want
 		- Change the namespace in the new GameRunner.cs to match your own
-	- Delete the Game1 class in the Monogame for Windows project 
-	- Create a GameRunner class that inherits from the GameRunner in the shared code project
-	- Modify program.cs to construct the new gamerunner class and run it
+	- Modify the ForWindowsDesktop Project:
+		- Delete the Game1 class 
+		- Modify the project namespace to be what you want
+			- Best Practive [SharedProjectNamespace].ForWindowsDesktop
+		- Create a new class that inherits from GameRunner
+			- Best Practice: call it WindowsDesktopGameRunner
+		- Modify Program class to reference your new class instead of Game1
 	- At this point, you should be able to run the windows app and see a default screen with some 
 	  instructions on what to do next.
 	  
-	Now you can start adding screens
-	- Create a .vwml file anywhere in your project and set the build action to "embedded resource"
-		- The name of this screen will be the filename without extension by default, unless you 
-		  explicitely set a name in the vwml file on the root element.
-	- In your code call GameController.SetScreen(screenName) to set your screen as the visual element
-
-	Adding content
+==== STEP 2: Add your first screen
+	- In the shared code project:
+		- Create a folder called "Layout"  
+		- Copy "SimpleScreen.vwml" from VarmintWidgets/Temples to your Layout folder
+			- rename it to "MainScreen.vwml"
+		- Right click on MainScreen.vwml and select "Properties"
+		- Change Build action to "Embedded Resource"
+		- Notes: 
+			- .vwml files can be saved anywhere in your project.  As long as they are 
+			  named with the .vwml extension and are embedded, the GameController will automatically
+			  find them
+			- The name of any screen you create will be the name of the .vwml file (without extension)
+			  by default unless overridden with the Name property in the file.  Be careful not to
+			  give .vwml files the same name.
+	- Add this code to your GameRunner class:
+        public VarmintWidget.EventHandledState GoOnTap(VarmintWidget tappedObject, Vector2 tapPosition)
+        {
+            // TODO: Add your button-handling code here
+            return VarmintWidget.EventHandledState.Handled;
+        }
+	- In the GameRunner constructor:
+		- Set up the GameController.OnLoaded event to call  GameController.SetScreen("MainScreen") 
+	- At this point, you should be able to run the program and see your first simple screen
+		
+==== STEP 3: Adding Content (Under construction)
 		Note:  If you put a content folder in your share project, make sure this code is in
 		your .projitems file:
 		  <ItemGroup>

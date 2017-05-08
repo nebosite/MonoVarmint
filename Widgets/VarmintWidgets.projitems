@@ -41,4 +41,7 @@
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)EmbeddedContent\_utility_SegoeUI.xnb" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)EmbeddedContent\_utility_block.xnb" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)Templates\SimpleScreen.vwml" />
+  </ItemGroup>
 </Project>

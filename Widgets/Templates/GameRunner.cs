@@ -40,7 +40,7 @@ namespace ChangeThisToYourNameSpace
 
             // TODO: uncomment this line and put in the name of the screen you
             // want to start with.
-            //_controller.OnLoaded += () => _controller.SetScreen("MyStartScreenName");
+            //_controller.OnLoaded += () => _controller.SetScreen("MainScreen");
         }
 
         //-----------------------------------------------------------------------------------------------

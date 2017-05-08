@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Audio;
+using System.IO;
 
 namespace MonoVarmint.Widgets
 {
@@ -63,6 +64,18 @@ namespace MonoVarmint.Widgets
             OnLoaded?.Invoke();
         }
 
+        //-----------------------------------------------------------------------------------------------
+        /// <summary>
+        /// This allows dynamic content by letting you replace an already loaded sceen with a new
+        /// one defined by the incoming stream
+        /// </summary>
+        //-----------------------------------------------------------------------------------------------
+        public void ReplaceWithLocalScreen(string replaceName, Stream vwmlStream)
+        {
+            var widget = VarmintWidget.LoadLayoutFromVwml(this, vwmlStream, replaceName);
+            widget.Name = replaceName;
+            _screensByName[replaceName] = widget;
+        }
 
         //-----------------------------------------------------------------------------------------------
         /// <summary>
@@ -78,6 +91,7 @@ namespace MonoVarmint.Widgets
                 _glyphsByName.Add(name, Content.Load<Texture2D>(name));
             }
         }
+
 
         //-----------------------------------------------------------------------------------------------
         /// <summary>

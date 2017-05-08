@@ -121,7 +121,7 @@ namespace MonoVarmint.Widgets
         /// ParseVector
         /// </summary>
         //--------------------------------------------------------------------------------------
-        private static Vector2 ParseVector(string text)
+        public static Vector2 ParseVector(string text)
         {
             var parts = text.Split(',');
             if (parts.Length != 2)
