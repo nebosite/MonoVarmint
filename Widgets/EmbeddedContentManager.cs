@@ -38,8 +38,6 @@ namespace MonoVarmint.Widgets
 
             return base.OpenStream(assetName);
         }
-
-
     }
 
     //-----------------------------------------------------------------------------------------------
