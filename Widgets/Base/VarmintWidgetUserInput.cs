@@ -8,15 +8,51 @@ using System.Xml;
 
 namespace MonoVarmint.Widgets
 {
-
-
+    
     //--------------------------------------------------------------------------------------
-    /// <summary>
-    /// VarmintWidget - A very simple widget class for MonoGame
-    /// </summary>
+    //
     //--------------------------------------------------------------------------------------
     public partial class VarmintWidget
     {
+        DateTime _dragStartTime = DateTime.MaxValue;
+        List<VarmintWidget> _recentDragWidgets = new List<VarmintWidget>();
+        static VarmintWidget _focusedContol = null;
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// Focus - set input focus on this control 
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public void Focus()
+        {
+            _focusedContol = this;
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// HandleInputCharacter
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public void HandleInputCharacter(char c)
+        {
+            if (_focusedContol != null)
+            {
+                _focusedContol.OnInputCharacter(c);
+            }
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// HitTest
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public IList<VarmintWidget> HitTest(Vector2 absolutePoint)
+        {
+            var hitList = new List<VarmintWidget>();
+            HitTestInternal(absolutePoint, hitList);
+            return hitList;
+        }
+
         public static float DragLengthThreshhold { get; set; }
         public static double FlickThreshholdSeconds { get; set; }
 
