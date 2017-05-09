@@ -79,6 +79,19 @@ namespace MonoVarmint.Widgets
 
         //-----------------------------------------------------------------------------------------------
         /// <summary>
+        /// Call this first if you want to reload content
+        /// </summary>
+        //-----------------------------------------------------------------------------------------------
+        public void ClearContent()
+        {
+            _fontsByName.Clear();
+            _glyphsByName.Clear();
+            _spritesByName.Clear();
+            _soundsByName.Clear();
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        /// <summary>
         /// Glyphs are textures with single images.   These can be saved as .xnb files embedded anywhere 
         /// in the project or they can be textures stored somewhere under the Content folder.  
         /// Glyphs are stored under the text key used to load them here.
@@ -88,10 +101,9 @@ namespace MonoVarmint.Widgets
         {
             foreach (var name in names)
             {
-                _glyphsByName.Add(name, Content.Load<Texture2D>(name));
+                _glyphsByName.Add(name, LoadTexture(name));
             }
         }
-
 
         //-----------------------------------------------------------------------------------------------
         /// <summary>
@@ -103,8 +115,28 @@ namespace MonoVarmint.Widgets
         //-----------------------------------------------------------------------------------------------
         public void LoadSprite(string name, int width, int height)
         {
-            var spriteTexture = Content.Load<Texture2D>(name);
+           
+            var spriteTexture = LoadTexture(name);
             _spritesByName.Add(name, new VarmintSprite(spriteTexture, width, height));
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        /// <summary>
+        /// Try to load local raw files first
+        /// </summary>
+        //-----------------------------------------------------------------------------------------------
+        Texture2D LoadTexture(string name)
+        {
+            var fileName = Path.Combine(Content.RootDirectory, name) + ".png";
+            if(File.Exists(fileName))
+            {
+                using (var fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+                {
+                    return Texture2D.FromStream(GraphicsDevice, fileStream);
+                }
+            }
+
+            return Content.Load<Texture2D>(name);
         }
 
         //-----------------------------------------------------------------------------------------------
