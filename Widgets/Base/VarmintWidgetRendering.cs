@@ -73,7 +73,7 @@ namespace MonoVarmint.Widgets
                         }
                         else
                         {
-                            newOffset.X = availableSize.X;
+                            newOffset.X = child.Margin.Right == null ? 0 : availableSize.X;
                         }
 
                         break;
@@ -100,7 +100,7 @@ namespace MonoVarmint.Widgets
                         }
                         else
                         {
-                            newOffset.Y = availableSize.Y;
+                            newOffset.Y = child.Margin.Bottom == null? 0 : availableSize.Y;
                         }
                         break;
                     case VerticalContentAlignment.Center:

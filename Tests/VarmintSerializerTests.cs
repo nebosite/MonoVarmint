@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MonoVarmint.Tools;
 
-namespace Tests
+namespace MonoVarmint.Tools.Tests
 {
     [TestClass]
     public class VarmintSerializerTests

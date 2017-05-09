@@ -15,9 +15,9 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "VarmintWidgets", "Widgets\V
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsDemo", "WindowsDemo\WindowsDemo.csproj", "{B535FF48-4023-422D-8501-A5ADFA10C541}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{CA303E85-5E76-47DF-B81E-85127FFD3010}"
-EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Demo.Shared", "Demo.Shared\Demo.Shared.shproj", "{A0CDBD0E-3A41-42B7-9425-A838BC2C7383}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestsForVarmintTools", "Tests\TestsForVarmintTools.csproj", "{BE18539D-AB72-4167-AD3D-06E8BF16D712}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -42,14 +42,14 @@ Global
 		{B535FF48-4023-422D-8501-A5ADFA10C541}.Release|Any CPU.ActiveCfg = Release|x86
 		{B535FF48-4023-422D-8501-A5ADFA10C541}.Release|x86.ActiveCfg = Release|x86
 		{B535FF48-4023-422D-8501-A5ADFA10C541}.Release|x86.Build.0 = Release|x86
-		{CA303E85-5E76-47DF-B81E-85127FFD3010}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CA303E85-5E76-47DF-B81E-85127FFD3010}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CA303E85-5E76-47DF-B81E-85127FFD3010}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{CA303E85-5E76-47DF-B81E-85127FFD3010}.Debug|x86.Build.0 = Debug|Any CPU
-		{CA303E85-5E76-47DF-B81E-85127FFD3010}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CA303E85-5E76-47DF-B81E-85127FFD3010}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CA303E85-5E76-47DF-B81E-85127FFD3010}.Release|x86.ActiveCfg = Release|Any CPU
-		{CA303E85-5E76-47DF-B81E-85127FFD3010}.Release|x86.Build.0 = Release|Any CPU
+		{BE18539D-AB72-4167-AD3D-06E8BF16D712}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BE18539D-AB72-4167-AD3D-06E8BF16D712}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BE18539D-AB72-4167-AD3D-06E8BF16D712}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BE18539D-AB72-4167-AD3D-06E8BF16D712}.Debug|x86.Build.0 = Debug|Any CPU
+		{BE18539D-AB72-4167-AD3D-06E8BF16D712}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BE18539D-AB72-4167-AD3D-06E8BF16D712}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BE18539D-AB72-4167-AD3D-06E8BF16D712}.Release|x86.ActiveCfg = Release|Any CPU
+		{BE18539D-AB72-4167-AD3D-06E8BF16D712}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

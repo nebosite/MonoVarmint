@@ -64,6 +64,14 @@ namespace MonoVarmint.Widgets
             OnLoaded?.Invoke();
         }
 
+        internal void LoadFonts(params string[] names)
+        {
+            foreach (var name in names)
+            {
+                _fontsByName.Add(name, Content.Load<SpriteFont>(name));
+            }
+        }
+
         //-----------------------------------------------------------------------------------------------
         /// <summary>
         /// This allows dynamic content by letting you replace an already loaded sceen with a new

@@ -23,7 +23,7 @@ namespace ChangeThisToYourNameSpace
     //-----------------------------------------------------------------------------------------------
     public abstract partial class GameRunner: IDisposable
     {
-        GameController _controller;
+        protected GameController _controller;
         public Vector2 ScreenSize { get { return _controller.ScreenSize; } }
 
         //-----------------------------------------------------------------------------------------------

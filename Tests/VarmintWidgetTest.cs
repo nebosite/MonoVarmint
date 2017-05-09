@@ -4,16 +4,11 @@ using MonoVarmint.Tools;
 using MonoVarmint.Widgets;
 using Microsoft.Xna.Framework;
 
-namespace Tests
+namespace MonoVarmint.Tools.Tests
 {
     [TestClass]
     public class VarmintWidgetsTests
     {
-        /// <summary>
-        /// Vanilla widget to test just VarmintWidget code
-        /// </summary>
-        class TestWidget : VarmintWidget { }
-
         [TestMethod]
         public void ForeGroundColorPropertyWorks()
         {
