@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("WindowsDemo")]
-[assembly: AssemblyProduct("WindowsDemo")]
+[assembly: AssemblyTitle("DemoForWindows")]
+[assembly: AssemblyProduct("DemoForWindows")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyCompany("HP Inc.")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("15aaa726-b3ac-4144-b291-4c9048105cc9")]
+[assembly: Guid("2a3ec636-920e-413f-902b-a16c43e34af2")]
 
 // Version information for an assembly consists of the following four values:
 //

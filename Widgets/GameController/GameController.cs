@@ -31,7 +31,7 @@ namespace MonoVarmint.Widgets
         public event Action OnLoaded;
         public event Action<GameTime> OnUpdate;
         public event Action<Keys, bool, char> OnTypedCharacter;
-
+        public event Action OnUserDeactivate;
 
         Dictionary<string, VarmintWidget> _screensByName = new Dictionary<string, VarmintWidget>();
         object _bindingContext;
@@ -108,15 +108,11 @@ namespace MonoVarmint.Widgets
         {
             CurrentFrameNumber++;
 
-            // For Mobile devices, this logic will close the Game when the Back button is pressed
-            // Exit() is obsolete on iOS
-#if !__IOS__ && !__TVOS__
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
                 Keyboard.GetState().IsKeyDown(Keys.Escape))
             {
-                Exit();
+                OnUserDeactivate?.Invoke();
             }
-#endif
 
 #if WINDOWS
             // In windows, we want to use keystrokes to mimic mobile buttons
@@ -301,6 +297,40 @@ namespace MonoVarmint.Widgets
         {
             return Services.GetService(serviceType);
         }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// OnActivated
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        protected override void OnActivated(object sender, EventArgs args)
+        {
+            Debug.WriteLine("ACTIVATED");
+            base.OnActivated(sender, args);
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// OnDeactivated
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        protected override void OnDeactivated(object sender, EventArgs args)
+        {
+            Debug.WriteLine("DE-ACTIVATED");
+            base.OnDeactivated(sender, args);
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// OnExiting
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        protected override void OnExiting(object sender, EventArgs args)
+        {
+            Debug.WriteLine("EXITING");
+            base.OnExiting(sender, args);
+        }
+
     }
 
 }

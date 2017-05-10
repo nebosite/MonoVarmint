@@ -20,10 +20,16 @@ namespace Demo.Shared
     /// </summary>
     public abstract partial class GameRunner: IDisposable
     {
-        GameController _controller;
+        protected GameController _controller;
         public Color GlobalBackgroundColor { get { return Color.DarkGray; } }
         public string TimeText {  get { return "Current Time: " + DateTime.Now.ToLongTimeString(); } }
         public Vector2 ScreenSize { get { return _controller.ScreenSize; } }
+
+        //-----------------------------------------------------------------------------------------------
+        // NATIVE METHODS - These methods are called when an action occurs that needs to be handled
+        //                  natively.  Override these in the platform versein of GameRunner
+        //-----------------------------------------------------------------------------------------------
+        public abstract void NativeHandleUserDeactivate();
 
         //-----------------------------------------------------------------------------------------------
         // ctor 
@@ -35,6 +41,8 @@ namespace Demo.Shared
 #else
             _controller = new GameController(this);
 #endif
+            _controller.OnUserDeactivate += NativeHandleUserDeactivate;
+
             _controller.OnLoaded += () =>
             {
                 _controller.LoadGlyph("Images/Mountains");

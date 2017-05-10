@@ -27,6 +27,12 @@ namespace ChangeThisToYourNameSpace
         public Vector2 ScreenSize { get { return _controller.ScreenSize; } }
 
         //-----------------------------------------------------------------------------------------------
+        // NATIVE METHODS - These methods are called when an action occurs that needs to be handled
+        //                  natively.  Override these in the platform versein of GameRunner
+        //-----------------------------------------------------------------------------------------------
+        public abstract void NativeHandleUserDeactivate();
+
+        //-----------------------------------------------------------------------------------------------
         // ctor 
         //-----------------------------------------------------------------------------------------------
         public GameRunner()
@@ -37,6 +43,7 @@ namespace ChangeThisToYourNameSpace
 #else
             _controller = new GameController(this);
 #endif
+            _controller.OnUserDeactivate += NativeHandleUserDeactivate;
 
             // TODO: uncomment this line and put in the name of the screen you
             // want to start with.
@@ -58,5 +65,6 @@ namespace ChangeThisToYourNameSpace
         {
             _controller.Dispose();
         }
+
     }
 }
