@@ -105,12 +105,15 @@ namespace MonoVarmint.Widgets
         /// Glyphs are stored under the text key used to load them here.
         /// </summary>
         //-----------------------------------------------------------------------------------------------
-        public void LoadGlyphs(params string[] names)
+        public void LoadGlyph(string name, bool throwOnDuplicate = true)
         {
-            foreach (var name in names)
+            if (_glyphsByName.ContainsKey(name))
             {
-                _glyphsByName.Add(name, LoadTexture(name));
+                if (throwOnDuplicate) throw new ApplicationException("Duplicate Glyph Name: " + name);
+                return;
             }
+
+            _glyphsByName.Add(name, LoadTexture(name));
         }
 
         //-----------------------------------------------------------------------------------------------

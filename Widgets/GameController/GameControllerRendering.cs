@@ -400,6 +400,8 @@ namespace MonoVarmint.Widgets
         {
             offset -= DrawOffset;
             Vector2 scale = size * _backBufferWidth / new Vector2(texture.Width, texture.Height);
+            origin.X *= texture.Width;
+            origin.Y *= texture.Height;
 
             EnsureSpriteBatch();
 
@@ -408,8 +410,8 @@ namespace MonoVarmint.Widgets
                 position: offset * _backBufferWidth,
                 sourceRectangle: null,
                 color: color,
-                rotation: 0,
-                origin: Vector2.Zero,
+                rotation: rotation,
+                origin: origin,
                 scale: scale,
                 effects: SpriteEffects.None,
                 layerDepth: 0);
@@ -426,13 +428,15 @@ namespace MonoVarmint.Widgets
         {
             DrawSprite(spriteName, spriteNumber, offset, size, color, 0, Vector2.Zero);
         }
-        public void DrawSprite(string spriteName, int spriteNumber, Vector2 offset, Vector2 size, Color color, float rotation, Vector2 rotationOrigin)
+        public void DrawSprite(string spriteName, int spriteNumber, Vector2 offset, Vector2 size, Color color, float rotation, Vector2 origin)
         {
             offset -= DrawOffset;
             var sprite = _spritesByName[spriteName];
             Texture2D texture = sprite.Texture;
             var sourceRect = sprite.GetRectangle(spriteNumber);
             Vector2 scale = size * _backBufferWidth / new Vector2(sprite.Width, sprite.Height);
+            origin.X *= sprite.Width;
+            origin.Y *= sprite.Height;
 
             EnsureSpriteBatch();
 
@@ -442,7 +446,7 @@ namespace MonoVarmint.Widgets
                   sourceRectangle: sourceRect,
                   color: color,
                   rotation: rotation,
-                  origin: rotationOrigin,
+                  origin: origin,
                   scale: scale,
                   effects: SpriteEffects.None,
                   layerDepth: 0);

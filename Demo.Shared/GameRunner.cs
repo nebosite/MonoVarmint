@@ -37,7 +37,9 @@ namespace Demo.Shared
 #endif
             _controller.OnLoaded += () =>
             {
-                _controller.LoadGlyphs("Images/Mountains", "Images/Trees", "Images/Ground");
+                _controller.LoadGlyph("Images/Mountains");
+                _controller.LoadGlyph("Images/Trees");
+                _controller.LoadGlyph("Images/Ground");
                 _controller.LoadSprite("Images/Bunny", 100, 100);
                 _controller.LoadSprite("Images/Monster", 100, 100);
                 _controller.LoadSounds("Sounds/Cowbell", "Sounds/Jump", "Sounds/Thump");
