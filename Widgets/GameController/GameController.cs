@@ -55,9 +55,10 @@ namespace MonoVarmint.Widgets
         //-----------------------------------------------------------------------------------------------
         // GetScreen - return a screen object by name 
         //-----------------------------------------------------------------------------------------------
-        internal VarmintWidget GetScreen(string startScreen)
+        internal VarmintWidget GetScreen(string screenName)
         {
-            return _screensByName[startScreen];
+            if (!_screensByName.ContainsKey(screenName)) throw new ApplicationException("Unknown screen: " + screenName);
+            return _screensByName[screenName];
         }
 
         //-----------------------------------------------------------------------------------------------

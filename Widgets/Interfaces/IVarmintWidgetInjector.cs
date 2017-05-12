@@ -10,7 +10,7 @@ namespace MonoVarmint.Widgets
     /// Use this to provide dependency injection when loading widgets from vwml files
     /// </summary>
     //--------------------------------------------------------------------------------------
-    interface IVarmintWidgetInjector
+    public interface IVarmintWidgetInjector
     {
         object GetInjectedValue(VarmintWidgetInjectAttribute attribute, PropertyInfo property);
     }

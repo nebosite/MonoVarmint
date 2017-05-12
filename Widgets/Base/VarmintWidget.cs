@@ -147,6 +147,8 @@ namespace MonoVarmint.Widgets
             }
         }
 
+        public Dictionary<string, string> Parameters { get; set; }
+
         static int _globalWidgetCount = 0;
 
         //--------------------------------------------------------------------------------------
@@ -168,6 +170,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public VarmintWidget()
         {
+            Parameters = new Dictionary<string, string>();
             ChildrenAffectFormatting = false;
             IsVisible = true;
             _globalWidgetCount++;

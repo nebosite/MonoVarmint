@@ -128,7 +128,22 @@ namespace MonoVarmint.Widgets
             {
                 throw new ApplicationException("Bad Vector Specification");
             }
-            return new Vector2(float.Parse(parts[0]), float.Parse(parts[1]));
+            return new Vector2(float.Parse(parts[0].Trim()), float.Parse(parts[1].Trim()));
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// Point
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public static Point ParsePoint(string text)
+        {
+            var parts = text.Split(',');
+            if (parts.Length != 2)
+            {
+                throw new ApplicationException("Bad Point Specification");
+            }
+            return new Point(int.Parse(parts[0].Trim()), int.Parse(parts[1].Trim()));
         }
 
         //--------------------------------------------------------------------------------------
@@ -193,34 +208,59 @@ namespace MonoVarmint.Widgets
             var propertyInfo = GetType().GetTypeInfo().GetProperty(propertyName);
             if (propertyInfo == null)
                 throw new ApplicationException("Property '" + propertyName + "' not found on type " + GetType());
-            var targetTypeName = propertyInfo.PropertyType.Name;
 
-            switch (targetTypeName)
+            // If the property is a dictionary, then we'll try to add this value, otherwise, we set the property
+            if (propertyInfo.PropertyType.IsGenericType && propertyInfo.PropertyType.Name == "Dictionary`2")
             {
-                case "String": propertyInfo.SetValue(this, valueText); break;
-                case "Vector2": propertyInfo.SetValue(this, ParseVector(valueText)); break;
+                // Break up name=value into actual key and value objects
+                var valueParts = valueText.Split(new char[] { '=' }, 2);
+                if (valueParts.Length != 2) throw new ApplicationException("Expected format of Name=Value");
+                var types = propertyInfo.PropertyType.GenericTypeArguments;
+                var key = GetValueFromText(types[0], valueParts[0]);
+                var value = GetValueFromText(types[1], valueParts[1]);
+
+                // Create dictionary object if not there
+                var dictionary = propertyInfo.GetValue(this);
+                if(dictionary == null)
+                {
+                    dictionary = Activator.CreateInstance(propertyInfo.PropertyType);
+                    propertyInfo.SetValue(this, dictionary);
+                }
+
+                // Add to the dictionary
+                var add = propertyInfo.PropertyType.GetMethod("Add", types);
+                add.Invoke(dictionary, new object[] { key, value });
+            }
+            else
+            {
+                propertyInfo.SetValue(this, GetValueFromText(propertyInfo.PropertyType, valueText));
+            }
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// GetValueFromText - Convert text from a vwml file into an value
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        private object GetValueFromText(Type type, string valueText)
+        {
+            switch (type.Name)
+            {
+                case "String": return valueText;
+                case "Vector2": return ParseVector(valueText);
+                case "Point": return ParsePoint(valueText);
                 case "Single":
-                case "float": propertyInfo.SetValue(this, float.Parse(valueText)); break;
-                case "double": propertyInfo.SetValue(this, double.Parse(valueText)); break;
-                case "int": propertyInfo.SetValue(this, int.Parse(valueText)); break;
+                case "float": return float.Parse(valueText);
+                case "double": return double.Parse(valueText);
+                case "int": return int.Parse(valueText);
                 case "Boolean":
-                case "bool": propertyInfo.SetValue(this, Boolean.Parse(valueText)); break;
-                case "Color": propertyInfo.SetValue(this, ParseColor(valueText)); break;
+                case "bool": return Boolean.Parse(valueText);
+                case "Color": return ParseColor(valueText);
                 default:
-                    if (propertyInfo.PropertyType.IsEnum)
-                    {
-                        propertyInfo.SetValue(this, Enum.Parse(propertyInfo.PropertyType, valueText));
-                    }
-                    else if (propertyInfo.PropertyType.Name == "Object")
-                    {
-                        propertyInfo.SetValue(this, valueText);
-                    }
-                    else if (propertyInfo.PropertyType.IsClass)
-                    {
-                        propertyInfo.SetValue(this, Activator.CreateInstance(propertyInfo.PropertyType, valueText));
-                    }
-                    else throw new ApplicationException("Don't know how to set a " + targetTypeName);
-                    break;
+                    if (type.IsEnum) return Enum.Parse(type, valueText);
+                    else if (type.Name == "Object") return valueText;
+                    else if (type.IsClass) return Activator.CreateInstance(type, valueText);
+                    else throw new ApplicationException("Don't know create a " + type.Name);
             }
         }
 
@@ -320,7 +360,7 @@ namespace MonoVarmint.Widgets
         ///                 specified in the vwml 
         /// </summary>
         //--------------------------------------------------------------------------------------
-        internal static VarmintWidget LoadLayoutFromVwml(IVarmintWidgetInjector injector, Stream vwmlStream, string defaultName)
+        public static VarmintWidget LoadLayoutFromVwml(IVarmintWidgetInjector injector, Stream vwmlStream, string defaultName)
         {
             using (var reader = XmlReader.Create(vwmlStream))
             {

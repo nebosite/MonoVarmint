@@ -78,10 +78,16 @@ namespace MonoVarmint.Widgets
         /// one defined by the incoming stream
         /// </summary>
         //-----------------------------------------------------------------------------------------------
-        public void ReplaceWithLocalScreen(string replaceName, Stream vwmlStream)
+        public void SetScreen(string replaceName, Stream vwmlStream, object bindingContext = null)
         {
             var widget = VarmintWidget.LoadLayoutFromVwml(this, vwmlStream, replaceName);
             widget.Name = replaceName;
+            if (bindingContext != null)
+            {
+                widget.BindingContext = bindingContext;
+                widget.Init();
+            }
+
             _screensByName[replaceName] = widget;
         }
 

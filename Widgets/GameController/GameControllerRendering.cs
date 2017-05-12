@@ -140,7 +140,11 @@ namespace MonoVarmint.Widgets
         public void SelectFont(string fontName = null)
         {
             _selectedFont = _defaultFont;
-            if (fontName != null) _selectedFont = _fontsByName[fontName];
+            if (fontName != null)
+            {
+                if (!_fontsByName.ContainsKey(fontName)) throw new ApplicationException("Can't find font named '" + fontName + "'");
+                _selectedFont = _fontsByName[fontName];
+            }
             _selectedFontPixelSize = _selectedFont.MeasureString("A").Y;
         }
 
@@ -367,6 +371,7 @@ namespace MonoVarmint.Widgets
         public void PlaySound(string soundName, double volumeAdjust = 1.0)
         {
             if (SoundVolume == 0) return;
+            if (!_soundsByName.ContainsKey(soundName)) throw new ApplicationException("Can't find sound named '" + soundName + "'");
             var effect = _soundsByName[soundName];
             if ((DateTime.Now - effect.LastPlayTime).TotalMilliseconds > 20)
             {
@@ -392,6 +397,7 @@ namespace MonoVarmint.Widgets
 
         public void DrawGlyph(string glyphName, Vector2 offset, Vector2 size, Color color, float rotation, Vector2 origin)
         {
+            if (!_glyphsByName.ContainsKey(glyphName)) throw new ApplicationException("Can't find glyph named '" + glyphName + "'");
             Texture2D texture = _glyphsByName[glyphName];
             DrawGlyph(texture, offset, size, color, rotation, origin);
         }
@@ -431,6 +437,7 @@ namespace MonoVarmint.Widgets
         public void DrawSprite(string spriteName, int spriteNumber, Vector2 offset, Vector2 size, Color color, float rotation, Vector2 origin)
         {
             offset -= DrawOffset;
+            if (!_spritesByName.ContainsKey(spriteName)) throw new ApplicationException("Can't find sprite named '" + spriteName + "'");
             var sprite = _spritesByName[spriteName];
             Texture2D texture = sprite.Texture;
             var sourceRect = sprite.GetRectangle(spriteNumber);
