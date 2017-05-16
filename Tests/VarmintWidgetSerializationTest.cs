@@ -33,7 +33,7 @@ namespace MonoVarmint.Tools.Tests
         {
             var layoutText =
 @"<TestWidget 
-    Parameters=""Foo=Bar,that""
+    Parameters=""Foo=Bar,that`Blech=223""
     OnTap=""HandleTap""
     Offset=""0.1,0.2""
     Size=""10,11""
@@ -45,6 +45,7 @@ namespace MonoVarmint.Tools.Tests
             target.Init();
             Assert.AreEqual("Barney", target.Name);
             Assert.AreEqual("Bar,that", target.Parameters["Foo"]);
+            Assert.AreEqual("223", target.Parameters["Blech"]);
             Assert.AreEqual(0.1f, target.Offset.X);
             Assert.AreEqual(0.2f, target.Offset.Y);
             Assert.AreEqual(10, target.Size.X);

@@ -212,24 +212,29 @@ namespace MonoVarmint.Widgets
             // If the property is a dictionary, then we'll try to add this value, otherwise, we set the property
             if (propertyInfo.PropertyType.IsGenericType && propertyInfo.PropertyType.Name == "Dictionary`2")
             {
-                // Break up name=value into actual key and value objects
-                var valueParts = valueText.Split(new char[] { '=' }, 2);
-                if (valueParts.Length != 2) throw new ApplicationException("Expected format of Name=Value");
-                var types = propertyInfo.PropertyType.GenericTypeArguments;
-                var key = GetValueFromText(types[0], valueParts[0]);
-                var value = GetValueFromText(types[1], valueParts[1]);
-
-                // Create dictionary object if not there
-                var dictionary = propertyInfo.GetValue(this);
-                if(dictionary == null)
+                // Break up string into separate key/Value pairs
+                var keyValuePairs = valueText.Split('`');
+                foreach(var keyValuePair in keyValuePairs)
                 {
-                    dictionary = Activator.CreateInstance(propertyInfo.PropertyType);
-                    propertyInfo.SetValue(this, dictionary);
-                }
+                    // Break up name=value into actual key and value objects
+                    var valueParts = keyValuePair.Split(new char[] { '=' }, 2);
+                    if (valueParts.Length != 2) throw new ApplicationException("Expected format of Name=Value");
+                    var types = propertyInfo.PropertyType.GenericTypeArguments;
+                    var key = GetValueFromText(types[0], valueParts[0]);
+                    var value = GetValueFromText(types[1], valueParts[1]);
 
-                // Add to the dictionary
-                var add = propertyInfo.PropertyType.GetMethod("Add", types);
-                add.Invoke(dictionary, new object[] { key, value });
+                    // Create dictionary object if not there
+                    var dictionary = propertyInfo.GetValue(this);
+                    if(dictionary == null)
+                    {
+                        dictionary = Activator.CreateInstance(propertyInfo.PropertyType);
+                        propertyInfo.SetValue(this, dictionary);
+                    }
+
+                    // Add to the dictionary
+                    var add = propertyInfo.PropertyType.GetMethod("Add", types);
+                    add.Invoke(dictionary, new object[] { key, value });
+                }
             }
             else
             {
