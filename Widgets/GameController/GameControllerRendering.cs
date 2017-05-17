@@ -150,6 +150,32 @@ namespace MonoVarmint.Widgets
 
         //--------------------------------------------------------------------------------------
         /// <summary>
+        /// IsInRenderingWindow
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public bool IsInRenderingWindow(Vector2 offset, Vector2 size)
+        {
+            var buffer = 0.01f;
+            offset -= DrawOffset;
+            var corner = offset;
+
+            Func<bool> cornerIsVisible = () =>
+            {
+                return ((corner.X >= -buffer && corner.X <= ScreenSize.X + buffer)
+                && (corner.Y >= -buffer && corner.Y <= ScreenSize.Y + buffer));
+            };
+
+            if (cornerIsVisible()) return true;
+            corner = offset + new Vector2(ScreenSize.X, 0);
+            if (cornerIsVisible()) return true;
+            corner = offset + new Vector2(0, ScreenSize.Y);
+            if (cornerIsVisible()) return true;
+            corner = offset + ScreenSize;
+            return (cornerIsVisible());
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
         /// DrawBox
         /// </summary>
         //--------------------------------------------------------------------------------------

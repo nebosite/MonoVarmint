@@ -24,6 +24,16 @@ namespace MonoVarmint.Widgets
             _animations.RemoveAll(a => a.IsComplete);
             OnRender?.Invoke(gameTime, this);
 
+            RenderChildren(gameTime, styleLibrary);
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// Render
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public virtual void RenderChildren(GameTime gameTime, Dictionary<string, VarmintWidgetStyle> styleLibrary = null)
+        {
             if (children.Count > 0)
             {
                 // Make a local copy because children can modify parent/child relationships
@@ -34,6 +44,7 @@ namespace MonoVarmint.Widgets
                 }
             }
         }
+
 
         //--------------------------------------------------------------------------------------
         /// <summary>

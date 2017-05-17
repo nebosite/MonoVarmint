@@ -22,5 +22,6 @@ namespace MonoVarmint.Widgets
        void PlaySound(string name, double volume = 1.0);
         void BeginClipping(Vector2 position, Vector2 size);
         void EndClipping();
+        bool IsInRenderingWindow(Vector2 offset, Vector2 size);
     }
 }
