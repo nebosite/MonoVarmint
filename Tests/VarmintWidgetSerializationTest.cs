@@ -118,6 +118,8 @@ namespace MonoVarmint.Tools.Tests
 
             var label = target.FindWidgetByName("MyLabel");
             Assert.AreEqual(Color.Gray, label.BackgroundColor);
+            // Global style should only apply to certain types
+            Assert.AreEqual(null, label.Margin.Left); 
         }
 
 

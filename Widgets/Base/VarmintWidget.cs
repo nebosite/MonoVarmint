@@ -254,7 +254,10 @@ namespace MonoVarmint.Widgets
             {
                 foreach (var style in styleLibrary.Values)
                 {
-                    applyStyle(style);
+                    if (style.AppliesToMe(this))
+                    {
+                        applyStyle(style);
+                    }
                 }
             }
 
