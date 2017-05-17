@@ -17,6 +17,8 @@ namespace MonoVarmint.Widgets
     //--------------------------------------------------------------------------------------
     public partial class VarmintWidget
     {
+        Dictionary<string, string> _declaredSettings = new Dictionary<string, string>();
+
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// LoadLayout - Search the implicit assembly for all valid vwml files  and build a 
@@ -48,7 +50,6 @@ namespace MonoVarmint.Widgets
                     if(bindingContext != null)
                     {
                         rootWidget.BindingContext = bindingContext;
-                        rootWidget.Init();
                     }
                 }
             }
@@ -197,7 +198,7 @@ namespace MonoVarmint.Widgets
         /// SetValue - Set a property to a literal value
         /// </summary>
         //--------------------------------------------------------------------------------------
-        internal void SetValue(string propertyName, string valueText)
+        internal void SetValue(string propertyName, string valueText, bool throwOnMissingProperty)
         {
             var eventInfo = GetType().GetTypeInfo().GetEvent(propertyName, _publicInstance);
             if (eventInfo != null)
@@ -207,7 +208,10 @@ namespace MonoVarmint.Widgets
             }
             var propertyInfo = GetType().GetTypeInfo().GetProperty(propertyName);
             if (propertyInfo == null)
-                throw new ApplicationException("Property '" + propertyName + "' not found on type " + GetType());
+            {
+                if (throwOnMissingProperty) throw new ApplicationException("Cannot find property " + propertyName + " on type " + GetType().Name);
+                return;
+            }
 
             // If the property is a dictionary, then we'll try to add this value, otherwise, we set the property
             if (propertyInfo.PropertyType.IsGenericType && propertyInfo.PropertyType.Name == "Dictionary`2")
@@ -318,13 +322,18 @@ namespace MonoVarmint.Widgets
                         bool hasAttribute = reader.MoveToFirstAttribute();
                         while (hasAttribute)
                         {
-                            if (IsBinding(reader.Value))
+                            // Some properties are special, and need to be set now.  The rest we set
+                            // at the last moment when we have all the styles to inform us.
+                            switch(reader.Name)
                             {
-                                output.AddBinding(reader.Name, reader.Value);
-                            }
-                            else
-                            {
-                                output.SetValue(reader.Name, reader.Value);
+                                case "Name":
+                                case "Style":
+                                case "ApplyTo":
+                                    output.SetValue(reader.Name, reader.Value, true);
+                                    break;
+                                default:
+                                    output.AddSetting(reader.Name, reader.Value);
+                                    break;
                             }
 
                             hasAttribute = reader.MoveToNextAttribute();
@@ -355,6 +364,16 @@ namespace MonoVarmint.Widgets
 
             output.AddChildren(childrenToAdd.ToArray(), true);
             return output;
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// AddSetting - remember a name/value setting used to define this object
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        private void AddSetting(string name, string value)
+        {
+            _declaredSettings.Add(name, value);
         }
 
         //--------------------------------------------------------------------------------------

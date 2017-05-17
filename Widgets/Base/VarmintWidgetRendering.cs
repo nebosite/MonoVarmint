@@ -15,9 +15,9 @@ namespace MonoVarmint.Widgets
         /// Render
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public virtual void RenderMe(GameTime gameTime)
+        public virtual void RenderMe(GameTime gameTime, Dictionary<string, VarmintWidgetStyle> styleLibrary = null)
         {
-            ReadBindings();
+            Update(styleLibrary);
             if (!IsVisible) return;
             var localAnimations = _animations.ToArray();
             foreach (var animation in localAnimations) animation.Update(this, gameTime);
@@ -30,7 +30,7 @@ namespace MonoVarmint.Widgets
                 var localChildren = new List<VarmintWidget>(children);
                 foreach (var child in localChildren)
                 {
-                    child.RenderMe(gameTime);
+                    child.RenderMe(gameTime, styleLibrary);
                 }
             }
         }
@@ -47,6 +47,7 @@ namespace MonoVarmint.Widgets
         }
         public virtual void UpdateChildFormatting(bool recurse)
         {
+            if (_updating) return;
             if (recurse)
             {
                 foreach (var child in children)

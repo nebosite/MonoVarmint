@@ -20,6 +20,7 @@ namespace MonoVarmint.Widgets
         public IMediaRenderer Renderer { get; set; }
 
         public string Name { get; set; }
+        public string Style { get; set; }
         public VarmintWidget Parent { get; set; }
         public Color BackgroundColor { get; set; }
         public bool ChildrenAffectFormatting { get; set; }
@@ -70,7 +71,6 @@ namespace MonoVarmint.Widgets
                         _originalSize = value;
                     }
                     _size = value;
-                    UpdateChildFormatting();
                 }
             }
         }
@@ -119,7 +119,11 @@ namespace MonoVarmint.Widgets
         public object BindingContext
         {
             get { return _bindingContext; }
-            set { UpdateBindings(value); }
+            set
+            {
+                _bindingContext = value;
+                _prepared = false;
+            }
         }
 
         List<VarmintWidgetAnimation> _animations = new List<VarmintWidgetAnimation>();
@@ -189,22 +193,99 @@ namespace MonoVarmint.Widgets
             Size = size;
         }
 
+        bool _prepared = false;
+        bool _updating = false;
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// Update 
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public void Update(Dictionary<string, VarmintWidgetStyle> _styleLibrary)
+        {
+            _updating = true;
+            if(!_prepared)
+            {
+                ApplyStyles(_styleLibrary);
+                UpdateBindings(BindingContext);
+                _prepared = true;
+            }
+
+            // Load binding data frist in case the init logic needs it.
+            ReadBindings();
+            _updating = false;
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// ApplyStyles 
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        private void ApplyStyles(Dictionary<string, VarmintWidgetStyle> styleLibrary)
+        {
+            var finalValues = new Dictionary<string, string>(_declaredSettings);
+
+            // Helper to apply a style and it's parent styles
+            Action<VarmintWidgetStyle> applyStyle = (style) =>
+            {
+                while (style != null)
+                {
+                    foreach (var stylePropertyName in style._declaredSettings.Keys)
+                    {
+                        if (!finalValues.ContainsKey(stylePropertyName))
+                        {
+                            finalValues.Add(stylePropertyName, style._declaredSettings[stylePropertyName]);
+                        }
+                    }
+                    style = (VarmintWidgetStyle)style.Parent;
+                }
+            };
+
+            if(Style != null)
+            {
+                if (styleLibrary == null || !styleLibrary.ContainsKey(Style))
+                {
+                    throw new ApplicationException("Style not found: " + Style);
+                }
+
+                applyStyle(styleLibrary[Style]);
+            }
+
+            if (styleLibrary != null && styleLibrary.Count > 0)
+            {
+                foreach (var style in styleLibrary.Values)
+                {
+                    applyStyle(style);
+                }
+            }
+
+            foreach(var name in finalValues.Keys)
+            {
+                if (IsBinding(finalValues[name]))
+                {
+                    AddBinding(name, finalValues[name]);
+                }
+                else
+                {
+                    SetValue(name, finalValues[name], false);
+                }
+            }
+       }
+
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// Init - trip all the OnInit events in this widget Tree.  
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public void Init()
+        public void Init(Dictionary<string, VarmintWidgetStyle> _styleLibrary)
         {
-            // Load binding data frist in case the init logic needs it.
-            ReadBindings();
+            Update(_styleLibrary);
 
             // user-provided init logic
             OnInit?.Invoke(this);
 
             foreach (var child in children)
             {
-                child.Init();
+                child.Init(_styleLibrary);
             }
         }
 

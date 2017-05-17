@@ -16,6 +16,7 @@ namespace MonoVarmint.Widgets
         Dictionary<string, VarmintSoundEffect> _soundsByName = new Dictionary<string, VarmintSoundEffect>();
         Dictionary<string, Texture2D> _glyphsByName = new Dictionary<string, Texture2D>();
         Dictionary<string, VarmintSprite> _spritesByName = new Dictionary<string, VarmintSprite>();
+        Dictionary<string, VarmintWidgetStyle> _styleLibrary = new Dictionary<string, VarmintWidgetStyle>();
 
         //-----------------------------------------------------------------------------------------------
         /// <summary>
@@ -59,6 +60,13 @@ namespace MonoVarmint.Widgets
 
             // Widgets
             _screensByName = VarmintWidget.LoadLayout(this, _bindingContext);
+            foreach(var item in _screensByName.Values)
+            {
+                foreach(var style in item.FindWidgetsByType<VarmintWidgetStyle>())
+                {
+                    _styleLibrary.Add(style.Name, style);
+                }
+            }
 
             _visualTree = _screensByName["_default_screen_"];
             OnLoaded?.Invoke();
@@ -82,11 +90,16 @@ namespace MonoVarmint.Widgets
         {
             var widget = VarmintWidget.LoadLayoutFromVwml(this, vwmlStream, replaceName);
             widget.Name = replaceName;
+            foreach(var style in widget.FindWidgetsByType<VarmintWidgetStyle>())
+            {
+                _styleLibrary[style.Name] = style;
+            }
+
             if (bindingContext != null)
             {
                 widget.BindingContext = bindingContext;
-                widget.Init();
             }
+            widget.Init(_styleLibrary);
 
             _screensByName[replaceName] = widget;
         }

@@ -94,8 +94,6 @@ namespace MonoVarmint.Widgets
                 }
 
             }
-
-            UpdateChildFormatting(true);
         }
 
         //--------------------------------------------------------------------------------------

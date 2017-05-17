@@ -14,6 +14,26 @@ namespace MonoVarmint.Widgets
 
         //--------------------------------------------------------------------------------------
         /// <summary>
+        /// FindWidgetsByType - seach the family tree for all widgets of the matching type
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public List<T> FindWidgetsByType<T>() where T : VarmintWidget
+        {
+            var output = new List<T>();
+            FindWidgetsByType<T>(output);
+            return output;
+        }
+        private void FindWidgetsByType<T>(List<T> output) where T : VarmintWidget
+        {
+            if (this is T) output.Add(this as T);
+            foreach(var child in Children)
+            {
+                child.FindWidgetsByType<T>(output);
+            }
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
         /// FindWidgetByName
         /// </summary>
         //--------------------------------------------------------------------------------------
