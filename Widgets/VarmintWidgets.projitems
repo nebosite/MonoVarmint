@@ -20,7 +20,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)WidgetBase\VarmintWidget.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WidgetBase\VarmintWidgetSerialization.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WidgetBase\VarmintWidgetUserInput.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)WidgetBase\VarmintWidgetWidgetMargin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)WidgetBase\VarmintWidget_UtilityClasses.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)EmbeddedContentManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GameController\GameController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GameController\GameControllerContent.cs" />

@@ -266,7 +266,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         private void AddSetting(string name, string value)
         {
-            _declaredSettings.Add(name, value);
+            _declaredSettings[name] = value;
         }
 
         //--------------------------------------------------------------------------------------

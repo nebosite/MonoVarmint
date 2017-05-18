@@ -19,6 +19,43 @@ namespace MonoVarmint.Widgets
     {
         //--------------------------------------------------------------------------------------
         /// <summary>
+        /// StretchParameter
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public class StretchParameter
+        {
+            public float? Horizontal { get; set; }
+            public float? Vertical { get; set; }
+
+            public StretchParameter() { }
+
+            public StretchParameter(string valueText)
+            {
+                var parts = valueText.Split(',');
+                if (parts.Length > 2) throw new ApplicationException("Too many values in stretch parameter specification.");
+
+                Func<int, float?> parse = (index) =>
+                {
+                    if (index < parts.Length)
+                    {
+                        float output;
+                        if (float.TryParse(parts[index], out output)) return output;
+                    }
+                    return null;
+                };
+
+                Horizontal = parse(0);
+                Vertical = parse(1);
+            }
+
+            public override string ToString()
+            {
+                return string.Format("{0},{1}", Horizontal, Vertical);
+            }
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
         /// WidgetMargin
         /// </summary>
         //--------------------------------------------------------------------------------------

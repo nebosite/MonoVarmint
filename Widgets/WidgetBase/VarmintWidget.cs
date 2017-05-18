@@ -112,6 +112,7 @@ namespace MonoVarmint.Widgets
         }
 
         public virtual WidgetMargin Margin { get; set; }
+        public virtual StretchParameter Stretch { get; set; }
         public object Content { get; set; }
         public bool WrapContent { get; set; }
 
@@ -181,6 +182,7 @@ namespace MonoVarmint.Widgets
             Name = "W" + _globalWidgetCount.ToString("000000");
             AllowInput = true;
             Margin = new WidgetMargin();
+            Stretch = new StretchParameter();
         }
 
         //--------------------------------------------------------------------------------------

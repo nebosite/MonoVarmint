@@ -10,6 +10,51 @@ namespace MonoVarmint.Tools.Tests
     public class VarmintWidgetsFormattingTests
     {
         [TestMethod]
+        public void StretchParamter_WorksWithGridlikeItems()
+        {
+            var container = new TestWidget() { Size = new Vector2(10, 20) };
+            var grid = new VarmintWidgetGrid() { Size = new Vector2(1, 1) };
+            container.AddChild(grid);
+
+            // starting out with no stretch
+            container.UpdateChildFormatting();
+            Assert.AreEqual(new Vector2(1, 1), grid.Size);
+
+            // Horizontal only
+            grid.Stretch = new VarmintWidget.StretchParameter("1");
+            container.UpdateChildFormatting();
+            Assert.AreEqual(new Vector2(10, 1), grid.Size);
+            Assert.AreEqual(new Vector2(0,0), grid.Offset);
+
+            // Vertical only
+            grid.Stretch = new VarmintWidget.StretchParameter(",1");
+            container.UpdateChildFormatting();
+            Assert.AreEqual(new Vector2(1, 20), grid.Size);
+            Assert.AreEqual(new Vector2(0, 0), grid.Offset);
+
+            // With Margins
+            grid.Margin = new VarmintWidget.WidgetMargin("2,2");
+            grid.Stretch = new VarmintWidget.StretchParameter();
+            container.UpdateChildFormatting();
+            Assert.AreEqual(new Vector2(1, 1), grid.Size);
+            Assert.AreEqual(new Vector2(2, 2), grid.Offset);
+            grid.Stretch = new VarmintWidget.StretchParameter("1,1"); ;
+            container.UpdateChildFormatting();
+            Assert.AreEqual(new Vector2(8, 18), grid.Size);
+            Assert.AreEqual(new Vector2(2, 2), grid.Offset);
+
+            // Two children, both should stretch to the same dimensions
+            var grid2 = new VarmintWidgetGrid() { Size = new Vector2(2, 2) };
+            grid2.Stretch = new VarmintWidget.StretchParameter("1,1"); ;
+            container.AddChild(grid2);
+            container.UpdateChildFormatting();
+            Assert.AreEqual(new Vector2(8,18), grid.Size);
+            Assert.AreEqual(new Vector2(2, 2), grid.Offset);
+            Assert.AreEqual(new Vector2(10,20), grid2.Size);
+            Assert.AreEqual(new Vector2(0,0), grid2.Offset);
+
+        }
+        [TestMethod]
         public void GridInGrid_RespectsMargins()
         {
             var target = new TestWidget() { Size = new Vector2(10, 20) };

@@ -91,11 +91,14 @@ namespace MonoVarmint.Widgets
             }
             newStackSize.Y = 0;
             var maxWidth = 0f;
+            var stretchBudget = 0f;
+            float spaceFromStretchables = 0;
             foreach (var child in Children)
             {
                 var childSize = child.IntendedSize;
                 childSize.X += (child.Margin.Left ?? 0) + (child.Margin.Right ?? 0);
                 childSize.Y += (child.Margin.Top ?? 0) + (child.Margin.Bottom ?? 0);
+                stretchBudget += child.Stretch.Vertical ?? 0;
 
                 newStackSize.Y += childSize.Y;
                 if (childSize.X > maxWidth) maxWidth = childSize.X;
@@ -108,6 +111,14 @@ namespace MonoVarmint.Widgets
             foreach (var child in Children)
             {
                 var newSize = child.IntendedSize;
+                if (child.Stretch.Horizontal != null)
+                {
+                    newSize.X = Size.X - ((child.Margin.Left ?? 0) + (child.Margin.Right ?? 0));
+                }
+                if (child.Stretch.Vertical != null)
+                {
+                    spaceFromStretchables += newSize.Y;
+                }
                 nextY += child.Margin.Top ?? 0;
                 var newOffset = new Vector2(0, nextY);
                 nextY += newSize.Y + (child.Margin.Bottom ?? 0);
@@ -135,6 +146,28 @@ namespace MonoVarmint.Widgets
                 child.Offset = newOffset;
                 child.Size = newSize;
             }
+
+            // If there is stretching to do, we need another pass
+            var remainingSpace = IntendedSize.Y - nextY;
+            if(stretchBudget > 0 && remainingSpace > 0)
+            {
+                remainingSpace += spaceFromStretchables;
+                nextY = 0;
+                foreach (var child in Children)
+                {
+                    var newSize = child.Size;
+                    nextY += child.Margin.Top ?? 0;
+                    child.Offset = new Vector2(child.Offset.X, nextY);
+                    if(child.Stretch.Vertical != null)
+                    {
+                        float newHeight = (child.Stretch.Vertical.Value / stretchBudget) * remainingSpace;
+                        newSize = new Vector2(child.Size.X, newHeight);
+                    }
+                    nextY += newSize.Y + (child.Margin.Bottom ?? 0);
+
+                    child.Size = newSize;
+                }
+            }
         }
 
 
@@ -153,11 +186,14 @@ namespace MonoVarmint.Widgets
             }
             newStackSize.X = 0;
             var maxHeight = 0f;
+            var stretchBudget = 0f;
+            float spaceFromStretchables = 0;
             foreach (var child in Children)
             {
                 var childSize = child.IntendedSize;
                 childSize.X += (child.Margin.Left ?? 0) + (child.Margin.Right ?? 0);
                 childSize.Y += (child.Margin.Top ?? 0) + (child.Margin.Bottom ?? 0);
+                stretchBudget += child.Stretch.Horizontal ?? 0;
 
                 newStackSize.X += childSize.X;
                 if (childSize.Y > maxHeight) maxHeight = childSize.Y;
@@ -170,6 +206,14 @@ namespace MonoVarmint.Widgets
             foreach (var child in Children)
             {
                 var newSize = child.IntendedSize;
+                if (child.Stretch.Horizontal != null)
+                {
+                    spaceFromStretchables += newSize.X;
+                }
+                if (child.Stretch.Vertical != null)
+                {
+                     newSize.Y = Size.Y - ((child.Margin.Top ?? 0) + (child.Margin.Bottom ?? 0));
+                }
                 nextX += (child.Margin.Left ?? 0);
                 var newOffset = new Vector2(nextX, 0);
                 nextX += newSize.X + (child.Margin.Right ?? 0);
@@ -197,6 +241,29 @@ namespace MonoVarmint.Widgets
                 child.Offset = newOffset;
                 child.Size = newSize;
             }
+
+            // If there is stretching to do, we need another pass
+            var remainingSpace = IntendedSize.X - nextX;
+            if (stretchBudget > 0 && remainingSpace > 0)
+            {
+                remainingSpace += spaceFromStretchables;
+                nextX = 0;
+                foreach (var child in Children)
+                {
+                    var newSize = child.Size;
+                    nextX += child.Margin.Left ?? 0;
+                    child.Offset = new Vector2(nextX, child.Offset.Y);
+                    if (child.Stretch.Horizontal != null)
+                    {
+                        float newWidth = (child.Stretch.Horizontal.Value / stretchBudget) * remainingSpace;
+                        newSize = new Vector2(newWidth, child.Size.Y);
+                    }
+                    nextX += newSize.X + (child.Margin.Right ?? 0);
+
+                    child.Size = newSize;
+                }
+            }
+
         }
     }
 }
