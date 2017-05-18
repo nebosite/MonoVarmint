@@ -83,6 +83,7 @@ namespace MonoVarmint.Widgets
 
         public bool AllowInput { get; set; }
         public bool IsVisible { get; set; }
+        public bool ClipToBounds { get; set; }
 
         private HorizontalContentAlignment? _horizontalContentAlignment;
         public HorizontalContentAlignment HorizontalContentAlignment
@@ -113,15 +114,40 @@ namespace MonoVarmint.Widgets
         public object Content { get; set; }
         public bool WrapContent { get; set; }
 
-        private object _bindingContext;
+        private object _xbindingContext;
         public object BindingContext
         {
-            get { return _bindingContext; }
+            get
+            {
+                if(_xbindingContext == null)
+                {
+                    if (Parent == null) return null;
+                    return Parent.BindingContext;
+                }
+                return _xbindingContext;
+            }
             set
             {
-                _bindingContext = value;
+                _xbindingContext = value;
                 _prepared = false;
             }
+        }
+
+        private object _eventBindingContext;
+        public object EventBindingContext
+        {
+            get
+            {
+                if (_eventBindingContext != null) return _eventBindingContext;
+                if (Parent != null)
+                {
+                    var parentContext = Parent.EventBindingContext;
+                    if (parentContext == null) return BindingContext;
+                    else return parentContext;
+                }
+                return BindingContext;
+            }
+            set { _eventBindingContext = value; }
         }
 
         List<VarmintWidgetAnimation> _animations = new List<VarmintWidgetAnimation>();

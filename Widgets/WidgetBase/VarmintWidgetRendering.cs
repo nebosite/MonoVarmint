@@ -23,9 +23,12 @@ namespace MonoVarmint.Widgets
             var localAnimations = _animations.ToArray();
             foreach (var animation in localAnimations) animation.Update(this, gameTime);
             _animations.RemoveAll(a => a.IsComplete);
+
+            if (ClipToBounds) Renderer.BeginClipping(AbsoluteOffset, Size);
             OnRender?.Invoke(gameTime, this);
 
             RenderChildren(gameTime, styleLibrary);
+            if (ClipToBounds) Renderer.EndClipping();
         }
 
         //--------------------------------------------------------------------------------------

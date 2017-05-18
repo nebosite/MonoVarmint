@@ -4,18 +4,18 @@ namespace MonoVarmint.Widgets
 {
     //--------------------------------------------------------------------------------------
     /// <summary>
-    /// VarmintWidgetControl - Special class for implementing controls
+    /// VarmintWidgetPanel - Generic widget intended for custom drawing
     /// </summary>
     //--------------------------------------------------------------------------------------
-    [VarmintWidgetShortName("Control")]
-    public class VarmintWidgetControl : VarmintWidget
+    [VarmintWidgetShortName("Panel")]
+    public class VarmintWidgetPanel : VarmintWidget
     {
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// ctor
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public VarmintWidgetControl(): base()
+        public VarmintWidgetPanel()
         {
         }
     }

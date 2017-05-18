@@ -11,6 +11,13 @@ namespace MonoVarmint.Widgets
     public partial class VarmintWidget
     {
         List<Action> _bindingActions = new List<Action>();
+        Dictionary<string, Action> _bindingPostActions = new Dictionary<string, Action>();
+
+        protected void PostBackProperty(string propertyName)
+        {
+            if (!_bindingPostActions.ContainsKey(propertyName)) return;
+            _bindingPostActions[propertyName]();
+        }
 
         //--------------------------------------------------------------------------------------
         /// <summary>
@@ -35,18 +42,7 @@ namespace MonoVarmint.Widgets
                 newContext = propertyInfo.GetValue(newContext);
             }
 
-            // Update the children first.  Stop when we find a child that has had it's 
-            // binding context set explicitely to something else.
-
-            foreach (var child in children)
-            {
-                if (child.BindingContext == null || child.BindingContext == this.BindingContext)
-                {
-                    child.BindingContext = newContext;
-                }
-            }
-
-            _bindingContext = newContext;
+            BindingContext = newContext;
 
             _bindingActions = new List<Action>();
             foreach (var bindingPair in _bindingTemplates)
@@ -57,34 +53,41 @@ namespace MonoVarmint.Widgets
                 var targetEventInfo = GetType().GetEvent(bindingPair.Key, _publicInstance);
                 if (targetEventInfo != null)
                 {
-                    var sourceMethodInfo = _bindingContext.GetType().GetMethod(bindingName, _publicInstance);
+                    var sourceMethodInfo = EventBindingContext.GetType().GetMethod(bindingName, _publicInstance);
                     if (sourceMethodInfo == null)
                     {
                         throw new ApplicationException("Could not find method '" + bindingName
-                            + "' on type " + _bindingContext.GetType());
+                            + "' on type " + EventBindingContext.GetType());
                     }
 
                     Delegate handler =
                          Delegate.CreateDelegate(targetEventInfo.EventHandlerType,
-                                                 _bindingContext,
+                                                 EventBindingContext,
                                                  sourceMethodInfo);
                     targetEventInfo.AddEventHandler(this, handler);
 
                 }
                 else
                 {
-                    if (_bindingContext != null)
+                    if (BindingContext != null)
                     {
-                        var sourcePropertyInfo = _bindingContext.GetType().GetProperty(bindingName, _publicInstance);
+                        var sourcePropertyInfo = BindingContext.GetType().GetProperty(bindingName, _publicInstance);
+                        var targetPropertyName = bindingPair.Key;
                         if (sourcePropertyInfo == null) throw new ApplicationException("Could not find property '"
-                             + bindingName + "' on " + _bindingContext.GetType());
-                        var targetPropertyInfo = GetType().GetProperty(bindingPair.Key);
+                             + bindingName + "' on " + BindingContext.GetType());
+                        var targetPropertyInfo = GetType().GetProperty(targetPropertyName);
                         if (targetPropertyInfo == null) throw new ApplicationException("Could not find property '"
-                            + bindingPair.Key + "' on " + GetType());
+                            + targetPropertyName + "' on " + GetType());
                         _bindingActions.Add(() =>
                         {
-                            object newValue = sourcePropertyInfo.GetValue(_bindingContext);
+                            object newValue = sourcePropertyInfo.GetValue(BindingContext);
                             targetPropertyInfo.SetValue(this, newValue);
+                        });
+
+                        _bindingPostActions.Add(targetPropertyName, () =>
+                        {
+                            object newValue = targetPropertyInfo.GetValue(this);
+                            sourcePropertyInfo.SetValue(BindingContext, newValue);
                         });
                     }
                     else

@@ -32,6 +32,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)WidgetSpace\VarmintWidgetSpace.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetButton.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetPanel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetStyle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetGrid.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetImage.cs" />

@@ -297,16 +297,31 @@ namespace MonoVarmint.Widgets
                 {
                     output.AddChild(HydrateLayout(injector, childItem, controlLibrary), true);
                 }
-
             };
 
 
             if(controlLibrary.ContainsKey(widgetLayout.VwmlTag))
             {
-                output = new VarmintWidgetControl();
+                var controlLayout = controlLibrary[widgetLayout.VwmlTag];
+
+                if(controlLayout.Settings.ContainsKey("Class"))
+                {
+                    var controlType = GetWidgetType(controlLayout.Settings["Class"]);
+                    if(!controlType.IsSubclassOf(typeof(VarmintWidgetControl)))
+                    {
+                        throw new ApplicationException("The Class attribute must point to a VarmintWidgetControl");
+                    }
+                    output = (VarmintWidget)Activator.CreateInstance(controlType);
+                    output.EventBindingContext = output;
+                }
+                else
+                {
+                    output = new VarmintWidgetControl();
+                }
+
                 // Controls will get properties from the control layout, but these can 
                 // be overridden later by the local instace of the control
-                applyLayout(controlLibrary[widgetLayout.VwmlTag]);
+                applyLayout(controlLayout);
             }
             else
             {
