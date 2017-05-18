@@ -195,22 +195,45 @@ namespace MonoVarmint.Widgets
 
         bool _prepared = false;
         bool _updating = false;
+        bool initCalled = false;
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// Prepare 
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public void Prepare(Dictionary<string, VarmintWidgetStyle> styleLibrary)
+        {
+            if(!_prepared)
+            {
+                ApplyStyles(styleLibrary);
+                UpdateBindings(BindingContext);
+                ReadBindings();
+
+                foreach(var child in Children)
+                {
+                    child.Prepare(styleLibrary);
+                }
+
+                if(!initCalled)
+                {
+                    initCalled = true;
+                    OnInit?.Invoke(this);
+                }
+                _prepared = true;
+                UpdateChildFormatting();
+            }
+        }
+
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// Update 
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public void Update(Dictionary<string, VarmintWidgetStyle> _styleLibrary)
+        public void Update()
         {
             _updating = true;
-            if(!_prepared)
-            {
-                ApplyStyles(_styleLibrary);
-                UpdateBindings(BindingContext);
-                _prepared = true;
-            }
-
-            // Load binding data frist in case the init logic needs it.
+            // Load binding data first in case the init logic needs it.
             ReadBindings();
             _updating = false;
         }
@@ -273,24 +296,5 @@ namespace MonoVarmint.Widgets
                 }
             }
        }
-
-        //--------------------------------------------------------------------------------------
-        /// <summary>
-        /// Init - trip all the OnInit events in this widget Tree.  
-        /// </summary>
-        //--------------------------------------------------------------------------------------
-        public void Init(Dictionary<string, VarmintWidgetStyle> _styleLibrary)
-        {
-            Update(_styleLibrary);
-
-            // user-provided init logic
-            OnInit?.Invoke(this);
-
-            foreach (var child in children)
-            {
-                child.Init(_styleLibrary);
-            }
-        }
-
     }
 }

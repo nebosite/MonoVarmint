@@ -8,7 +8,7 @@ namespace MonoVarmint.Widgets
     /// </summary>
     //--------------------------------------------------------------------------------------
     [VarmintWidgetShortName("Button")]
-    public class DotsWidgetTrapDotButton : VarmintWidgetLabel
+    public class VarmintWidgetButton : VarmintWidgetLabel
     {
         public float LineWidth { get; set; }
         public bool HasBorder { get; set; }
@@ -17,7 +17,7 @@ namespace MonoVarmint.Widgets
         /// ctor
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public DotsWidgetTrapDotButton(): base() 
+        public VarmintWidgetButton(): base() 
         {
             LineWidth = 0.006f;
             FontSize = .05f;

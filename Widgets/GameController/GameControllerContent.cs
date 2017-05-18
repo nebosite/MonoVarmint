@@ -16,7 +16,6 @@ namespace MonoVarmint.Widgets
         Dictionary<string, VarmintSoundEffect> _soundsByName = new Dictionary<string, VarmintSoundEffect>();
         Dictionary<string, Texture2D> _glyphsByName = new Dictionary<string, Texture2D>();
         Dictionary<string, VarmintSprite> _spritesByName = new Dictionary<string, VarmintSprite>();
-        Dictionary<string, VarmintWidgetStyle> _styleLibrary = new Dictionary<string, VarmintWidgetStyle>();
 
         //-----------------------------------------------------------------------------------------------
         /// <summary>
@@ -59,16 +58,9 @@ namespace MonoVarmint.Widgets
             SelectFont();
 
             // Widgets
-            _screensByName = VarmintWidget.LoadLayout(this, _bindingContext);
-            foreach(var item in _screensByName.Values)
-            {
-                foreach(var style in item.FindWidgetsByType<VarmintWidgetStyle>())
-                {
-                    _styleLibrary.Add(style.Name, style);
-                }
-            }
+            _widgetSpace = new VarmintWidgetSpace(this, _bindingContext);
 
-            _visualTree = _screensByName["_default_screen_"];
+            _visualTree = _widgetSpace.GetScreen("_default_screen_", null);
             OnLoaded?.Invoke();
         }
 
@@ -80,29 +72,6 @@ namespace MonoVarmint.Widgets
             }
         }
 
-        //-----------------------------------------------------------------------------------------------
-        /// <summary>
-        /// This allows dynamic content by letting you replace an already loaded sceen with a new
-        /// one defined by the incoming stream
-        /// </summary>
-        //-----------------------------------------------------------------------------------------------
-        public void SetScreen(string replaceName, Stream vwmlStream, object bindingContext = null)
-        {
-            var widget = VarmintWidget.LoadLayoutFromVwml(this, vwmlStream, replaceName);
-            widget.Name = replaceName;
-            foreach(var style in widget.FindWidgetsByType<VarmintWidgetStyle>())
-            {
-                _styleLibrary[style.Name] = style;
-            }
-
-            if (bindingContext != null)
-            {
-                widget.BindingContext = bindingContext;
-            }
-            widget.Init(_styleLibrary);
-
-            _screensByName[replaceName] = widget;
-        }
 
         //-----------------------------------------------------------------------------------------------
         /// <summary>

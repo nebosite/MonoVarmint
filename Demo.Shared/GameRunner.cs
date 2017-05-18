@@ -41,7 +41,7 @@ namespace Demo.Shared
 #else
             _controller = new GameController(this);
 #endif
-            _controller.OnUserDeactivate += NativeHandleUserDeactivate;
+            _controller.OnUserBackButtonPress += NativeHandleUserDeactivate;
 
             _controller.OnLoaded += () =>
             {
@@ -51,7 +51,7 @@ namespace Demo.Shared
                 _controller.LoadSprite("Images/Bunny", 100, 100);
                 _controller.LoadSprite("Images/Monster", 100, 100);
                 _controller.LoadSounds("Sounds/Cowbell", "Sounds/Jump", "Sounds/Thump");
-                _controller.SetScreen("MainScreen");
+                _controller.SetScreen(_controller.GetScreen("MainScreen", this));
             };
 
             _controller.OnUpdate += (gameTime) =>

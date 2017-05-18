@@ -31,13 +31,13 @@ namespace MonoVarmint.Widgets
         public event Action OnLoaded;
         public event Action<GameTime> OnUpdate;
         public event Action<Keys, bool, char> OnTypedCharacter;
-        public event Action OnUserDeactivate;
+        public event Action OnUserBackButtonPress;
 
-        Dictionary<string, VarmintWidget> _screensByName = new Dictionary<string, VarmintWidget>();
         object _bindingContext;
         int _frameCount = 0;
         DateTime _lastFrameMeasureTime = DateTime.Now;
         double _fps = 0;
+        VarmintWidgetSpace _widgetSpace;
 
 
 
@@ -55,10 +55,9 @@ namespace MonoVarmint.Widgets
         //-----------------------------------------------------------------------------------------------
         // GetScreen - return a screen object by name 
         //-----------------------------------------------------------------------------------------------
-        internal VarmintWidget GetScreen(string screenName)
+        internal VarmintWidget GetScreen(string screenName, object bindingContext)
         {
-            if (!_screensByName.ContainsKey(screenName)) throw new ApplicationException("Unknown screen: " + screenName);
-            return _screensByName[screenName];
+            return _widgetSpace.GetScreen(screenName, bindingContext);
         }
 
         //-----------------------------------------------------------------------------------------------
@@ -109,10 +108,9 @@ namespace MonoVarmint.Widgets
         {
             CurrentFrameNumber++;
 
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
-                Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
             {
-                OnUserDeactivate?.Invoke();
+                OnUserBackButtonPress?.Invoke();
             }
 
 #if WINDOWS
@@ -241,6 +239,7 @@ namespace MonoVarmint.Widgets
             // First, We render the game to a backbuffer to be resolution independent
             GraphicsDevice.SetRenderTarget(_backBuffer);
             GraphicsDevice.Clear(Color.Blue);
+            _visualTree.Prepare(_widgetSpace.StyleLibrary);
             _visualTree.RenderMe(gameTime);
 
             if(ShowFps)
@@ -277,6 +276,14 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         // 
         //--------------------------------------------------------------------------------------
+        public void AddVwmlContent(string replaceName, Stream vwmlStream, object bindingContext = null)
+        {
+            _widgetSpace.AddContent(replaceName, vwmlStream, bindingContext);
+        }
+
+        //--------------------------------------------------------------------------------------
+        // 
+        //--------------------------------------------------------------------------------------
         public void SetScreen(VarmintWidget screen)
         {
             _visualTree = screen;
@@ -286,9 +293,9 @@ namespace MonoVarmint.Widgets
         // SetScreen - call this to change the visual tree to a screen you have defined in
         // a .vwml file
         //--------------------------------------------------------------------------------------
-        public void SetScreen(string screenName)
+        public void SetScreen(string screenName, object bindingContext)
         {
-            _visualTree = _screensByName[screenName];
+            _visualTree = _widgetSpace.GetScreen(screenName, bindingContext);
         }
 
         //--------------------------------------------------------------------------------------

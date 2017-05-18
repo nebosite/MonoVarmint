@@ -19,46 +19,22 @@ namespace MonoVarmint.Widgets
     {
         Dictionary<string, string> _declaredSettings = new Dictionary<string, string>();
 
+        private static Dictionary<string, Type> _cachedWidgetTypes = new Dictionary<string, Type>();
+        private static List<Assembly> _knownAssemblies = new List<Assembly>();
+
         //--------------------------------------------------------------------------------------
         /// <summary>
-        /// LoadLayout - Search the implicit assembly for all valid vwml files  and build a 
-        ///              dictionary of the visual elements.   The assembly will be searched 
-        ///              for any symbols specified in the vwml. 
-        ///                 
+        /// DeclareAssembly - Let the widget system know about an assembly that provides types
+        ///                   needed by the Widget space
         /// </summary>
         //--------------------------------------------------------------------------------------
-        internal static Dictionary<string, VarmintWidget> LoadLayout(IVarmintWidgetInjector injector, object bindingContext = null)
+        public static void DeclareAssembly(Assembly assembly)
         {
-            var output = new Dictionary<string, VarmintWidget>();
-            var assembly = injector.GetType().GetTypeInfo().Assembly;
             if (!_knownAssemblies.Contains(assembly))
             {
                 _knownAssemblies.Add(assembly);
             }
-
-            foreach (var resourceName in assembly.GetManifestResourceNames())
-            {
-                if (resourceName.ToLower().EndsWith(".vwml"))
-                {
-                    System.Diagnostics.Debug.WriteLine("---- " + resourceName);
-
-                    var nameParts = resourceName.Split('.');
-                    var defaultName = nameParts[nameParts.Length - 2];
-                    var rootWidget = LoadLayoutFromVwml(injector, assembly.GetManifestResourceStream(resourceName), defaultName);
-                    rootWidget.UpdateChildFormatting(true);
-                    output.Add(rootWidget.Name, rootWidget);
-                    if(bindingContext != null)
-                    {
-                        rootWidget.BindingContext = bindingContext;
-                    }
-                }
-            }
-
-            return output;
         }
-
-        private static Dictionary<string, Type> _cachedWidgetTypes = new Dictionary<string, Type>();
-        private static List<Assembly> _knownAssemblies = new List<Assembly>();
 
         //--------------------------------------------------------------------------------------
         /// <summary>
@@ -285,14 +261,127 @@ namespace MonoVarmint.Widgets
 
         //--------------------------------------------------------------------------------------
         /// <summary>
-        /// GetNextWidget - Recursively get the next widget from the xml reader
+        /// AddSetting - remember a name/value setting used to define this object
         /// </summary>
         //--------------------------------------------------------------------------------------
-        private static VarmintWidget GetNextWidget(IVarmintWidgetInjector injector, XmlReader reader, string defaultName = null)
+        private void AddSetting(string name, string value)
+        {
+            _declaredSettings.Add(name, value);
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// HydrateLayout - Take a layout item and turn it into a VarmintWidget
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public static VarmintWidget HydrateLayout(IVarmintWidgetInjector injector, LayoutItem widgetLayout, Dictionary<string, LayoutItem> controlLibrary)
+        {
+            VarmintWidget output = null;
+
+            Action<LayoutItem> applyLayout = (layout) =>
+            {
+                foreach (var name in layout.Settings.Keys)
+                {
+                    switch (name)
+                    {
+                        case "Style":
+                        case "ApplyTo":
+                            output.SetValue(name, layout.Settings[name], true);
+                            break;
+                        default:
+                            output.AddSetting(name, layout.Settings[name]);
+                            break;
+                    }
+                }
+                foreach (var childItem in layout.Children)
+                {
+                    output.AddChild(HydrateLayout(injector, childItem, controlLibrary), true);
+                }
+
+            };
+
+
+            if(controlLibrary.ContainsKey(widgetLayout.VwmlTag))
+            {
+                output = new VarmintWidgetControl();
+                // Controls will get properties from the control layout, but these can 
+                // be overridden later by the local instace of the control
+                applyLayout(controlLibrary[widgetLayout.VwmlTag]);
+            }
+            else
+            {
+                var nodeType = GetWidgetType(widgetLayout.VwmlTag);
+                output = (VarmintWidget)Activator.CreateInstance(nodeType);
+            }
+            if (widgetLayout.Name != null) output.Name = widgetLayout.Name;
+
+            foreach (var propertyType in output.GetType().GetProperties())
+            {
+                var injectAttribute = (VarmintWidgetInjectAttribute)propertyType.GetCustomAttribute(typeof(VarmintWidgetInjectAttribute));
+                if (injectAttribute != null)
+                {
+                    propertyType.SetValue(output,
+                        injector.GetInjectedValue(injectAttribute, propertyType));
+                }
+            }
+
+            applyLayout(widgetLayout);
+
+            return output;
+        }
+
+
+        public class LayoutItem
+        {
+            public string VwmlTag { get; set; }
+            public string Name { get; set; }
+            public string Style { get; set; }
+            public string ApplyTo { get; set; }
+            public string LocationText { get; set; }
+
+            public List<LayoutItem> Children { get; set; }
+
+            public Dictionary<string, string> Settings = new Dictionary<string, string>();
+
+            public LayoutItem(string tagName)
+            {
+                VwmlTag = tagName;
+                Children = new List<LayoutItem>();
+            }
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// LoadLayoutFrom - Load a visual element tree from a raw vwml file
+        ///                  
+        ///                 The provided assembly will be searched for any symbols
+        ///                 specified in the vwml 
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public static LayoutItem PreloadFromVwml(Stream vwmlStream, string defaultName)
+        {
+            using (var reader = XmlReader.Create(vwmlStream))
+            {
+                var lineInfo = (IXmlLineInfo)reader;
+                try
+                {
+                    return GetNextNode(reader, defaultName, defaultName);
+                }
+                catch (Exception e)
+                {
+                    throw new ApplicationException("VWML parse error on line " + lineInfo.LineNumber
+                        + ": " + e.Message, e);
+                }
+            }
+        }
+
+        //--------------------------------------------------------------------------------------
+        //
+        //--------------------------------------------------------------------------------------
+        private static LayoutItem GetNextNode(XmlReader reader, string defaultName, string entityName)
         {
             var nodeName = "";
-            VarmintWidget output = null;
-            List<VarmintWidget> childrenToAdd = new List<VarmintWidget>();
+            LayoutItem output = null;
 
             do
             {
@@ -305,34 +394,21 @@ namespace MonoVarmint.Widgets
                         {
                             throw new ApplicationException("You must specify a widget class derived from VarmintWidget");
                         }
-                        var nodeType = GetWidgetType(nodeName);
 
-                        output = (VarmintWidget)Activator.CreateInstance(nodeType);
-                        if (defaultName != null) output.Name = defaultName;
-                        foreach (var propertyType in nodeType.GetProperties())
-                        {
-                            var injectAttribute = (VarmintWidgetInjectAttribute)propertyType.GetCustomAttribute(typeof(VarmintWidgetInjectAttribute));
-                            if (injectAttribute != null)
-                            {
-                                propertyType.SetValue(output,
-                                    injector.GetInjectedValue(injectAttribute, propertyType));
-                            }
-                        }
+                        output = new LayoutItem(nodeName);
+                        var lineInfo = (IXmlLineInfo)reader;
+                        output.LocationText = entityName + ", Line: " + lineInfo.LineNumber;
 
                         bool hasAttribute = reader.MoveToFirstAttribute();
                         while (hasAttribute)
                         {
                             // Some properties are special, and need to be set now.  The rest we set
                             // at the last moment when we have all the styles to inform us.
-                            switch(reader.Name)
+                            switch (reader.Name)
                             {
-                                case "Name":
-                                case "Style":
-                                case "ApplyTo":
-                                    output.SetValue(reader.Name, reader.Value, true);
-                                    break;
+                                case "Name": output.Name = reader.Value; break;
                                 default:
-                                    output.AddSetting(reader.Name, reader.Value);
+                                    output.Settings.Add(reader.Name, reader.Value);
                                     break;
                             }
 
@@ -347,7 +423,7 @@ namespace MonoVarmint.Widgets
                     }
                     else
                     {
-                        childrenToAdd.Add(GetNextWidget(injector, reader));
+                        output.Children.Add(GetNextNode(reader, null, entityName));
                     }
                 }
                 else if (reader.NodeType == XmlNodeType.EndElement)
@@ -362,44 +438,10 @@ namespace MonoVarmint.Widgets
                 if (output == null) continue;
             } while (reader.Read());
 
-            output.AddChildren(childrenToAdd.ToArray(), true);
+            if (output.Name == null) output.Name = defaultName;
             return output;
         }
 
-        //--------------------------------------------------------------------------------------
-        /// <summary>
-        /// AddSetting - remember a name/value setting used to define this object
-        /// </summary>
-        //--------------------------------------------------------------------------------------
-        private void AddSetting(string name, string value)
-        {
-            _declaredSettings.Add(name, value);
-        }
-
-        //--------------------------------------------------------------------------------------
-        /// <summary>
-        /// LoadLayoutFrom - Load a visual element tree from a raw vwml file
-        ///                  
-        ///                 The provided assembly will be searched for any symbols
-        ///                 specified in the vwml 
-        /// </summary>
-        //--------------------------------------------------------------------------------------
-        public static VarmintWidget LoadLayoutFromVwml(IVarmintWidgetInjector injector, Stream vwmlStream, string defaultName)
-        {
-            using (var reader = XmlReader.Create(vwmlStream))
-            {
-                var lineInfo = (IXmlLineInfo)reader;
-                try
-                {
-                    return GetNextWidget(injector, reader, defaultName);
-                }
-                catch (Exception e)
-                {
-                    throw new ApplicationException("VWML parse error on line " + lineInfo.LineNumber
-                        + ": " + e.Message, e);
-                }
-            }
-        }
 
     }
 }

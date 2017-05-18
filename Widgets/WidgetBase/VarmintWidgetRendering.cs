@@ -17,7 +17,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public virtual void RenderMe(GameTime gameTime, Dictionary<string, VarmintWidgetStyle> styleLibrary = null)
         {
-            Update(styleLibrary);
+            Update();
             if (!IsVisible) return;
             var localAnimations = _animations.ToArray();
             foreach (var animation in localAnimations) animation.Update(this, gameTime);
