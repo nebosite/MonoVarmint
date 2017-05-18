@@ -3,12 +3,77 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MonoVarmint.Tools;
 using MonoVarmint.Widgets;
 using Microsoft.Xna.Framework;
+using System.Reflection;
+using System.Collections.Generic;
 
 namespace MonoVarmint.Tools.Tests
 {
     [TestClass]
-    public class VarmintWidgetsStackPanelTests
+    public class VarmintWidgetsStackPanelTests : IVarmintWidgetInjector
     {
+        public object GetInjectedValue(VarmintWidgetInjectAttribute attribute, PropertyInfo property)
+        {
+            return null;
+        }
+
+        [TestMethod]
+        public void StackPanelCenteredOnAGrid_WorksFromSerialized()
+        {
+            var layoutText =
+                @"<Grid  HorizontalContentAlignment=""Center"" Size=""10,20"">
+                    <StackPanel Name=""panel"">
+                        <Grid Size=""6,1""  Name=""panelChild"" />
+                    </StackPanel>
+                   </Grid>";
+
+            var target = TestUtils.LoadFromText(this, layoutText, "Barney");
+            target.Prepare(new Dictionary<string, VarmintWidgetStyle>());
+
+            var panel = target.FindWidgetByName("panel");
+            var panelChild1 = target.FindWidgetByName("panelChild");
+            Assert.AreEqual(new Vector2(2, 0), panel.Offset);
+            Assert.AreEqual(new Vector2(0, 0), panelChild1.Offset);
+
+        }
+
+        [TestMethod]
+        public void StackPanelCenteredOnAGrid_Works()
+        {
+            //         < Grid Style = "BaseScreenStyle" >
+            //< StackPanel >
+            //  < Image
+            //   Size = ".8,.18"
+            //   Content = "Images/LogoTile" />
+            var container = new VarmintWidgetGrid() {
+                Size = new Vector2(10, 20),
+                HorizontalContentAlignment = HorizontalContentAlignment.Center };
+            var panel = new VarmintWidgetStackPanel() { };
+            var panelChild1 = new VarmintWidgetGrid() { Size = new Vector2(6, 1) };
+            panel.AddChild(panelChild1);
+            container.AddChild(panel);
+            container.Prepare(null);
+            Assert.AreEqual(new Vector2(2, 0), panel.Offset);
+            Assert.AreEqual(new Vector2(0, 0), panelChild1.Offset);
+
+        }
+
+        [TestMethod]
+        public void StretchParameter_Works_WhenPanelIsStretchedToParent()
+        {
+            var container = new VarmintWidgetGrid() { Size = new Vector2(30,20) };
+            var panel = new VarmintWidgetStackPanel() { Stretch = new VarmintWidget.StretchParameter("1,1") };
+            var panelChild1 = new VarmintWidgetGrid() { Size = new Vector2(1, 1), Stretch = new VarmintWidget.StretchParameter("1,1") };
+
+            panel.AddChild(panelChild1);
+            container.AddChild(panel);
+
+            container.Prepare(null);
+
+            Assert.AreEqual(new Vector2(30, 20), panel.Size);
+            Assert.AreEqual(new Vector2(30, 20), panelChild1.Size);
+
+        }
+
         [TestMethod]
         public void StretchParameter_ExpandsChildren_Vertical()
         {
@@ -21,6 +86,7 @@ namespace MonoVarmint.Tools.Tests
             container.AddChild(grid2);
             container.AddChild(grid3);
             container.AddChild(grid4);
+            container.Prepare(null);
 
             // starting out with no stretch
             container.UpdateChildFormatting();
@@ -98,6 +164,7 @@ namespace MonoVarmint.Tools.Tests
             container.AddChild(grid2);
             container.AddChild(grid3);
             container.AddChild(grid4);
+            container.Prepare(null);
 
             // starting out with no stretch
             container.UpdateChildFormatting();

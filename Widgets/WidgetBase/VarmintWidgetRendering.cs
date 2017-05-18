@@ -10,6 +10,7 @@ namespace MonoVarmint.Widgets
 {
     public partial class VarmintWidget
     {
+        bool _applyingStyles = false;
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// Render
@@ -45,6 +46,68 @@ namespace MonoVarmint.Widgets
             }
         }
 
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// ApplyStyles 
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        private void ApplyStyles(Dictionary<string, VarmintWidgetStyle> styleLibrary)
+        {
+            _applyingStyles = true;
+            var finalValues = new Dictionary<string, string>(_declaredSettings);
+
+            // Helper to apply a style and it's parent styles
+            Action<VarmintWidgetStyle> applyStyle = (style) =>
+            {
+                while (style != null)
+                {
+                    foreach (var stylePropertyName in style._declaredSettings.Keys)
+                    {
+                        if (!finalValues.ContainsKey(stylePropertyName))
+                        {
+                            finalValues.Add(stylePropertyName, style._declaredSettings[stylePropertyName]);
+                        }
+                    }
+                    style = (VarmintWidgetStyle)style.Parent;
+                }
+            };
+
+            if (Style != null)
+            {
+                if (styleLibrary == null || !styleLibrary.ContainsKey(Style))
+                {
+                    throw new ApplicationException("Style not found: " + Style);
+                }
+
+                applyStyle(styleLibrary[Style]);
+            }
+
+            if (styleLibrary != null && styleLibrary.Count > 0)
+            {
+                foreach (var style in styleLibrary.Values)
+                {
+                    if (style.AppliesToMe(this))
+                    {
+                        applyStyle(style);
+                    }
+                }
+            }
+
+            foreach (var name in finalValues.Keys)
+            {
+                if (IsBinding(finalValues[name]))
+                {
+                    AddBinding(name, finalValues[name]);
+                }
+                else
+                {
+                    SetValue(name, finalValues[name], false);
+                }
+            }
+
+            _applyingStyles = false;
+        }
+
 
         //--------------------------------------------------------------------------------------
         /// <summary>
@@ -52,21 +115,22 @@ namespace MonoVarmint.Widgets
         ///                         the children of this widget
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public virtual void UpdateChildFormatting()
+        public void UpdateChildFormatting(Vector2? updatedSize = null)
         {
-            UpdateChildFormatting(false);
-        }
-        public virtual void UpdateChildFormatting(bool recurse)
-        {
-            if (_updating) return;
-            if (recurse)
+            if (_updating || _applyingStyles || !_prepared) return;
+            _updating = true;
+            // recurse first to ensure children that have a size determined by content
+            // update their size.
+            foreach (var child in children)
             {
-                foreach (var child in children)
-                {
-                    child.UpdateChildFormatting(true);
-                }
+               child. UpdateChildFormatting();
             }
-
+            UpdateChildFormatting_Internal(updatedSize);
+            _updating = false;
+        }
+        protected virtual void UpdateChildFormatting_Internal(Vector2? updatedSize)
+        {
+            if (updatedSize != null) Size = updatedSize.Value;
             foreach (var child in children)
             {
                 var newSize = child.IntendedSize;

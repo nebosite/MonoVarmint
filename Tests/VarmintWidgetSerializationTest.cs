@@ -19,26 +19,6 @@ namespace MonoVarmint.Tools.Tests
             return null;
         }
 
-        class BindingThing
-        {
-            public int FooCalls = 0;
-            public Vector2 SizeProperty { get { return new Vector2(2, 3); } }
-            public VarmintWidget.EventHandledState HandleTap(VarmintWidget widget, Vector2 location)
-            {
-                FooCalls++;
-                return VarmintWidget.EventHandledState.Handled;
-            }
-        }
-
-        VarmintWidget LoadFromText(string vwml, string defaultName)
-        {
-            using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(vwml)))
-            {
-                var layout = VarmintWidget.PreloadFromVwml(memoryStream, defaultName);
-                return VarmintWidget.HydrateLayout(this, layout, new Dictionary<string, VarmintWidget.LayoutItem>());
-            }
-        }
-
         [TestMethod]
         public void GeneralPropertySerializationWorks()
         {
@@ -51,7 +31,7 @@ namespace MonoVarmint.Tools.Tests
                 />";
             var bindToMe = new BindingThing();
 
-            var target = LoadFromText(layoutText, "Barney");
+            var target = TestUtils.LoadFromText(this,layoutText, "Barney");
             target.BindingContext = bindToMe;
             target.Prepare(new Dictionary<string, VarmintWidgetStyle>());
             Assert.AreEqual("Barney", target.Name);
@@ -104,9 +84,9 @@ namespace MonoVarmint.Tools.Tests
                 </TestWidget>";
             var bindToMe = new BindingThing();
 
-            var style = LoadFromText(styleText, "Fooz");
-            var globalStyle = LoadFromText(globalStyleText, "Freee");
-            var target = LoadFromText(layoutText, "StyleTest");
+            var style = TestUtils.LoadFromText(this, styleText, "Fooz");
+            var globalStyle = TestUtils.LoadFromText(this, globalStyleText, "Freee");
+            var target = TestUtils.LoadFromText(this, layoutText, "StyleTest");
             target.BindingContext = bindToMe;
             var styleLibrary = new Dictionary<string, VarmintWidgetStyle>();
             foreach (var styleItem in style.FindWidgetsByType<VarmintWidgetStyle>())

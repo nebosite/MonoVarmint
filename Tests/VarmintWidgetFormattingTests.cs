@@ -17,7 +17,7 @@ namespace MonoVarmint.Tools.Tests
             container.AddChild(grid);
 
             // starting out with no stretch
-            container.UpdateChildFormatting();
+            container.Prepare(null);
             Assert.AreEqual(new Vector2(1, 1), grid.Size);
 
             // Horizontal only
@@ -59,11 +59,12 @@ namespace MonoVarmint.Tools.Tests
         {
             var target = new TestWidget() { Size = new Vector2(10, 20) };
             var child = new TestWidget() { Size = new Vector2(2, 2) };
-
-            // ####################### Left/Top
             target.HorizontalContentAlignment = HorizontalContentAlignment.Left;
             target.VerticalContentAlignment = VerticalContentAlignment.Top;
             target.AddChild(child);
+            target.Prepare(null);
+
+            // ####################### Left/Top
             target.UpdateChildFormatting();
             Assert.AreEqual(0, child.Offset.X);
             Assert.AreEqual(0, child.Offset.Y);

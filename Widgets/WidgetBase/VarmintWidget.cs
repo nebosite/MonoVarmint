@@ -56,21 +56,18 @@ namespace MonoVarmint.Widgets
         {
             get
             {
-                if (_size == null)
-                {
-                    Size = Vector2.Zero;
-                }
-                return _size.Value;
+                return _size ?? Vector2.Zero;
             }
             set
             {
                 if (_size == null || _size != value)
                 {
-                    if (_size == null)
+                    if (_originalSize == null || _applyingStyles)
                     {
                         _originalSize = value;
                     }
                     _size = value;
+                    UpdateChildFormatting(_size);
                 }
             }
         }
@@ -240,63 +237,5 @@ namespace MonoVarmint.Widgets
             _updating = false;
         }
 
-        //--------------------------------------------------------------------------------------
-        /// <summary>
-        /// ApplyStyles 
-        /// </summary>
-        //--------------------------------------------------------------------------------------
-        private void ApplyStyles(Dictionary<string, VarmintWidgetStyle> styleLibrary)
-        {
-            var finalValues = new Dictionary<string, string>(_declaredSettings);
-
-            // Helper to apply a style and it's parent styles
-            Action<VarmintWidgetStyle> applyStyle = (style) =>
-            {
-                while (style != null)
-                {
-                    foreach (var stylePropertyName in style._declaredSettings.Keys)
-                    {
-                        if (!finalValues.ContainsKey(stylePropertyName))
-                        {
-                            finalValues.Add(stylePropertyName, style._declaredSettings[stylePropertyName]);
-                        }
-                    }
-                    style = (VarmintWidgetStyle)style.Parent;
-                }
-            };
-
-            if(Style != null)
-            {
-                if (styleLibrary == null || !styleLibrary.ContainsKey(Style))
-                {
-                    throw new ApplicationException("Style not found: " + Style);
-                }
-
-                applyStyle(styleLibrary[Style]);
-            }
-
-            if (styleLibrary != null && styleLibrary.Count > 0)
-            {
-                foreach (var style in styleLibrary.Values)
-                {
-                    if (style.AppliesToMe(this))
-                    {
-                        applyStyle(style);
-                    }
-                }
-            }
-
-            foreach(var name in finalValues.Keys)
-            {
-                if (IsBinding(finalValues[name]))
-                {
-                    AddBinding(name, finalValues[name]);
-                }
-                else
-                {
-                    SetValue(name, finalValues[name], false);
-                }
-            }
-       }
     }
 }

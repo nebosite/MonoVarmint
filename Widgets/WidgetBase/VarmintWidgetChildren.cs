@@ -65,7 +65,7 @@ namespace MonoVarmint.Widgets
             widget.Parent = this;
             if (ChildrenAffectFormatting && !suppressChildUpdate)
             {
-                UpdateChildFormatting(true);
+                UpdateChildFormatting();
             }
         }
 
@@ -83,7 +83,7 @@ namespace MonoVarmint.Widgets
             }
             if (ChildrenAffectFormatting && !suppressChildUpdate)
             {
-                UpdateChildFormatting(true);
+                UpdateChildFormatting();
             }
         }
 
@@ -97,7 +97,7 @@ namespace MonoVarmint.Widgets
             children.Remove(childToRemove);
             if (ChildrenAffectFormatting && !suppressChildUpdate)
             {
-                UpdateChildFormatting(true);
+                UpdateChildFormatting();
             }
         }
 
@@ -109,6 +109,10 @@ namespace MonoVarmint.Widgets
         public void ClearChildren()
         {
             children.Clear();
+            if (ChildrenAffectFormatting)
+            {
+                UpdateChildFormatting();
+            }
         }
 
     }

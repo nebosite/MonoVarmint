@@ -60,20 +60,10 @@ namespace MonoVarmint.Widgets
         /// UpdateChildFormatting
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public override void UpdateChildFormatting(bool recurse = false)
+        protected override void UpdateChildFormatting_Internal(Vector2? updatedSize)
         {
-            if (isUpdating) return;
-            isUpdating = true;
-            if (recurse)
-            {
-                foreach (var child in Children)
-                {
-                    child.UpdateChildFormatting(true);
-                }
-            }
-            if (Orientation == Orientation.Horizontal) UpdateHorizontal();
-            else UpdateVertical();
-            isUpdating = false;
+            if (Orientation == Orientation.Horizontal) UpdateHorizontal(updatedSize);
+            else UpdateVertical(updatedSize);
         }
 
         //--------------------------------------------------------------------------------------
@@ -81,9 +71,15 @@ namespace MonoVarmint.Widgets
         /// UpdateVertical
         /// </summary>
         //--------------------------------------------------------------------------------------
-        private void UpdateVertical()
+        private void UpdateVertical(Vector2? updatedSize)
         {
             Vector2 newStackSize = IntendedSize;
+            if(updatedSize != null)
+            {
+                newStackSize = updatedSize.Value;
+            }
+            var intendedSpace = newStackSize.Y;
+
             if(Children.Count == 0)
             {
                 this.Size = newStackSize;
@@ -148,7 +144,7 @@ namespace MonoVarmint.Widgets
             }
 
             // If there is stretching to do, we need another pass
-            var remainingSpace = IntendedSize.Y - nextY;
+            var remainingSpace = intendedSpace - nextY;
             if(stretchBudget > 0 && remainingSpace > 0)
             {
                 remainingSpace += spaceFromStretchables;
@@ -167,6 +163,8 @@ namespace MonoVarmint.Widgets
 
                     child.Size = newSize;
                 }
+                newStackSize.Y = nextY;
+                Size = newStackSize;
             }
         }
 
@@ -176,14 +174,15 @@ namespace MonoVarmint.Widgets
         /// UpdateHorizontal
         /// </summary>
         //--------------------------------------------------------------------------------------
-        private void UpdateHorizontal()
+        private void UpdateHorizontal(Vector2? updatedSize)
         {
             Vector2 newStackSize = IntendedSize;
-            if (Children.Count == 0)
+            if (updatedSize != null)
             {
-                this.Size = newStackSize;
-                return;
+                newStackSize = updatedSize.Value;
             }
+            var intendedSpace = newStackSize.X;
+
             newStackSize.X = 0;
             var maxHeight = 0f;
             var stretchBudget = 0f;
@@ -243,7 +242,7 @@ namespace MonoVarmint.Widgets
             }
 
             // If there is stretching to do, we need another pass
-            var remainingSpace = IntendedSize.X - nextX;
+            var remainingSpace = intendedSpace - nextX;
             if (stretchBudget > 0 && remainingSpace > 0)
             {
                 remainingSpace += spaceFromStretchables;
@@ -262,8 +261,9 @@ namespace MonoVarmint.Widgets
 
                     child.Size = newSize;
                 }
+                newStackSize.X = nextX;
+                Size = newStackSize;
             }
-
         }
     }
 }
