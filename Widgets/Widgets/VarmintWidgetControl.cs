@@ -10,7 +10,9 @@ namespace MonoVarmint.Widgets
     [VarmintWidgetShortName("Control")]
     public class VarmintWidgetControl : VarmintWidget
     {
-        //--------------------------------------------------------------------------------------
+        public string Class { get; set; }
+
+       //--------------------------------------------------------------------------------------
         /// <summary>
         /// ctor
         /// </summary>

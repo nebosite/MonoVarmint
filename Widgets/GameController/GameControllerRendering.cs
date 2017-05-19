@@ -547,9 +547,10 @@ namespace MonoVarmint.Widgets
         /// Clip any drawing outside of the specified area
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public void BeginClipping(Vector2 position, Vector2 size)
+        public void BeginClipping(Vector2 absolutePosition, Vector2 size)
         {
-            position -= DrawOffset;
+            
+            var position = absolutePosition - DrawOffset;
             var rawPosition = position * _backBufferWidth;
             var rawSize = size * _backBufferWidth;
             // [ ] Set up a new buffer and push onto the stack
@@ -560,7 +561,7 @@ namespace MonoVarmint.Widgets
             {
                 newBuffer.PreviousClipBuffer = _drawBuffers.Peek();
             }
-            DrawOffset = position;
+            DrawOffset = absolutePosition;
 
             //Debug.WriteLine("AAA_spriteBatch.End();");
             _spriteBatch.End();

@@ -231,6 +231,7 @@ namespace MonoVarmint.Widgets
         protected override void Draw(GameTime gameTime)
         {
             UpdateFrame();
+            _visualTree.AdvanceAnimations(gameTime);
             base.Draw(gameTime);
 
             //Debug.WriteLine("AAA---------------------- BEGIN ------------------------");

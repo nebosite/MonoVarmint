@@ -11,6 +11,21 @@ namespace MonoVarmint.Widgets
     public partial class VarmintWidget
     {
         bool _applyingStyles = false;
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// AdvanceAnimations
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public void AdvanceAnimations(GameTime gameTime)
+        {
+            var localAnimations = _animations.ToArray();
+            foreach (var animation in localAnimations) animation.Update(this, gameTime);
+            _animations.RemoveAll(a => a.IsComplete);
+
+            foreach (var child in Children) child.AdvanceAnimations(gameTime);
+        }
+
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// Render
@@ -20,12 +35,9 @@ namespace MonoVarmint.Widgets
         {
             Update();
             if (!IsVisible) return;
-            var localAnimations = _animations.ToArray();
-            foreach (var animation in localAnimations) animation.Update(this, gameTime);
-            _animations.RemoveAll(a => a.IsComplete);
 
             bool shouldClip = ClipToBounds
-                || Rotate != 0;
+                || Rotate != 0 || FlipHorizontal || FlipVertical;
             if (shouldClip) Renderer.BeginClipping(AbsoluteOffset, Size);
             OnRender?.Invoke(gameTime, this);
 
@@ -38,8 +50,8 @@ namespace MonoVarmint.Widgets
                     (float)(Rotate / 180.0 * Math.PI), 
                     new Vector2(.5f),
                     new Vector2(1),
-                    false,
-                    false);
+                    FlipHorizontal,
+                    FlipVertical);
             }
         }
 

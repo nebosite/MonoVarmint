@@ -51,6 +51,8 @@ namespace MonoVarmint.Widgets
         }
 
         public float Rotate { get; set; }
+        public bool FlipVertical { get; set; }
+        public bool FlipHorizontal { get; set; }
 
         private Vector2? _size = null;
         internal Vector2? _originalSize = null;
