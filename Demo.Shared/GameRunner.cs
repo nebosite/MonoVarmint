@@ -24,6 +24,7 @@ namespace Demo.Shared
         public Color GlobalBackgroundColor { get { return Color.DarkGray; } }
         public string TimeText {  get { return "Current Time: " + DateTime.Now.ToLongTimeString(); } }
         public Vector2 ScreenSize { get { return _controller.ScreenSize; } }
+        public float WowRotate { get; set; }
 
         //-----------------------------------------------------------------------------------------------
         // NATIVE METHODS - These methods are called when an action occurs that needs to be handled
@@ -56,6 +57,7 @@ namespace Demo.Shared
 
             _controller.OnUpdate += (gameTime) =>
             {
+                WowRotate += 1;
                 if (_currentGame != null) _currentGame.Update(gameTime);
             };
         }

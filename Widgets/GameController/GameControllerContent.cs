@@ -37,14 +37,6 @@ namespace MonoVarmint.Widgets
                 _backBufferXOffset = (GraphicsDevice.PresentationParameters.BackBufferWidth - _backBufferWidth) / 2;
             }
 
-            _backBuffer = new RenderTarget2D(
-                _graphics.GraphicsDevice,
-                _backBufferWidth,
-                _backBufferHeight,
-                false,
-                SurfaceFormat.Color,
-                DepthFormat.None);
-
             var scaleFactor = _backBufferWidth / 1000.0f;
             _scaleToNativeResolution = Matrix.CreateScale(new Vector3(scaleFactor, scaleFactor, 1));
 

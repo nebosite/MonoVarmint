@@ -47,6 +47,10 @@ namespace MonoVarmint.Widgets
         public GameController(object bindingContext)
         {
             _graphics = new GraphicsDeviceManager(this);
+            _graphics.PreparingDeviceSettings += (sender, settings)=>
+            {
+                settings.GraphicsDeviceInformation.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
+            };
             _graphics.IsFullScreen = true;
             _bindingContext = bindingContext;
             SoundVolume = 1.0;
@@ -226,39 +230,46 @@ namespace MonoVarmint.Widgets
         //-----------------------------------------------------------------------------------------------
         protected override void Draw(GameTime gameTime)
         {
+            UpdateFrame();
+            base.Draw(gameTime);
+
+            //Debug.WriteLine("AAA---------------------- BEGIN ------------------------");
+            //Debug.WriteLine("AAA_spriteBatch.Begin();");
+            _spriteBatch.Begin();
+            GraphicsDevice.Clear(GlobalBackgroundColor);
+            BeginClipping(DrawOffset, ScreenSize);
+            _visualTree.Prepare(_widgetSpace.StyleLibrary);
+            _visualTree.RenderMe(gameTime);
+
+            if (ShowFps)
+            {
+                DrawText("Fps: " + _fps.ToString(".0"), null, .05f, DrawOffset + new Vector2(0.01f, 0.01f), Color.Black);
+            }
+
+            EndClipping(0, Vector2.Zero,new Vector2(1), false, false);
+            if(_drawBuffers.Count > 0)
+            {
+                throw new ApplicationException("There was an unmatch BeginClipping call.");
+            }
+
+            //Debug.WriteLine("AAA_spriteBatch.End();");
+            _spriteBatch.End();
+            //Debug.WriteLine("AAA---------------------- END ------------------------");
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        // 
+        //-----------------------------------------------------------------------------------------------
+        private void UpdateFrame()
+        {
             _frameCount++;
-            if(_frameCount == 30)
+            if (_frameCount == 30)
             {
                 var span = DateTime.Now - _lastFrameMeasureTime;
                 _lastFrameMeasureTime = DateTime.Now;
                 _frameCount = 0;
                 _fps = 30 / span.TotalSeconds;
             }
-            base.Draw(gameTime);
-
-            // First, We render the game to a backbuffer to be resolution independent
-            GraphicsDevice.SetRenderTarget(_backBuffer);
-            GraphicsDevice.Clear(Color.Blue);
-            _visualTree.Prepare(_widgetSpace.StyleLibrary);
-            _visualTree.RenderMe(gameTime);
-
-            if(ShowFps)
-            {
-                DrawText("Fps: " + _fps.ToString(".0"), null, .05f, DrawOffset + new Vector2(0.01f, 0.01f), Color.Black);
-            }
-
-            if (_inSpriteBatch)
-            {
-                _spriteBatch.End();
-                _inSpriteBatch = false;
-            }
-            GraphicsDevice.SetRenderTarget(null);
-
-            // Now we render the back buffer to the screen
-            GraphicsDevice.Clear(GlobalBackgroundColor);
-            _spriteBatch.Begin();
-            _spriteBatch.Draw(_backBuffer, new Vector2(_backBufferXOffset, 0));
-            _spriteBatch.End();
         }
 
         //--------------------------------------------------------------------------------------
@@ -287,6 +298,7 @@ namespace MonoVarmint.Widgets
         public void SetScreen(VarmintWidget screen)
         {
             _visualTree = screen;
+            screen.Prepare(_widgetSpace.StyleLibrary);
         }
 
         //--------------------------------------------------------------------------------------

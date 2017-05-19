@@ -21,7 +21,7 @@ namespace MonoVarmint.Widgets
         void DrawSprite(string name, int spriteFrame, Vector2 offset, Vector2 size, Color color, float rotation, Vector2 rotationOrigin);
        void PlaySound(string name, double volume = 1.0);
         void BeginClipping(Vector2 position, Vector2 size);
-        void EndClipping();
+        void EndClipping(float rotation, Vector2 rotationOrigin, Vector2 scale, bool flipHorizontal, bool flipVertical);
         bool IsInRenderingWindow(Vector2 offset, Vector2 size);
     }
 }

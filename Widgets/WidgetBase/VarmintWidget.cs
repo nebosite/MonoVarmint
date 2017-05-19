@@ -50,6 +50,8 @@ namespace MonoVarmint.Widgets
             }
         }
 
+        public float Rotate { get; set; }
+
         private Vector2? _size = null;
         internal Vector2? _originalSize = null;
         public Vector2 Size

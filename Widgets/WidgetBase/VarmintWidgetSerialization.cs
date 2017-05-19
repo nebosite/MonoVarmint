@@ -170,6 +170,19 @@ namespace MonoVarmint.Widgets
         }
 
         //--------------------------------------------------------------------------------------
+        //
+        //--------------------------------------------------------------------------------------
+        void ThrowIfPropertyNotValid(string propertyName)
+        {
+            var eventInfo = GetType().GetTypeInfo().GetEvent(propertyName, _publicInstance);
+            var propertyInfo = GetType().GetTypeInfo().GetProperty(propertyName);
+            if (propertyInfo == null && eventInfo == null)
+            {
+                throw new ApplicationException("Cannot find property " + propertyName + " on type " + GetType().Name);
+            }
+        }
+
+        //--------------------------------------------------------------------------------------
         /// <summary>
         /// SetValue - Set a property to a literal value
         /// </summary>

@@ -24,11 +24,23 @@ namespace MonoVarmint.Widgets
             foreach (var animation in localAnimations) animation.Update(this, gameTime);
             _animations.RemoveAll(a => a.IsComplete);
 
-            if (ClipToBounds) Renderer.BeginClipping(AbsoluteOffset, Size);
+            bool shouldClip = ClipToBounds
+                || Rotate != 0;
+            if (shouldClip) Renderer.BeginClipping(AbsoluteOffset, Size);
             OnRender?.Invoke(gameTime, this);
 
             RenderChildren(gameTime, styleLibrary);
-            if (ClipToBounds) Renderer.EndClipping();
+
+            if (shouldClip)
+            {
+                float rotation = 0;
+                Renderer.EndClipping(
+                    (float)(Rotate / 180.0 * Math.PI), 
+                    new Vector2(.5f),
+                    new Vector2(1),
+                    false,
+                    false);
+            }
         }
 
         //--------------------------------------------------------------------------------------
@@ -58,6 +70,11 @@ namespace MonoVarmint.Widgets
         {
             _applyingStyles = true;
             var finalValues = new Dictionary<string, string>(_declaredSettings);
+            foreach (var name in finalValues.Keys)
+            {
+                ThrowIfPropertyNotValid(name);
+            }
+
 
             // Helper to apply a style and it's parent styles
             Action<VarmintWidgetStyle> applyStyle = (style) =>

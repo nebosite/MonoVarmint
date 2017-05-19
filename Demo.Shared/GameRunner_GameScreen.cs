@@ -54,7 +54,6 @@ namespace Demo.Shared
             // is essentially the code to draw a frame
             gameWindow.SetCustomRender((GameTime gameTime, VarmintWidget widget) =>
             {
-                _controller.BeginClipping(widget.AbsoluteOffset, widget.Size);
                 // draw the sky
                 _controller.DrawBox(widget.AbsoluteOffset, widget.Size, Color.SkyBlue);
 
@@ -89,7 +88,6 @@ namespace Demo.Shared
                 // Draw the ground
                 drawScrollingThing("Images/Ground", 1);
 
-                _controller.EndClipping();
             });
         }
 
