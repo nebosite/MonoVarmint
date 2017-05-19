@@ -43,7 +43,7 @@ namespace ChangeThisToYourNameSpace
 #else
             _controller = new GameController(this);
 #endif
-            _controller.OnUserDeactivate += NativeHandleUserDeactivate;
+            _controller.OnUserBackButtonPress += NativeHandleUserDeactivate;
 
             // TODO: uncomment this line and put in the name of the screen you
             // want to start with.

@@ -6,6 +6,7 @@
   BackgroundColor="White">
   <Grid
     Name="GameContainer"
+    ClipToBounds="true"
     Size=".8,.6"
     Margin=",.1"/>
   <StackPanel Orientation="Horizontal" Margin=",.1">

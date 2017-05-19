@@ -30,7 +30,7 @@ namespace Demo.Shared
         //-----------------------------------------------------------------------------------------------
         public void StartGame()
         {
-            _controller.SetScreen("GameScreen");
+            _controller.SetScreen(_controller.GetScreen("GameScreen", this));
             var holder = _controller.GetVisibleWidgetByName("GameContainer");
             var gameWindow = new VarmintWidgetGrid();
             gameWindow.Size = holder.Size;
@@ -54,7 +54,6 @@ namespace Demo.Shared
             // is essentially the code to draw a frame
             gameWindow.SetCustomRender((GameTime gameTime, VarmintWidget widget) =>
             {
-                _controller.BeginClipping(widget.AbsoluteOffset, widget.Size);
                 // draw the sky
                 _controller.DrawBox(widget.AbsoluteOffset, widget.Size, Color.SkyBlue);
 
@@ -89,7 +88,6 @@ namespace Demo.Shared
                 // Draw the ground
                 drawScrollingThing("Images/Ground", 1);
 
-                _controller.EndClipping();
             });
         }
 
@@ -99,7 +97,7 @@ namespace Demo.Shared
         public VarmintWidget.EventHandledState GameQuitButtonOnTap(VarmintWidget tappedObject, Vector2 tapPosition)
         {
             _controller.GetVisibleWidgetByName("GameContainer").ClearChildren();
-            _controller.SetScreen("MainScreen");
+            _controller.SetScreen(_controller.GetScreen("MainScreen", this));
             _currentGame = null;
 
             return VarmintWidget.EventHandledState.Handled;

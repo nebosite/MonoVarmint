@@ -31,13 +31,13 @@ namespace MonoVarmint.Widgets
         public event Action OnLoaded;
         public event Action<GameTime> OnUpdate;
         public event Action<Keys, bool, char> OnTypedCharacter;
-        public event Action OnUserDeactivate;
+        public event Action OnUserBackButtonPress;
 
-        Dictionary<string, VarmintWidget> _screensByName = new Dictionary<string, VarmintWidget>();
         object _bindingContext;
         int _frameCount = 0;
         DateTime _lastFrameMeasureTime = DateTime.Now;
         double _fps = 0;
+        VarmintWidgetSpace _widgetSpace;
 
 
 
@@ -47,6 +47,10 @@ namespace MonoVarmint.Widgets
         public GameController(object bindingContext)
         {
             _graphics = new GraphicsDeviceManager(this);
+            _graphics.PreparingDeviceSettings += (sender, settings)=>
+            {
+                settings.GraphicsDeviceInformation.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
+            };
             _graphics.IsFullScreen = true;
             _bindingContext = bindingContext;
             SoundVolume = 1.0;
@@ -55,10 +59,9 @@ namespace MonoVarmint.Widgets
         //-----------------------------------------------------------------------------------------------
         // GetScreen - return a screen object by name 
         //-----------------------------------------------------------------------------------------------
-        internal VarmintWidget GetScreen(string screenName)
+        internal VarmintWidget GetScreen(string screenName, object bindingContext)
         {
-            if (!_screensByName.ContainsKey(screenName)) throw new ApplicationException("Unknown screen: " + screenName);
-            return _screensByName[screenName];
+            return _widgetSpace.GetScreen(screenName, bindingContext);
         }
 
         //-----------------------------------------------------------------------------------------------
@@ -109,10 +112,9 @@ namespace MonoVarmint.Widgets
         {
             CurrentFrameNumber++;
 
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
-                Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
             {
-                OnUserDeactivate?.Invoke();
+                OnUserBackButtonPress?.Invoke();
             }
 
 #if WINDOWS
@@ -228,38 +230,47 @@ namespace MonoVarmint.Widgets
         //-----------------------------------------------------------------------------------------------
         protected override void Draw(GameTime gameTime)
         {
+            UpdateFrame();
+            _visualTree.AdvanceAnimations(gameTime);
+            base.Draw(gameTime);
+
+            //Debug.WriteLine("AAA---------------------- BEGIN ------------------------");
+            //Debug.WriteLine("AAA_spriteBatch.Begin();");
+            _spriteBatch.Begin();
+            GraphicsDevice.Clear(GlobalBackgroundColor);
+            BeginClipping(DrawOffset, ScreenSize);
+            _visualTree.Prepare(_widgetSpace.StyleLibrary);
+            _visualTree.RenderMe(gameTime);
+
+            if (ShowFps)
+            {
+                DrawText("Fps: " + _fps.ToString(".0"), null, .05f, DrawOffset + new Vector2(0.01f, 0.01f), Color.Black);
+            }
+
+            EndClipping(0, Vector2.Zero,new Vector2(1), false, false);
+            if(_drawBuffers.Count > 0)
+            {
+                throw new ApplicationException("There was an unmatch BeginClipping call.");
+            }
+
+            //Debug.WriteLine("AAA_spriteBatch.End();");
+            _spriteBatch.End();
+            //Debug.WriteLine("AAA---------------------- END ------------------------");
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        // 
+        //-----------------------------------------------------------------------------------------------
+        private void UpdateFrame()
+        {
             _frameCount++;
-            if(_frameCount == 30)
+            if (_frameCount == 30)
             {
                 var span = DateTime.Now - _lastFrameMeasureTime;
                 _lastFrameMeasureTime = DateTime.Now;
                 _frameCount = 0;
                 _fps = 30 / span.TotalSeconds;
             }
-            base.Draw(gameTime);
-
-            // First, We render the game to a backbuffer to be resolution independent
-            GraphicsDevice.SetRenderTarget(_backBuffer);
-            GraphicsDevice.Clear(Color.Blue);
-            _visualTree.RenderMe(gameTime);
-
-            if(ShowFps)
-            {
-                DrawText("Fps: " + _fps.ToString(".0"), null, .05f, DrawOffset + new Vector2(0.01f, 0.01f), Color.Black);
-            }
-
-            if (_inSpriteBatch)
-            {
-                _spriteBatch.End();
-                _inSpriteBatch = false;
-            }
-            GraphicsDevice.SetRenderTarget(null);
-
-            // Now we render the back buffer to the screen
-            GraphicsDevice.Clear(GlobalBackgroundColor);
-            _spriteBatch.Begin();
-            _spriteBatch.Draw(_backBuffer, new Vector2(_backBufferXOffset, 0));
-            _spriteBatch.End();
         }
 
         //--------------------------------------------------------------------------------------
@@ -277,18 +288,27 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         // 
         //--------------------------------------------------------------------------------------
+        public void AddVwmlContent(string replaceName, Stream vwmlStream, object bindingContext = null)
+        {
+            _widgetSpace.AddContent(replaceName, vwmlStream, bindingContext);
+        }
+
+        //--------------------------------------------------------------------------------------
+        // 
+        //--------------------------------------------------------------------------------------
         public void SetScreen(VarmintWidget screen)
         {
             _visualTree = screen;
+            screen.Prepare(_widgetSpace.StyleLibrary);
         }
 
         //--------------------------------------------------------------------------------------
         // SetScreen - call this to change the visual tree to a screen you have defined in
         // a .vwml file
         //--------------------------------------------------------------------------------------
-        public void SetScreen(string screenName)
+        public void SetScreen(string screenName, object bindingContext)
         {
-            _visualTree = _screensByName[screenName];
+            _visualTree = _widgetSpace.GetScreen(screenName, bindingContext);
         }
 
         //--------------------------------------------------------------------------------------

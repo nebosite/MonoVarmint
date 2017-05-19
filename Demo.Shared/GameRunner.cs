@@ -24,6 +24,7 @@ namespace Demo.Shared
         public Color GlobalBackgroundColor { get { return Color.DarkGray; } }
         public string TimeText {  get { return "Current Time: " + DateTime.Now.ToLongTimeString(); } }
         public Vector2 ScreenSize { get { return _controller.ScreenSize; } }
+        public float WowRotate { get; set; }
 
         //-----------------------------------------------------------------------------------------------
         // NATIVE METHODS - These methods are called when an action occurs that needs to be handled
@@ -41,7 +42,7 @@ namespace Demo.Shared
 #else
             _controller = new GameController(this);
 #endif
-            _controller.OnUserDeactivate += NativeHandleUserDeactivate;
+            _controller.OnUserBackButtonPress += NativeHandleUserDeactivate;
 
             _controller.OnLoaded += () =>
             {
@@ -51,11 +52,12 @@ namespace Demo.Shared
                 _controller.LoadSprite("Images/Bunny", 100, 100);
                 _controller.LoadSprite("Images/Monster", 100, 100);
                 _controller.LoadSounds("Sounds/Cowbell", "Sounds/Jump", "Sounds/Thump");
-                _controller.SetScreen("MainScreen");
+                _controller.SetScreen(_controller.GetScreen("MainScreen", this));
             };
 
             _controller.OnUpdate += (gameTime) =>
             {
+                WowRotate += 1;
                 if (_currentGame != null) _currentGame.Update(gameTime);
             };
         }

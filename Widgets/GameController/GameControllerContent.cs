@@ -37,14 +37,6 @@ namespace MonoVarmint.Widgets
                 _backBufferXOffset = (GraphicsDevice.PresentationParameters.BackBufferWidth - _backBufferWidth) / 2;
             }
 
-            _backBuffer = new RenderTarget2D(
-                _graphics.GraphicsDevice,
-                _backBufferWidth,
-                _backBufferHeight,
-                false,
-                SurfaceFormat.Color,
-                DepthFormat.None);
-
             var scaleFactor = _backBufferWidth / 1000.0f;
             _scaleToNativeResolution = Matrix.CreateScale(new Vector3(scaleFactor, scaleFactor, 1));
 
@@ -58,9 +50,9 @@ namespace MonoVarmint.Widgets
             SelectFont();
 
             // Widgets
-            _screensByName = VarmintWidget.LoadLayout(this, _bindingContext);
+            _widgetSpace = new VarmintWidgetSpace(this, _bindingContext);
 
-            _visualTree = _screensByName["_default_screen_"];
+            _visualTree = _widgetSpace.GetScreen("_default_screen_", null);
             OnLoaded?.Invoke();
         }
 
@@ -72,24 +64,6 @@ namespace MonoVarmint.Widgets
             }
         }
 
-        //-----------------------------------------------------------------------------------------------
-        /// <summary>
-        /// This allows dynamic content by letting you replace an already loaded sceen with a new
-        /// one defined by the incoming stream
-        /// </summary>
-        //-----------------------------------------------------------------------------------------------
-        public void SetScreen(string replaceName, Stream vwmlStream, object bindingContext = null)
-        {
-            var widget = VarmintWidget.LoadLayoutFromVwml(this, vwmlStream, replaceName);
-            widget.Name = replaceName;
-            if (bindingContext != null)
-            {
-                widget.BindingContext = bindingContext;
-                widget.Init();
-            }
-
-            _screensByName[replaceName] = widget;
-        }
 
         //-----------------------------------------------------------------------------------------------
         /// <summary>
@@ -102,6 +76,7 @@ namespace MonoVarmint.Widgets
             _glyphsByName.Clear();
             _spritesByName.Clear();
             _soundsByName.Clear();
+            _widgetSpace = new VarmintWidgetSpace(this, _bindingContext);
         }
 
         //-----------------------------------------------------------------------------------------------

@@ -20,6 +20,7 @@ namespace MonoVarmint.Widgets
         public IMediaRenderer Renderer { get; set; }
 
         public string Name { get; set; }
+        public string Style { get; set; }
         public VarmintWidget Parent { get; set; }
         public Color BackgroundColor { get; set; }
         public bool ChildrenAffectFormatting { get; set; }
@@ -49,28 +50,28 @@ namespace MonoVarmint.Widgets
             }
         }
 
+        public float Rotate { get; set; }
+        public bool FlipVertical { get; set; }
+        public bool FlipHorizontal { get; set; }
+
         private Vector2? _size = null;
         internal Vector2? _originalSize = null;
         public Vector2 Size
         {
             get
             {
-                if (_size == null)
-                {
-                    Size = Vector2.Zero;
-                }
-                return _size.Value;
+                return _size ?? Vector2.Zero;
             }
             set
             {
                 if (_size == null || _size != value)
                 {
-                    if (_size == null)
+                    if (_originalSize == null || _applyingStyles)
                     {
                         _originalSize = value;
                     }
                     _size = value;
-                    UpdateChildFormatting();
+                    UpdateChildFormatting(_size);
                 }
             }
         }
@@ -86,6 +87,7 @@ namespace MonoVarmint.Widgets
 
         public bool AllowInput { get; set; }
         public bool IsVisible { get; set; }
+        public bool ClipToBounds { get; set; }
 
         private HorizontalContentAlignment? _horizontalContentAlignment;
         public HorizontalContentAlignment HorizontalContentAlignment
@@ -112,14 +114,44 @@ namespace MonoVarmint.Widgets
         }
 
         public virtual WidgetMargin Margin { get; set; }
+        public virtual StretchParameter Stretch { get; set; }
         public object Content { get; set; }
         public bool WrapContent { get; set; }
 
-        private object _bindingContext;
+        private object _xbindingContext;
         public object BindingContext
         {
-            get { return _bindingContext; }
-            set { UpdateBindings(value); }
+            get
+            {
+                if(_xbindingContext == null)
+                {
+                    if (Parent == null) return null;
+                    return Parent.BindingContext;
+                }
+                return _xbindingContext;
+            }
+            set
+            {
+                _xbindingContext = value;
+                _prepared = false;
+            }
+        }
+
+        private object _eventBindingContext;
+        public object EventBindingContext
+        {
+            get
+            {
+                if (_eventBindingContext != null) return _eventBindingContext;
+                if (Parent != null)
+                {
+                    var parentContext = Parent.EventBindingContext;
+                    if (parentContext == null) return BindingContext;
+                    else return parentContext;
+                }
+                return BindingContext;
+            }
+            set { _eventBindingContext = value; }
         }
 
         List<VarmintWidgetAnimation> _animations = new List<VarmintWidgetAnimation>();
@@ -177,6 +209,7 @@ namespace MonoVarmint.Widgets
             Name = "W" + _globalWidgetCount.ToString("000000");
             AllowInput = true;
             Margin = new WidgetMargin();
+            Stretch = new StretchParameter();
         }
 
         //--------------------------------------------------------------------------------------
@@ -189,23 +222,49 @@ namespace MonoVarmint.Widgets
             Size = size;
         }
 
+        bool _prepared = false;
+        bool _updating = false;
+        bool initCalled = false;
+
         //--------------------------------------------------------------------------------------
         /// <summary>
-        /// Init - trip all the OnInit events in this widget Tree.  
+        /// Prepare 
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public void Init()
+        public void Prepare(Dictionary<string, VarmintWidgetStyle> styleLibrary)
         {
-            // Load binding data frist in case the init logic needs it.
-            ReadBindings();
-
-            // user-provided init logic
-            OnInit?.Invoke(this);
-
-            foreach (var child in children)
+            if(!_prepared)
             {
-                child.Init();
+                ApplyStyles(styleLibrary);
+                UpdateBindings(BindingContext);
+                ReadBindings();
+
+                foreach(var child in Children)
+                {
+                    child.Prepare(styleLibrary);
+                }
+
+                if(!initCalled)
+                {
+                    initCalled = true;
+                    OnInit?.Invoke(this);
+                }
+                _prepared = true;
+                UpdateChildFormatting();
             }
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// Update 
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public void Update()
+        {
+            _updating = true;
+            // Load binding data first in case the init logic needs it.
+            ReadBindings();
+            _updating = false;
         }
 
     }
