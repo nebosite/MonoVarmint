@@ -108,8 +108,6 @@ namespace MonoVarmint.Tools.Tests
             target.UpdateChildFormatting();
             Assert.AreEqual(8, child.Offset.X);
             Assert.AreEqual(18, child.Offset.Y);
-
-
         }
 
     }

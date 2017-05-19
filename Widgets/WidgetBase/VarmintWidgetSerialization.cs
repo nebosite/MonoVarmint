@@ -237,7 +237,10 @@ namespace MonoVarmint.Widgets
                 case "Single":
                 case "float": return float.Parse(valueText);
                 case "double": return double.Parse(valueText);
+                case "Int32":
                 case "int": return int.Parse(valueText);
+                case "Int64":
+                case "long": return long.Parse(valueText);
                 case "Boolean":
                 case "bool": return Boolean.Parse(valueText);
                 case "Color": return ParseColor(valueText);
