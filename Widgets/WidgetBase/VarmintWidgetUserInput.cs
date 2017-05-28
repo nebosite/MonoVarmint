@@ -142,9 +142,9 @@ namespace MonoVarmint.Widgets
         /// HandleDrag
         /// </summary>
         //--------------------------------------------------------------------------------------
-        private EventHandledState HandleDrag(Vector2 position)
+        private EventHandledState HandleDrag(Vector2 position, Vector2 delta)
         {
-            if (AllowInput && OnDrag != null) return OnDrag(this, position);
+            if (AllowInput && OnDrag != null) return OnDrag(this, position, delta);
             return AllowInput ? EventHandledState.NotHandled : EventHandledState.Handled;
         }
 
@@ -254,7 +254,7 @@ namespace MonoVarmint.Widgets
                     if (_recentDragWidgets.Count == 0) _dragStartTime = DateTime.Now;
                     for (int i = hitList.Count - 1; i >= 0; i--)
                     {
-                        if (hitList[i].HandleDrag(gestureLocation1) == EventHandledState.Handled)
+                        if (hitList[i].HandleDrag(gestureLocation1, gestureLocation1 - gestureLocation2.Value) == EventHandledState.Handled)
                         {
                             if (_recentDragWidgets.Count == 0
                                 || _recentDragWidgets[_recentDragWidgets.Count - 1] != hitList[i])
