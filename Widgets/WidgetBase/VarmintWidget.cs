@@ -183,6 +183,7 @@ namespace MonoVarmint.Widgets
 
         static int _globalWidgetCount = 0;
 
+
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// Static ctor
@@ -193,6 +194,8 @@ namespace MonoVarmint.Widgets
             _knownAssemblies.Add(typeof(VarmintWidget).GetTypeInfo().Assembly);
             DragLengthThreshhold = .05f;
             FlickThreshholdSeconds = 0.3;
+            DoubleTapIntervalSeconds = 0.25;
+            DoubleTapRadius = 0.1f;
         }
 
         //--------------------------------------------------------------------------------------

@@ -11,6 +11,7 @@ namespace MonoVarmint.Widgets
     public partial class VarmintWidget
     {
         public event Func<VarmintWidget, Vector2, EventHandledState> OnTap;
+        public event Func<VarmintWidget, Vector2, EventHandledState> OnDoubleTap;
         public event Func<VarmintWidget, Vector2, Vector2, EventHandledState> OnFlick;
         public event Func<VarmintWidget, Vector2, EventHandledState> OnDrag;
         public event Func<EventHandledState> OnDragComplete;

@@ -488,6 +488,33 @@ namespace MonoVarmint.Widgets
                   layerDepth: 0);
         }
 
+        //class RenderBufferAllocator
+        //{
+        //    public RenderBufferRegion GetRegion(Vector2 rawPosition, Vector2 rawSize)
+        //    {
+        //        return null;
+        //    }
+        //}
+
+        //class RenderBufferRegion
+        //{
+        //    public RenderTarget2D BigBuffer { get; private set; }
+        //    public Rectangle SourceRectangle { get; set; }
+        //    public Vector2 PreviousDrawOffset { get; set; }
+        //    public Vector2 RawPosition { get; set; }
+
+        //    public RenderBufferRegion PreviousRegion { get; set; }
+        //    public RenderBufferRegion(RenderTarget2D target, Vector2 rawPosition, Vector2 rawSize)
+        //    {
+        //        RawPosition = rawPosition;
+        //        RawSize = rawSize;
+
+        //        RenderBuffer = target;
+        //    }
+        //}
+
+
+
         class ClipBuffer
         {
             public RenderTarget2D RenderBuffer { get; private set; }
@@ -508,8 +535,13 @@ namespace MonoVarmint.Widgets
 
         private Dictionary<int, Stack<RenderTarget2D>> _renderTargets = new Dictionary<int, Stack<RenderTarget2D>>();
 
+
+
+
         RenderTarget2D GetRenderTarget(GraphicsDevice graphicsDevice, Vector2 rawSize)
         {
+
+
             int width = (int)rawSize.X;
             int height = (int)rawSize.Y;
             int key = height * 100000 + width;

@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace MonoVarmint.Widgets
 {
-    
+
     //--------------------------------------------------------------------------------------
     //
     //--------------------------------------------------------------------------------------
@@ -55,6 +55,8 @@ namespace MonoVarmint.Widgets
 
         public static float DragLengthThreshhold { get; set; }
         public static double FlickThreshholdSeconds { get; set; }
+        public static double DoubleTapIntervalSeconds { get; set; }
+        public static float DoubleTapRadius { get; set; }
 
         //--------------------------------------------------------------------------------------
         /// <summary>
@@ -99,6 +101,21 @@ namespace MonoVarmint.Widgets
             {
                 var relativeLocation = absoluteLocation - this.AbsoluteOffset;
                 return OnTap(this, relativeLocation);
+            }
+            return AllowInput ? EventHandledState.NotHandled : EventHandledState.Handled;
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// HandleDoubleTap
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        private EventHandledState HandleDoubleTap(Vector2 absoluteLocation)
+        {
+            if (AllowInput && OnDoubleTap != null)
+            {
+                var relativeLocation = absoluteLocation - this.AbsoluteOffset;
+                return OnDoubleTap(this, relativeLocation);
             }
             return AllowInput ? EventHandledState.NotHandled : EventHandledState.Handled;
         }
@@ -221,6 +238,12 @@ namespace MonoVarmint.Widgets
                         if (hitList[i].HandleTap(gestureLocation1) == EventHandledState.Handled) break;
                     }
                     break;
+                case GestureType.DoubleTap:
+                    for (int i = hitList.Count - 1; i >= 0; i--)
+                    {
+                        if (hitList[i].HandleDoubleTap(gestureLocation1) == EventHandledState.Handled) break;
+                    }
+                    break;
                 case GestureType.Flick:
                     for (int i = hitList.Count - 1; i >= 0; i--)
                     {
@@ -270,6 +293,16 @@ namespace MonoVarmint.Widgets
         Vector2? _lastTouchUpLocation;
         Vector2? _lastTouchMoveLocation;
 
+        class ResidualGesture
+        {
+            public GestureType GestureType { get; set; }
+            public Vector2 Location1 { get; set; }
+            public Vector2 Location2 { get; set; }
+            public DateTime CreationTime { get; set; }
+        }
+
+        List<ResidualGesture> _residualGestures = new List<ResidualGesture>();
+
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// HandleTouch
@@ -283,7 +316,7 @@ namespace MonoVarmint.Widgets
                 _trackedTouches[touch.Id] = new TouchMemory();
             }
             var memory = _trackedTouches[touch.Id];
-            if(touch.State == TouchLocationState.Moved 
+            if (touch.State == TouchLocationState.Moved
                 && memory.TouchCount > 0
                 && memory.CurrentTouch.Position == touch.Position)
             {
@@ -320,7 +353,7 @@ namespace MonoVarmint.Widgets
                         _lastTouchUpLocation = touch.Position;
 
                         // Generate drag complete gesture if we went far enough
-                        if(memory.PathLength > DragLengthThreshhold)
+                        if (memory.PathLength > DragLengthThreshhold)
                         {
                             var flickLength = (memory.FirstTouch.Position - touch.Position).Length();
                             var dragSeconds = (DateTime.Now - _dragStartTime).TotalSeconds;
@@ -328,7 +361,7 @@ namespace MonoVarmint.Widgets
                             {
                                 HandleGesture(GestureType.DragComplete, touch.Position, null);
                             }
-                            else if(dragSeconds < FlickThreshholdSeconds && flickLength > DragLengthThreshhold)
+                            else if (dragSeconds < FlickThreshholdSeconds && flickLength > DragLengthThreshhold)
                             {
                                 HandleGesture(GestureType.Flick, touch.Position, memory.FirstTouch.Position);
                             }
@@ -338,7 +371,38 @@ namespace MonoVarmint.Widgets
                         else
                         {
                             CancelDrag();
-                            HandleGesture(GestureType.Tap, touch.Position, null);
+
+                            // check for double-tap
+                            bool foundMatchingGesture = false;
+                            for (int i = 0; i < _residualGestures.Count; i++)
+                            {
+                                var gesture = _residualGestures[i];
+                                if (gesture.GestureType == GestureType.Tap && (DateTime.Now - gesture.CreationTime).TotalSeconds < DoubleTapIntervalSeconds)
+                                {
+                                    if ((gesture.Location1 - touch.Position).Length() < DoubleTapRadius)
+                                    {
+                                        _residualGestures.RemoveAt(i);
+                                        var time = (DateTime.Now - gesture.CreationTime).TotalSeconds;
+                                        HandleGesture(GestureType.DoubleTap, touch.Position, null);
+                                        foundMatchingGesture = true;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        HandleGesture(GestureType.Tap, gesture.Location1, null);
+                                        _residualGestures.RemoveAt(i);
+                                        HandleGesture(GestureType.Tap, touch.Position, null);
+                                        foundMatchingGesture = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (!foundMatchingGesture)
+                            {
+                                _residualGestures.Add(new ResidualGesture() { GestureType = GestureType.Tap, Location1 = touch.Position, CreationTime = DateTime.Now });
+                            }
+
                         }
 
                         memory.Dispose();
@@ -378,10 +442,36 @@ namespace MonoVarmint.Widgets
                         control.HandleTouchMove(TouchMoveType.Leave, touch, memory.PreviousTouch);
                     }
                     HandleGesture(GestureType.FreeDrag, touch.Position, memory.PreviousTouch.Position);
-                    
+
                     break;
                 default:
                     break;
+            }
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// HandleResidualTouch - Some touch events don't take place until some time has
+        ///                       passed. (eg: Tap vs. Double-Tap) 
+        ///                       Call this method regularly from the update loop to make
+        ///                       sure residuals are handled properly.
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public void HandleResidualTouch()
+        {
+            for (int i = 0; i < _residualGestures.Count;)
+            {
+                var gesture = _residualGestures[i];
+
+                // process a tap if a double-tap hasn't happened in the allowable window
+                if (gesture.GestureType == GestureType.Tap && (DateTime.Now - gesture.CreationTime).TotalSeconds > DoubleTapIntervalSeconds)
+                {
+                    HandleGesture(gesture.GestureType, gesture.Location1, gesture.Location2);
+                    _residualGestures.RemoveAt(i);
+                    continue;
+                }
+
+                i++;
             }
         }
     }

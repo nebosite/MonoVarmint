@@ -211,6 +211,8 @@ namespace MonoVarmint.Widgets
                 if (PauseInput) continue;
                 _visualTree.HandleTouch(adjustedTouch);
             }
+
+            _visualTree.HandleResidualTouch();
         }
 
         //--------------------------------------------------------------------------------------
