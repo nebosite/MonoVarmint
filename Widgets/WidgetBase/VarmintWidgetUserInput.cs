@@ -216,45 +216,38 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void HandleGesture(
             GestureType gesture,
-            Vector2 gestureLocation1,
-            Vector2? gestureLocation2)
+            Vector2 gestureStartLocation,
+            Vector2? gestureEndLocation)
         {
-            // Flicks don't preserve location data, so We'll do our best to fill it in.
-            if (gesture == GestureType.Flick && _lastTouchDownLocation != null)
-            {
-                gestureLocation1 = _lastTouchDownLocation.Value;
-                gestureLocation2 = _lastTouchUpLocation;
-                if (gestureLocation2 == null) gestureLocation2 = _lastTouchMoveLocation;
-            }
-            if (gestureLocation2 == null) gestureLocation2 = gestureLocation1;
+            if (gestureEndLocation == null) gestureEndLocation = gestureStartLocation;
 
-            var hitList = HitTest(gestureLocation1);
+            var hitList = HitTest(gestureStartLocation);
 
             switch (gesture)
             {
                 case GestureType.Tap:
                     for (int i = hitList.Count - 1; i >= 0; i--)
                     {
-                        if (hitList[i].HandleTap(gestureLocation1) == EventHandledState.Handled) break;
+                        if (hitList[i].HandleTap(gestureStartLocation) == EventHandledState.Handled) break;
                     }
                     break;
                 case GestureType.DoubleTap:
                     for (int i = hitList.Count - 1; i >= 0; i--)
                     {
-                        if (hitList[i].HandleDoubleTap(gestureLocation1) == EventHandledState.Handled) break;
+                        if (hitList[i].HandleDoubleTap(gestureStartLocation) == EventHandledState.Handled) break;
                     }
                     break;
                 case GestureType.Flick:
                     for (int i = hitList.Count - 1; i >= 0; i--)
                     {
-                        if (hitList[i].HandleFlick(gestureLocation1, gestureLocation2.Value) == EventHandledState.Handled) break;
+                        if (hitList[i].HandleFlick(gestureStartLocation, gestureEndLocation.Value) == EventHandledState.Handled) break;
                     }
                     break;
                 case GestureType.FreeDrag:
                     if (_recentDragWidgets.Count == 0) _dragStartTime = DateTime.Now;
                     for (int i = hitList.Count - 1; i >= 0; i--)
                     {
-                        if (hitList[i].HandleDrag(gestureLocation1, gestureLocation1 - gestureLocation2.Value) == EventHandledState.Handled)
+                        if (hitList[i].HandleDrag(gestureStartLocation, gestureStartLocation - gestureEndLocation.Value) == EventHandledState.Handled)
                         {
                             if (_recentDragWidgets.Count == 0
                                 || _recentDragWidgets[_recentDragWidgets.Count - 1] != hitList[i])
@@ -268,6 +261,10 @@ namespace MonoVarmint.Widgets
                 case GestureType.DragComplete:
                     _recentDragWidgets[_recentDragWidgets.Count - 1].HandleDragComplete();
                     _recentDragWidgets.Clear();
+                    break;
+                case GestureType.Pinch:
+                    break;
+                case GestureType.PinchComplete:
                     break;
                 default:
                     break;
@@ -289,9 +286,6 @@ namespace MonoVarmint.Widgets
         }
 
         Dictionary<int, TouchMemory> _trackedTouches = new Dictionary<int, TouchMemory>();
-        Vector2? _lastTouchDownLocation;
-        Vector2? _lastTouchUpLocation;
-        Vector2? _lastTouchMoveLocation;
 
         class ResidualGesture
         {
@@ -349,8 +343,6 @@ namespace MonoVarmint.Widgets
                                 widget.HandleTouchMove(TouchMoveType.Leave, touch, memory.PreviousTouch);
                             }
                         }
-                        _lastTouchDownLocation = memory.PreviousTouch.Position;
-                        _lastTouchUpLocation = touch.Position;
 
                         // Generate drag complete gesture if we went far enough
                         if (memory.PathLength > DragLengthThreshhold)
@@ -416,9 +408,6 @@ namespace MonoVarmint.Widgets
                         memory.AddPreviousWidget(hitList[i]);
                         if (hitList[i].HandleTouchDown(touch) == EventHandledState.Handled) break;
                     }
-                    _lastTouchDownLocation = memory.PreviousTouch.Position;
-                    _lastTouchUpLocation = null;
-                    _lastTouchMoveLocation = null;
 
                     break;
                 case TouchLocationState.Moved:
@@ -435,7 +424,6 @@ namespace MonoVarmint.Widgets
                         }
                         if (hitList[i].HandleTouchMove(moveType, touch, memory.PreviousTouch) == EventHandledState.Handled) break;
                     }
-                    _lastTouchMoveLocation = touch.Position;
 
                     foreach (var control in previousControls)
                     {
