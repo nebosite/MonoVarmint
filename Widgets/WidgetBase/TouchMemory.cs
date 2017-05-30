@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input.Touch;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input.Touch;
 using System;
 using System.Collections.Generic;
 
@@ -13,11 +14,46 @@ namespace MonoVarmint.Widgets
     {
         List<TouchLocation> _touches = GetTouchBuffer();
         List<VarmintWidget> _previousWidgets = new List<VarmintWidget>();
+        List<VarmintWidget> _startWidgets = new List<VarmintWidget>();
+        int _lastUnresolvedTouchIndex = 0;
 
         /// <summary>
         /// Array of the controls this touch saw last update
         /// </summary>
         public VarmintWidget[] PreviousWidgets { get { return _previousWidgets.ToArray(); } }
+
+        /// <summary>
+        /// Array of the controls this touch started with
+        /// </summary>
+        public VarmintWidget[] StartWidgets { get { return _startWidgets.ToArray(); } }
+
+        /// <summary>
+        /// LastUpdateTime
+        /// </summary>
+        GameTime _touchStartTime = new GameTime();
+        public GameTime TouchStartTime
+        {
+            get { return _touchStartTime; }
+            set
+            {
+                _touchStartTime.TotalGameTime = value.TotalGameTime;
+                _touchStartTime.ElapsedGameTime = value.ElapsedGameTime;
+            }
+        }
+        GameTime _lastUpdateTime = new GameTime();
+        public GameTime LastUpdateTime
+        {
+            get { return _lastUpdateTime; }
+            set
+            {
+                _lastUpdateTime.TotalGameTime = value.TotalGameTime;
+                _lastUpdateTime.ElapsedGameTime = value.ElapsedGameTime;
+            }
+        }
+
+        public float TotalDistance { get; set; }
+
+        public GestureType GestureType { get; set; }
 
         /// <summary>
         /// The touch just before the current touch in memory
@@ -30,6 +66,15 @@ namespace MonoVarmint.Widgets
                 return _touches[_touches.Count - 2];
             }
         }
+        public TouchLocation LastUnresolvedTouch
+        {
+            get
+            {
+                return _touches[_lastUnresolvedTouchIndex];
+            }
+        }
+
+        public int UnresolvedCount { get { return _touches.Count - 1 - _lastUnresolvedTouchIndex; } }
 
         /// <summary>
         /// The last touch in the list
@@ -100,11 +145,22 @@ namespace MonoVarmint.Widgets
 
         //--------------------------------------------------------------------------------------
         /// <summary>
+        /// ctor
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public TouchMemory()
+        {
+            GestureType = GestureType.None;
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
         /// AddTouch - remember this touch
         /// </summary>
         //--------------------------------------------------------------------------------------
         internal void AddTouch(TouchLocation touch)
         {
+            if (_touches.Count > 0) TotalDistance += (CurrentTouch.Position - touch.Position).Length();
             _touches.Add(touch);
         }
 
@@ -113,9 +169,19 @@ namespace MonoVarmint.Widgets
         /// AddPreviousWidget - remember this as a recent widget
         /// </summary>
         //--------------------------------------------------------------------------------------
-        internal void AddPreviousWidget(VarmintWidget widget)
+        internal void AddTouchedWidget(VarmintWidget widget)
         {
             _previousWidgets.Add(widget);
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// AddStartWidget - remember this as an initially touched widget
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        internal void AddStartWidget(VarmintWidget widget)
+        {
+            _startWidgets.Add(widget);
         }
 
         //--------------------------------------------------------------------------------------
@@ -151,6 +217,36 @@ namespace MonoVarmint.Widgets
             _touches.Clear();
             _touchBuffers.Push(_touches);
             _touches = null;
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// SecondsAfterLastUpdate
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        internal double SecondsAfterLastUpdate(GameTime gameTime)
+        {
+            return (gameTime.TotalGameTime - LastUpdateTime.TotalGameTime).TotalSeconds;
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// SecondsAfterStart
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        internal double SecondsAfterStart(GameTime gameTime)
+        {
+            return (gameTime.TotalGameTime - TouchStartTime.TotalGameTime).TotalSeconds;
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// MarkResolved - Signal that all the known touches have been inspected
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public void MarkResolved()
+        {
+            _lastUnresolvedTouchIndex = _touches.Count - 1;
         }
     }
 }

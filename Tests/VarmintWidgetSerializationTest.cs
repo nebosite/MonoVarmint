@@ -41,7 +41,7 @@ namespace MonoVarmint.Tools.Tests
             Assert.AreEqual(0.2f, target.Offset.Y);
             Assert.AreEqual(10, target.Size.X);
             Assert.AreEqual(11, target.Size.Y);
-            target.HandleGesture(GestureType.Tap, new Vector2(1, 1), null);
+            target.HandleTap(new Vector2(1, 1));
             Assert.AreEqual(1, bindToMe.FooCalls);
         }
 

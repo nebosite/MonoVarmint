@@ -192,10 +192,6 @@ namespace MonoVarmint.Widgets
         static VarmintWidget()
         {
             _knownAssemblies.Add(typeof(VarmintWidget).GetTypeInfo().Assembly);
-            DragLengthThreshhold = .05f;
-            FlickThreshholdSeconds = 0.3;
-            DoubleTapIntervalSeconds = 0.25;
-            DoubleTapRadius = 0.1f;
         }
 
         //--------------------------------------------------------------------------------------
@@ -213,7 +209,13 @@ namespace MonoVarmint.Widgets
             AllowInput = true;
             Margin = new WidgetMargin();
             Stretch = new StretchParameter();
-        }
+
+            DragLengthThreshhold = .05f;
+            FlickThreshholdSeconds = 0.15;
+            DoubleTapIntervalSeconds = 0.25;
+            DoubleTapRadius = 0.1f;
+            TouchOrphanTimeoutSeconds = 1;
+       }
 
         //--------------------------------------------------------------------------------------
         /// <summary>

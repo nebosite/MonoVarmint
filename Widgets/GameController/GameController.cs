@@ -209,10 +209,10 @@ namespace MonoVarmint.Widgets
                 hitSpot.X -= (float)_backBufferXOffset / _backBufferWidth;
                 var adjustedTouch = new TouchLocation(touch.Id, touch.State, hitSpot);
                 if (PauseInput) continue;
-                _visualTree.HandleTouch(adjustedTouch);
+                _visualTree.ReportTouch(adjustedTouch, gameTime);
             }
 
-            _visualTree.HandleResidualTouch();
+            _visualTree.ResolveGestures(gameTime);
         }
 
         //--------------------------------------------------------------------------------------

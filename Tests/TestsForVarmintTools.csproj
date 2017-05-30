@@ -55,6 +55,7 @@
     <Compile Include="VarmintWidgetStackpanelTests.cs" />
     <Compile Include="VarmintWidgetFormattingTests.cs" />
     <Compile Include="VarmintWidgetSerializationTest.cs" />
+    <Compile Include="VarmintWidgetTouchAndGestureTests.cs" />
     <Compile Include="VarmintWidgetTest.cs" />
     <Compile Include="VarmintSerializerTests.cs" />
   </ItemGroup>
