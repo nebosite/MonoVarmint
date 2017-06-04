@@ -56,6 +56,16 @@ namespace MonoVarmint.Widgets
             OnLoaded?.Invoke();
         }
 
+        //-----------------------------------------------------------------------------------------------
+        /// <summary>
+        /// Prepare - prepare the visual elements in this widget according to sytles
+        /// </summary>
+        //-----------------------------------------------------------------------------------------------
+        internal void Prepare(VarmintWidget overlay)
+        {
+            overlay.Prepare(_widgetSpace.StyleLibrary);
+        }
+
         internal void LoadFonts(params string[] names)
         {
             foreach (var name in names)

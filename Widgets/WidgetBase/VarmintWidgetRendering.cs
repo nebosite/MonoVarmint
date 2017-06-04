@@ -31,7 +31,7 @@ namespace MonoVarmint.Widgets
         /// Render
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public virtual void RenderMe(GameTime gameTime, Dictionary<string, VarmintWidgetStyle> styleLibrary = null)
+        public virtual void RenderMe(GameTime gameTime)
         {
             Update();
             if (!IsVisible) return;
@@ -41,7 +41,7 @@ namespace MonoVarmint.Widgets
             if (shouldClip) Renderer.BeginClipping(AbsoluteOffset, Size);
             OnRender?.Invoke(gameTime, this);
 
-            RenderChildren(gameTime, styleLibrary);
+            RenderChildren(gameTime);
 
             if (shouldClip)
             {
@@ -60,7 +60,7 @@ namespace MonoVarmint.Widgets
         /// Render
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public virtual void RenderChildren(GameTime gameTime, Dictionary<string, VarmintWidgetStyle> styleLibrary = null)
+        public virtual void RenderChildren(GameTime gameTime)
         {
             if (children.Count > 0)
             {
@@ -68,7 +68,7 @@ namespace MonoVarmint.Widgets
                 var localChildren = new List<VarmintWidget>(children);
                 foreach (var child in localChildren)
                 {
-                    child.RenderMe(gameTime, styleLibrary);
+                    child.RenderMe(gameTime);
                 }
             }
         }
