@@ -53,6 +53,7 @@ namespace MonoVarmint.Widgets
         /// Enumerated list of children in visual order
         /// </summary>
         public IReadOnlyList<VarmintWidget> Children { get { return (IReadOnlyList<VarmintWidget>)children; } }
+        public List<VarmintWidget> ChildrenCopy { get { return new List<VarmintWidget>(children); } }
 
         //--------------------------------------------------------------------------------------
         /// <summary>

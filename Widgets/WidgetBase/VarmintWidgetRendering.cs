@@ -23,7 +23,7 @@ namespace MonoVarmint.Widgets
             foreach (var animation in localAnimations) animation.Update(this, gameTime);
             _animations.RemoveAll(a => a.IsComplete);
 
-            foreach (var child in Children) child.AdvanceAnimations(gameTime);
+            foreach (var child in ChildrenCopy) child.AdvanceAnimations(gameTime);
         }
 
         //--------------------------------------------------------------------------------------
