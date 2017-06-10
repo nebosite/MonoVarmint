@@ -73,7 +73,6 @@ namespace MonoVarmint.Widgets
                             throw new ApplicationException("Ambiguous Widget Type: " + typeName);
                         }
                         probableMatch = type;
-                        return type;
                     }
                 }
             }
