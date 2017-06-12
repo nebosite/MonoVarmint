@@ -13,7 +13,7 @@ namespace MonoVarmint.Widgets
         public event Func<VarmintWidget, Vector2, EventHandledState> OnTap;
         public event Func<VarmintWidget, Vector2, EventHandledState> OnDoubleTap;
         public event Func<VarmintWidget, Vector2, Vector2, EventHandledState> OnFlick;
-        public event Func<VarmintWidget, Vector2, Vector2, EventHandledState> OnDrag;
+        public event Func<VarmintWidget, Vector2, Vector2, EventHandledState> OnDrag; // location, delta
         public event Func<EventHandledState> OnDragComplete;
         public event Func<EventHandledState> OnDragCancel;
         public event Func<VarmintWidget, Vector2, float, float, EventHandledState> OnPinch; // location, rotation, scale

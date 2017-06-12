@@ -30,6 +30,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)GameController\GameControllerRendering.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Templates\GameRunner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WidgetSpace\VarmintWidgetSpace.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetScrollView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetSprite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetControl.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetButton.cs" />

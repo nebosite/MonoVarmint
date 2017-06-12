@@ -159,7 +159,7 @@ namespace MonoVarmint.Widgets
         /// <summary>
         /// AbsoluteOffset
         /// </summary>
-        public Vector2 AbsoluteOffset
+        public virtual Vector2 AbsoluteOffset
         {
             get
             {

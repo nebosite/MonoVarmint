@@ -72,28 +72,10 @@ namespace MonoVarmint.Widgets
 
         //--------------------------------------------------------------------------------------
         /// <summary>
-        /// AddChildren
-        /// </summary>
-        //--------------------------------------------------------------------------------------
-        public virtual void AddChildren(VarmintWidget[] widgets, bool suppressChildUpdate = false)
-        {
-            foreach (var widget in widgets)
-            {
-                children.Add(widget);
-                widget.Parent = this;
-            }
-            if (ChildrenAffectFormatting && !suppressChildUpdate)
-            {
-                UpdateChildFormatting();
-            }
-        }
-
-        //--------------------------------------------------------------------------------------
-        /// <summary>
         /// RemoveChild
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public void RemoveChild(VarmintWidget childToRemove, bool suppressChildUpdate = false)
+        public virtual void RemoveChild(VarmintWidget childToRemove, bool suppressChildUpdate = false)
         {
             children.Remove(childToRemove);
             if (ChildrenAffectFormatting && !suppressChildUpdate)
@@ -107,7 +89,7 @@ namespace MonoVarmint.Widgets
         /// ClearChildren
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public void ClearChildren()
+        public virtual void ClearChildren()
         {
             children.Clear();
             if (ChildrenAffectFormatting)
