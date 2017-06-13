@@ -42,8 +42,7 @@ namespace MonoVarmint.Widgets
         {
             ClipToBounds = true;
             this.SetCustomRender((gt, w) => {
-                ScrollOffset += _momentum;
-                KeepInBounds();
+                ScrollBy(_momentum);
                 _momentum *= .9f;
                 Renderer.DrawBox(AbsoluteOffset, Size, BackgroundColor);
             });
@@ -99,29 +98,34 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         //
         //--------------------------------------------------------------------------------------
-        private void KeepInBounds()
+        private void KeepInBounds(Vector2 previousDelta)
         {
             var correction = Vector2.Zero;
-            if (_innerContent.ExtremeLeft + ScrollOffset.X > 0)
+            if(previousDelta.X != 0)
             {
-                correction.X = -(_innerContent.ExtremeLeft + ScrollOffset.X);
+                if (_innerContent.ExtremeRight + ScrollOffset.X < Size.X)
+                {
+                    correction.X = Size.X - (_innerContent.ExtremeRight + ScrollOffset.X);
+                }
+
+                else if (_innerContent.ExtremeLeft + ScrollOffset.X > 0)
+                {
+                    correction.X = -(_innerContent.ExtremeLeft + ScrollOffset.X);
+                }
+
             }
 
-            if (_innerContent.ExtremeTop + ScrollOffset.Y > 0)
+            if (previousDelta.Y != 0)
             {
-                correction.Y = -(_innerContent.ExtremeTop + ScrollOffset.Y);
-            }
+                if (_innerContent.ExtremeTop + ScrollOffset.Y > 0)
+                {
+                    correction.Y = -(_innerContent.ExtremeTop + ScrollOffset.Y);
+                }
 
-            if (_innerContent.ExtremeRight + ScrollOffset.X < Size.X
-                && _innerContent.ExtremeLeft + ScrollOffset.X < 0)
-            {
-                correction.X = Size.X - (_innerContent.ExtremeRight + ScrollOffset.X);
-            }
-
-            if (_innerContent.ExtremeBottom + ScrollOffset.Y < Size.Y
-                && _innerContent.ExtremeTop + ScrollOffset.Y < 0)
-            {
-                correction.Y = Size.Y - (_innerContent.ExtremeBottom + ScrollOffset.Y);
+                else if (_innerContent.ExtremeBottom + ScrollOffset.Y < Size.Y)
+                {
+                    correction.Y = Size.Y - (_innerContent.ExtremeBottom + ScrollOffset.Y);
+                }
             }
 
             ScrollOffset += correction;
@@ -132,9 +136,31 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         private EventHandledState VarmintWidgetScrollView_OnDrag(VarmintWidget source, Vector2 location, Vector2 delta)
         {
-            ScrollOffset += delta;
-            KeepInBounds();
+            ScrollBy(delta);
             return EventHandledState.Handled;
+        }
+
+        //--------------------------------------------------------------------------------------
+        //
+        //--------------------------------------------------------------------------------------
+        void ScrollBy(Vector2 delta)
+        {
+            if (_innerContent.ExtremeLeft + ScrollOffset.X >= 0
+                && _innerContent.ExtremeRight + ScrollOffset.X <= Size.X)
+            {
+                // Don't try to scroll if we are inside the display area
+                delta.X = 0;
+            }
+
+            if (_innerContent.ExtremeTop + ScrollOffset.Y >= 0
+                && _innerContent.ExtremeBottom + ScrollOffset.Y <= Size.Y)
+            {
+                // Don't try to scroll if we are inside the display area
+                delta.Y = 0;
+            }
+            ScrollOffset += delta;
+            KeepInBounds(delta);
+
         }
 
         //--------------------------------------------------------------------------------------
