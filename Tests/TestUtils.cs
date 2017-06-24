@@ -21,7 +21,7 @@ namespace MonoVarmint.Tools.Tests
 
     class BindingThing
     {
-        public int FooCalls = 0;
+        public int FooCalls = 0; 
         public Vector2 SizeProperty { get { return new Vector2(2, 3); } }
         public VarmintWidget.EventHandledState HandleTap(VarmintWidget widget, Vector2 location)
         {

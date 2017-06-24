@@ -1,0 +1,2 @@
+	[ ] Varmint Widgets demo should user VarmintWidgetSpace, styles, and controls
+	[ ] More tests

@@ -7,6 +7,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Stuff", "Stuff", "{00DBFC4F
 	ProjectSection(SolutionItems) = preProject
 		GetStarted.txt = GetStarted.txt
 		License.txt = License.txt
+		TODO.txt = TODO.txt
 	EndProjectSection
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "VarmintTools", "Tools\VarmintTools.shproj", "{F89FA038-229B-42D6-8844-AFC7C045A9E3}"

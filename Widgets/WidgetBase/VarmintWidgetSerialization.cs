@@ -310,7 +310,30 @@ namespace MonoVarmint.Widgets
                 }
                 foreach (var childItem in layout.Children)
                 {
-                    output.AddChild(HydrateLayout(injector, childItem, controlLibrary), true);
+                    if(childItem.VwmlTag.Contains("."))
+                    {
+                        var parts = childItem.VwmlTag.Split('.');
+                        if (parts.Length > 2)
+                        {
+                            throw new ApplicationException("Property setter specification is too deep.  Only one dot allowed! (" + childItem.VwmlTag + ")");
+                        }
+
+                        var propertyType = output.GetType().GetProperty(parts[1]);
+                        if (childItem.Children.Count == 1) // Only add items with content
+                        {
+                            var hydratedLayout = HydrateLayout(injector, childItem.Children[0], controlLibrary);
+                            if (!hydratedLayout.GetType().IsAssignableFrom(propertyType.PropertyType))
+                            {
+                                throw new ApplicationException("Property " + childItem.VwmlTag + " is not of Type " + hydratedLayout.GetType().Name);
+                            }
+                            propertyType.SetValue(output, hydratedLayout);
+                        }
+                        else if(childItem.Children.Count > 1)
+                        {
+                            throw new ApplicationException("Too many child nodes on a property setter.  You only get one! (" + childItem.VwmlTag + ")");
+                        }
+                    }
+                    else output.AddChild(HydrateLayout(injector, childItem, controlLibrary), true);
                 }
             };
 

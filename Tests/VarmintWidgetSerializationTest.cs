@@ -19,9 +19,98 @@ namespace MonoVarmint.Tools.Tests
             return null;
         }
 
+        public class ChildPropertyWidget: VarmintWidget
+        {
+            public ChildPropertyWidget Foo { get; set; }
+        }
+
+        [TestMethod]
+        public void ChildPropertySettingWorks()
+        {
+            var layoutText =
+                @"
+<ChildPropertyWidget>
+    <Grid Name=""Gumby"" />
+    <ChildPropertyWidget.Foo>
+        <ChildPropertyWidget Name=""greg"" />
+    </ChildPropertyWidget.Foo>
+</ChildPropertyWidget>";
+            var bindToMe = new BindingThing();
+
+            var target = (ChildPropertyWidget) TestUtils.LoadFromText(this, layoutText, "CP");
+            Assert.AreEqual(1, target.Children.Count);
+            Assert.AreEqual("Gumby", target.Children[0].Name);
+            Assert.AreEqual("greg", target.Foo.Name);
+        }
+
+        [TestMethod]
+        public void ChildPropertyThrowsIfMoreThanOneDeep()
+        {
+            var layoutText =
+                @"
+<ChildPropertyWidget>
+    <ChildPropertyWidget.Foo.Foo>
+        <Grid Name=""greg"" />
+    </ChildPropertyWidget.Foo.Foo>
+</ChildPropertyWidget>";
+            var bindToMe = new BindingThing();
+
+            Assert.AreEqual("Property setter specification is too deep.  Only one dot allowed! (ChildPropertyWidget.Foo.Foo)",
+                Assert.ThrowsException<ApplicationException>(() => { TestUtils.LoadFromText(this, layoutText, "CP"); }).Message);
+        }
+
+        [TestMethod]
+        public void ChildPropertyIsNullWhenChildContentNotSpecified()
+        {
+            var layoutText =
+                @"
+<ChildPropertyWidget>
+    <ChildPropertyWidget.Foo>
+    </ChildPropertyWidget.Foo>
+</ChildPropertyWidget>";
+            var bindToMe = new BindingThing();
+
+            var target = (ChildPropertyWidget)TestUtils.LoadFromText(this, layoutText, "CP");
+            Assert.AreEqual(0, target.Children.Count);
+            Assert.AreEqual(null, target.Foo);
+        }
+
+        [TestMethod]
+        public void ChildPropertyThrowsIfTooManyChildren()
+        {
+            var layoutText =
+                @"
+<ChildPropertyWidget>
+    <ChildPropertyWidget.Foo>
+        <ChildPropertyWidget Name=""greg"" />
+        <ChildPropertyWidget Name=""bob"" />
+    </ChildPropertyWidget.Foo>
+</ChildPropertyWidget>";
+            var bindToMe = new BindingThing();
+
+            Assert.AreEqual("Too many child nodes on a property setter.  You only get one! (ChildPropertyWidget.Foo)",
+                Assert.ThrowsException<ApplicationException>(() => { TestUtils.LoadFromText(this, layoutText, "CP"); }).Message);
+        }
+
+        [TestMethod]
+        public void ChildPropertyThrowsIfBadType()
+        {
+            var layoutText =
+                @"
+<ChildPropertyWidget>
+    <ChildPropertyWidget.Name>
+        <ChildPropertyWidget Name=""greg"" />
+    </ChildPropertyWidget.Name>
+</ChildPropertyWidget>";
+            var bindToMe = new BindingThing();
+
+            Assert.AreEqual("Property ChildPropertyWidget.Name is not of Type ChildPropertyWidget",
+                Assert.ThrowsException<ApplicationException>(() => { TestUtils.LoadFromText(this, layoutText, "CP"); }).Message);
+        }
+
         [TestMethod]
         public void GeneralPropertySerializationWorks()
-        {
+        { 
             var layoutText =
                 @"<TestWidget 
                     Parameters=""Foo=Bar,that`Blech=223""
