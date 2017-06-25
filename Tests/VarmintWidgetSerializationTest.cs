@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Text;
 using Microsoft.Xna.Framework.Input.Touch;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace MonoVarmint.Tools.Tests
 {
@@ -38,8 +39,8 @@ namespace MonoVarmint.Tools.Tests
             var bindToMe = new BindingThing();
 
             var target = (ChildPropertyWidget) TestUtils.LoadFromText(this, layoutText, "CP");
-            Assert.AreEqual(1, target.Children.Count);
-            Assert.AreEqual("Gumby", target.Children[0].Name);
+            Assert.AreEqual(true, target.HasChildren);
+            Assert.AreEqual("Gumby", target.Children.First().Name);
             Assert.AreEqual("greg", target.Foo.Name);
         }
 
@@ -71,7 +72,7 @@ namespace MonoVarmint.Tools.Tests
             var bindToMe = new BindingThing();
 
             var target = (ChildPropertyWidget)TestUtils.LoadFromText(this, layoutText, "CP");
-            Assert.AreEqual(0, target.Children.Count);
+            Assert.AreEqual(false, target.HasChildren);
             Assert.AreEqual(null, target.Foo);
         }
 

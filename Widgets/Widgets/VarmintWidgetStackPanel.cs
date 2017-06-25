@@ -80,7 +80,7 @@ namespace MonoVarmint.Widgets
             }
             var intendedSpace = newStackSize.Y;
 
-            if(Children.Count == 0)
+            if(!HasChildren)
             {
                 this.Size = newStackSize;
                 return;

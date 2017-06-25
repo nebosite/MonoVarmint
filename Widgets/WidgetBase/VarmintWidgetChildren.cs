@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Xml;
+using System.Linq;
 
 namespace MonoVarmint.Widgets
 {
@@ -52,8 +53,16 @@ namespace MonoVarmint.Widgets
         /// <summary>
         /// Enumerated list of children in visual order
         /// </summary>
-        public IReadOnlyList<VarmintWidget> Children { get { return (IReadOnlyList<VarmintWidget>)children; } }
+        public virtual IEnumerable<VarmintWidget> Children { get { return (IEnumerable<VarmintWidget>)children; } }
         public List<VarmintWidget> ChildrenCopy { get { return new List<VarmintWidget>(children); } }
+
+        public bool HasChildren
+        {
+            get
+            {
+                return Children.GetEnumerator().MoveNext();
+            }
+        }
 
         //--------------------------------------------------------------------------------------
         /// <summary>
