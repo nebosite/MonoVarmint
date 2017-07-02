@@ -74,6 +74,7 @@ namespace MonoVarmint.Widgets
             }
 
             var returnMe = _screensByName[screenName];
+            returnMe.Prepare(_styleLibrary);
             return returnMe;
         }
 
