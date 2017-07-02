@@ -42,7 +42,7 @@ namespace MonoVarmint.Widgets
         {
             if (Name == name) return this;
 
-            foreach (var child in children)
+            foreach (var child in Children)
             {
                 var match = child.FindWidgetByName(name);
                 if (match != null) return match;
@@ -54,7 +54,7 @@ namespace MonoVarmint.Widgets
         /// Enumerated list of children in visual order
         /// </summary>
         public virtual IEnumerable<VarmintWidget> Children { get { return (IEnumerable<VarmintWidget>)children; } }
-        public List<VarmintWidget> ChildrenCopy { get { return new List<VarmintWidget>(children); } }
+        public List<VarmintWidget> ChildrenCopy { get { return new List<VarmintWidget>(Children); } }
 
         public bool HasChildren
         {
