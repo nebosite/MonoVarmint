@@ -11,8 +11,30 @@ namespace MonoVarmint.Widgets
     [VarmintWidgetShortName("Slider")]
     public class VarmintWidgetPanelSlider : VarmintWidget
     {
-        public VarmintWidget Track { get; set; }
-        public VarmintWidget Thumb { get; set; }
+        private VarmintWidget track;
+        public VarmintWidget Track {
+            get
+            {
+                return track;
+            }
+            set
+            {
+                track = value;
+                if (track != null) track.Parent = this;
+            }
+        }
+        private VarmintWidget thumb;
+        public VarmintWidget Thumb {
+            get
+            {
+                return thumb;
+            }
+            set
+            {
+                thumb = value;
+                if (thumb != null) thumb.Parent = this;
+            }
+        }
 
         public override IEnumerable<VarmintWidget> Children
         {

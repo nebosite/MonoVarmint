@@ -30,9 +30,7 @@
       ForegroundColor="Yellow"
       Content="WOW!"
       VerticalContentAlignment="Center"
-      Rotate="{WowRotate}"
-      />
-    
+      Rotate="{WowRotate}" />
     <Slider Size=".8,.2" BackgroundColor="Red">
       <Slider.Track>
         <Label Content="|-----------------------------------------|" Stretch="1,1"/> 
