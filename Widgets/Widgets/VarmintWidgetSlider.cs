@@ -31,9 +31,28 @@ namespace MonoVarmint.Widgets
             }
             set
             {
+                if (thumb != null)
+                {
+                    thumb.OnDrag -= Thumb_OnDrag;
+                }
                 thumb = value;
-                if (thumb != null) thumb.Parent = this;
+                if (thumb != null)
+                {
+                    thumb.Parent = this;
+                    thumb.OnDrag += Thumb_OnDrag;
+                }
             }
+        }
+
+        private EventHandledState Thumb_OnDrag(VarmintWidget sender, Vector2 start, Vector2 end)
+        {
+            // TODO: Implement to allow dragging to work.
+            // This should probably be implemented by changing the underlying slider value
+            // according to the drag position. Data binding will then update the slider
+            // thumb position accordingly, creating the effect of a drag. This will also cause
+            // the slider to jump between valid positions in situations where only a few
+            // integer values are accepted.
+            throw new System.NotImplementedException();
         }
 
         public override IEnumerable<VarmintWidget> Children
