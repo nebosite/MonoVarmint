@@ -108,7 +108,7 @@ namespace MonoVarmint.Widgets
         {
             if (recurse)
             {
-                foreach (var child in children)
+                foreach (var child in Children)
                 {
                     child.ReadBindings(true);
                 }
