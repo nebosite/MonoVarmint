@@ -322,9 +322,9 @@ namespace MonoVarmint.Widgets
                         if (childItem.Children.Count == 1) // Only add items with content
                         {
                             var hydratedLayout = HydrateLayout(injector, childItem.Children[0], controlLibrary);
-                            if (!hydratedLayout.GetType().IsAssignableFrom(propertyType.PropertyType))
+                            if (!propertyType.PropertyType.IsAssignableFrom(hydratedLayout.GetType()))
                             {
-                                throw new ApplicationException("Property " + childItem.VwmlTag + " is not of Type " + hydratedLayout.GetType().Name);
+                                throw new ApplicationException("Property " + childItem.VwmlTag + " cannot be assigned Type " + hydratedLayout.GetType().Name);
                             }
                             propertyType.SetValue(output, hydratedLayout);
                         }

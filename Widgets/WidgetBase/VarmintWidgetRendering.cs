@@ -50,12 +50,17 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public virtual void RenderChildren(GameTime gameTime)
         {
-            if (children.Count <= 0) return;
-            // Make a local copy because children can modify parent/child relationships
-            var localChildren = new List<VarmintWidget>(children);
-            foreach (var child in localChildren)
+            if (HasChildren)
             {
-                child.RenderMe(gameTime);
+                // Make a local copy because children can modify parent/child relationships
+                var localChildren = new List<VarmintWidget>(Children);
+                foreach (var child in localChildren)
+                {
+                    if (Renderer.IsInRenderingWindow(child.AbsoluteOffset, child.Size))
+                    {
+                        child.RenderMe(gameTime);
+                    }
+                }
             }
         }
 
@@ -154,17 +159,18 @@ namespace MonoVarmint.Widgets
             _updating = true;
             // recurse first to ensure children that have a size determined by content
             // update their size.
-            foreach (var child in children)
+            foreach (var child in Children)
             {
-               child. UpdateChildFormatting();
+               child.UpdateChildFormatting();
             }
             UpdateChildFormatting_Internal(updatedSize);
             _updating = false;
         }
+
         protected virtual void UpdateChildFormatting_Internal(Vector2? updatedSize)
         {
             if (updatedSize != null) Size = updatedSize.Value;
-            foreach (var child in children)
+            foreach (var child in Children)
             {
                 var newSize = child.IntendedSize;
                 if (child.Stretch.Horizontal != null) newSize.X = Size.X - ((child.Margin.Left ?? 0) + (child.Margin.Right ?? 0));
