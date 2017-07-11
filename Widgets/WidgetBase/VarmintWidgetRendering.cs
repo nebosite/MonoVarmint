@@ -33,11 +33,11 @@ namespace MonoVarmint.Widgets
             if (!IsVisible) return;
             if (Size.X > 0 && Size.Y > 0)
             {
-                Renderer?.BeginClipping(this, Size);
+                Renderer.BeginClipping(this, Size);
 
                 OnRender?.Invoke(gameTime, this);
 
-                Renderer?.EndClipping();
+                Renderer.EndClipping();
             }
 
             RenderChildren(gameTime);
@@ -73,7 +73,7 @@ namespace MonoVarmint.Widgets
             if (FlipVertical) transform *= Matrix.CreateScale(1, -1, 1);
             transform *= Matrix.CreateRotationZ(Rotate);
             transform *= Matrix.CreateTranslation(Offset.X, Offset.Y, 0);
-            Renderer?.DrawCachedWidget(this, transform);
+            Renderer.DrawCachedWidget(this, transform);
             foreach (var child in children)
             {
                 child.ComposeInternal(transform);
