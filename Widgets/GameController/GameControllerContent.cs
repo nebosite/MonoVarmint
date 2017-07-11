@@ -38,7 +38,7 @@ namespace MonoVarmint.Widgets
             }
 
             var scaleFactor = _backBufferWidth / 1000.0f;
-            _scaleToNativeResolution = Matrix.CreateScale(new Vector3(scaleFactor, scaleFactor, 1));
+            Matrix.CreateScale(new Vector3(scaleFactor, scaleFactor, 1));
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 

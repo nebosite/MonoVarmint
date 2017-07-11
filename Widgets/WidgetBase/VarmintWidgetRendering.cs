@@ -1,10 +1,6 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input.Touch;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Xml;
 
 namespace MonoVarmint.Widgets
 {
@@ -35,24 +31,16 @@ namespace MonoVarmint.Widgets
         {
             Update();
             if (!IsVisible) return;
+            if (Size.X > 0 && Size.Y > 0)
+            {
+                Renderer?.BeginClipping(this, Size);
 
-            bool shouldClip = ClipToBounds
-                || Rotate != 0 || FlipHorizontal || FlipVertical;
-            if (shouldClip) Renderer.BeginClipping(AbsoluteOffset, Size);
-            OnRender?.Invoke(gameTime, this);
+                OnRender?.Invoke(gameTime, this);
+
+                Renderer?.EndClipping();
+            }
 
             RenderChildren(gameTime);
-
-            if (shouldClip)
-            {
-                float rotation = 0;
-                Renderer.EndClipping(
-                    (float)(Rotate / 180.0 * Math.PI), 
-                    new Vector2(.5f),
-                    new Vector2(1),
-                    FlipHorizontal,
-                    FlipVertical);
-            }
         }
 
         //--------------------------------------------------------------------------------------
@@ -62,14 +50,27 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public virtual void RenderChildren(GameTime gameTime)
         {
-            if (children.Count > 0)
+            if (children.Count <= 0) return;
+            // Make a local copy because children can modify parent/child relationships
+            var localChildren = new List<VarmintWidget>(children);
+            foreach (var child in localChildren)
             {
-                // Make a local copy because children can modify parent/child relationships
-                var localChildren = new List<VarmintWidget>(children);
-                foreach (var child in localChildren)
-                {
-                    child.RenderMe(gameTime);
-                }
+                child.RenderMe(gameTime);
+            }
+        }
+
+        public virtual void Compose(GameTime gameTime)
+        {
+            ComposeInternal(gameTime, Vector2.Zero, Vector2.One, 0, false, false);
+        }
+
+        private void ComposeInternal(GameTime gameTime, Vector2 offset, Vector2 scale, float rotate, bool flipHorizontal,
+            bool flipVertical)
+        {
+            Renderer?.DrawCachedWidget(this, Offset + offset, Size * scale, Rotate + rotate, Size * scale / 2, FlipHorizontal ^ flipHorizontal, FlipVertical ^ flipVertical);
+            foreach (var child in children)
+            {
+                child.ComposeInternal(gameTime, Offset + offset, scale, Rotate + rotate, FlipHorizontal ^ flipHorizontal, FlipVertical ^ flipVertical);
             }
         }
 

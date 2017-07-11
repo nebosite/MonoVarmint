@@ -2,26 +2,23 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Text;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Audio;
-using System.Threading;
-using System.Diagnostics;
 
 namespace MonoVarmint.Widgets
 {
-    public partial class GameController : IMediaRenderer
+    public partial class GameController
     {
-        GraphicsDeviceManager _graphics;
+        readonly GraphicsDeviceManager _graphics;
         SpriteBatch _spriteBatch;
+
+        //todo: add basic effect property
 
         public double SoundVolume { get; set; }
 
         public Vector2 DrawOffset { get; set; }
 
         // these are used to allow a portrait-oriented app on any resolution
-        Matrix _scaleToNativeResolution;
         int _backBufferWidth;
         int _backBufferHeight;
         int _backBufferXOffset;
@@ -37,8 +34,6 @@ namespace MonoVarmint.Widgets
         {
             return _visualTree.FindWidgetByName(widgetName);
         }
-
-        bool _inSpriteBatch = false;
 
         //--------------------------------------------------------------------------------------
         /// <summary>
@@ -99,7 +94,7 @@ namespace MonoVarmint.Widgets
                 int x = spriteNumber % _columns;
                 int y = spriteNumber / _columns;
 
-                return new Microsoft.Xna.Framework.Rectangle(x * Width, y * Height, Width, Height);
+                return new Rectangle(x * Width, y * Height, Width, Height);
             }
         }
 
@@ -109,6 +104,7 @@ namespace MonoVarmint.Widgets
         /// Start a spritebatch session if not already started
         /// </summary>
         //--------------------------------------------------------------------------------------
+        [Obsolete]
         void EnsureSpriteBatch(RasterizerState rasterizerState = null)
         {
            // Debug.WriteLine("AAA// Draw Something");
@@ -126,6 +122,7 @@ namespace MonoVarmint.Widgets
         /// End a spritebatch session if there is one
         /// </summary>
         //--------------------------------------------------------------------------------------
+        [Obsolete]
         void EndSpriteBatch()
         {
             //if (_inSpriteBatch)
@@ -158,23 +155,22 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public bool IsInRenderingWindow(Vector2 offset, Vector2 size)
         {
-            var buffer = 0.01f;
+            const float buffer = 0.01f;
             offset -= DrawOffset;
             var corner = offset;
 
-            Func<bool> cornerIsVisible = () =>
+            bool CornerIsVisible()
             {
-                return ((corner.X >= -buffer && corner.X <= ScreenSize.X + buffer)
-                && (corner.Y >= -buffer && corner.Y <= ScreenSize.Y + buffer));
-            };
+                return corner.X >= -buffer && corner.X <= ScreenSize.X + buffer && corner.Y >= -buffer && corner.Y <= ScreenSize.Y + buffer;
+            }
 
-            if (cornerIsVisible()) return true;
+            if (CornerIsVisible()) return true;
             corner = offset + new Vector2(ScreenSize.X, 0);
-            if (cornerIsVisible()) return true;
+            if (CornerIsVisible()) return true;
             corner = offset + new Vector2(0, ScreenSize.Y);
-            if (cornerIsVisible()) return true;
+            if (CornerIsVisible()) return true;
             corner = offset + ScreenSize;
-            return (cornerIsVisible());
+            return CornerIsVisible();
         }
 
         //--------------------------------------------------------------------------------------
@@ -234,11 +230,10 @@ namespace MonoVarmint.Widgets
 
             var spaceSize = MeasureText(" ", fontSize);
             var lines = text.Split('\n');
-            var currentTextWidth = 0f;
-            foreach (var line in lines)
+            foreach (var unused in lines)
             {
                 var lineBuilder = new StringBuilder();
-                currentTextWidth = 0;
+                float currentTextWidth = 0;
                 var parts = text.Split(' ');
                 foreach (var part in parts)
                 {
@@ -468,9 +463,9 @@ namespace MonoVarmint.Widgets
             offset -= DrawOffset;
             if (!_spritesByName.ContainsKey(spriteName)) throw new ApplicationException("Can't find sprite named '" + spriteName + "'");
             var sprite = _spritesByName[spriteName];
-            Texture2D texture = sprite.Texture;
+            var texture = sprite.Texture;
             var sourceRect = sprite.GetRectangle(spriteNumber);
-            Vector2 scale = size * _backBufferWidth / new Vector2(sprite.Width, sprite.Height);
+            var scale = size * _backBufferWidth / new Vector2(sprite.Width, sprite.Height);
             origin.X *= sprite.Width;
             origin.Y *= sprite.Height;
 
@@ -488,36 +483,10 @@ namespace MonoVarmint.Widgets
                   layerDepth: 0);
         }
 
-        //class RenderBufferAllocator
-        //{
-        //    public RenderBufferRegion GetRegion(Vector2 rawPosition, Vector2 rawSize)
-        //    {
-        //        return null;
-        //    }
-        //}
-
-        //class RenderBufferRegion
-        //{
-        //    public RenderTarget2D BigBuffer { get; private set; }
-        //    public Rectangle SourceRectangle { get; set; }
-        //    public Vector2 PreviousDrawOffset { get; set; }
-        //    public Vector2 RawPosition { get; set; }
-
-        //    public RenderBufferRegion PreviousRegion { get; set; }
-        //    public RenderBufferRegion(RenderTarget2D target, Vector2 rawPosition, Vector2 rawSize)
-        //    {
-        //        RawPosition = rawPosition;
-        //        RawSize = rawSize;
-
-        //        RenderBuffer = target;
-        //    }
-        //}
-
-
 
         class ClipBuffer
         {
-            public RenderTarget2D RenderBuffer { get; private set; }
+            public RenderTarget2D RenderBuffer { get; }
             public Vector2 PreviousDrawOffset { get; set; }
             public Vector2 RawPosition { get; set; }
             public Vector2 RawSize { get; set; }
@@ -533,25 +502,29 @@ namespace MonoVarmint.Widgets
 
         private Stack<ClipBuffer> _drawBuffers = new Stack<ClipBuffer>();
 
-        private Dictionary<int, Stack<RenderTarget2D>> _renderTargets = new Dictionary<int, Stack<RenderTarget2D>>();
+        private readonly Dictionary<VarmintWidget, RenderTarget2D> _renderTargets = new Dictionary<VarmintWidget, RenderTarget2D>();
 
-
-
-
-        RenderTarget2D GetRenderTarget(GraphicsDevice graphicsDevice, Vector2 rawSize)
+        RenderTarget2D GetRenderTarget(GraphicsDevice graphicsDevice, VarmintWidget widget, Vector2 rawSize)
         {
-
+            RenderTarget2D renderTarget;
+            if (_renderTargets.ContainsKey(widget))
+            {
+                renderTarget = _renderTargets[widget];
+                if (renderTarget.Width != (int)rawSize.X || renderTarget.Height != (int)rawSize.Y)
+                {
+                    _renderTargets.Remove(widget);
+                    renderTarget.Dispose();
+                }
+                else
+                {
+                    return renderTarget;
+                }
+            }
 
             int width = (int)rawSize.X;
             int height = (int)rawSize.Y;
-            int key = height * 100000 + width;
-            if(_renderTargets.ContainsKey(key))
-            {
-                var targetStack = _renderTargets[key];
-                if (targetStack.Count > 0) return targetStack.Pop();
-            }
 
-            return new RenderTarget2D(
+            renderTarget = new RenderTarget2D(
                 graphicsDevice,
                 width,
                 height,
@@ -560,18 +533,8 @@ namespace MonoVarmint.Widgets
                 DepthFormat.None,
                 1,
                 RenderTargetUsage.PreserveContents);
-
-        }
-
-        void ReturnRenderTarget(RenderTarget2D target)
-        {
-            var key = target.Height * 100000 + target.Width;
-            if(!_renderTargets.ContainsKey(key))
-            {
-                _renderTargets[key] = new Stack<RenderTarget2D>();
-            }
-
-            _renderTargets[key].Push(target);
+            _renderTargets[widget] = renderTarget;
+            return renderTarget;
         }
 
         //--------------------------------------------------------------------------------------
@@ -579,30 +542,19 @@ namespace MonoVarmint.Widgets
         /// Clip any drawing outside of the specified area
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public void BeginClipping(Vector2 absolutePosition, Vector2 size)
+        public void BeginClipping(VarmintWidget widget, Vector2 size)
         {
-            
-            var position = absolutePosition - DrawOffset;
-            var rawPosition = position * _backBufferWidth;
             var rawSize = size * _backBufferWidth;
             // [ ] Set up a new buffer and push onto the stack
-            var newBuffer = new ClipBuffer(
-                GetRenderTarget(_graphics.GraphicsDevice, rawSize), rawPosition, rawSize);
-            newBuffer.PreviousDrawOffset = DrawOffset;
-            if (_drawBuffers.Count > 0)
-            {
-                newBuffer.PreviousClipBuffer = _drawBuffers.Peek();
-            }
-            DrawOffset = absolutePosition;
+            var renderTarget = GetRenderTarget(_graphics.GraphicsDevice, widget, rawSize);
 
             //Debug.WriteLine("AAA_spriteBatch.End();");
             _spriteBatch.End();
             //Debug.WriteLine("AAAGraphicsDevice.SetRenderTarget(RenderBuffer" + newBuffer.RawSize + ");");
-           GraphicsDevice.SetRenderTarget(newBuffer.RenderBuffer);
-           // Debug.WriteLine("AAA_spriteBatch.Begin();");
-           _spriteBatch.Begin();
+            GraphicsDevice.SetRenderTarget(renderTarget);
+            // Debug.WriteLine("AAA_spriteBatch.Begin();");
+            _spriteBatch.Begin();
             GraphicsDevice.Clear(new Color(0, 0, 0, 0));
-            _drawBuffers.Push(newBuffer);
         }
 
         //--------------------------------------------------------------------------------------
@@ -610,72 +562,24 @@ namespace MonoVarmint.Widgets
         /// allow drawing on the entire area
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public void EndClipping(float rotation, Vector2 rotationOrigin, Vector2 scale, bool flipHorizontal, bool flipVertical)
+        public void EndClipping()
         {
-            var drawBuffer = _drawBuffers.Pop();
+            GraphicsDevice.SetRenderTarget(null);
+        }
 
-            //Debug.WriteLine("AAA_spriteBatch.End();");
-           _spriteBatch.End();
-
-            if (drawBuffer.PreviousClipBuffer != null)
-            {
-                //Debug.WriteLine("AAAGraphicsDevice.SetRenderTarget(RenderBuffer" + drawBuffer.PreviousClipBuffer.RawSize +");");
-                GraphicsDevice.SetRenderTarget(drawBuffer.PreviousClipBuffer.RenderBuffer);
-            }
-            else
-            {
-                //Debug.WriteLine("AAAGraphicsDevice.SetRenderTarget(null);");
-                GraphicsDevice.SetRenderTarget(null);
-            }
-            //Debug.WriteLine("AAA_spriteBatch.Begin();");
-            _spriteBatch.Begin();
-
-            SpriteEffects effects = SpriteEffects.None;
-            if (flipHorizontal) effects |= SpriteEffects.FlipHorizontally;
-            if (flipVertical) effects |= SpriteEffects.FlipVertically;
-            var origin = rotationOrigin * drawBuffer.RawSize;
-            //Debug.WriteLine("AAA_spriteBatch.Draw(drawBuffer.RenderBuffer" + drawBuffer.RawSize + "...");
-
-            _spriteBatch.Draw(drawBuffer.RenderBuffer, 
-                drawBuffer.RawPosition + origin,
-                (Rectangle?)null,
+        public void DrawCachedWidget(VarmintWidget widget, Vector2 offset, Vector2 size, float rotation, Vector2 rotationOrigin, bool flipHorizontal, bool flipVertical)
+        {
+            if (!_renderTargets.TryGetValue(widget, out var renderTarget)) return;
+            
+            _spriteBatch.Draw(renderTarget,
+                offset,
+                null,
                 Color.White,
                 rotation,
-                origin,
-                scale,
-                effects,
-                _drawBuffers.Count);
-            ReturnRenderTarget(drawBuffer.RenderBuffer);
-            DrawOffset = drawBuffer.PreviousDrawOffset;
-        }
-        //--------------------------------------------------------------------------------------
-        /// <summary>
-        /// Clip any drawing outside of the specified area
-        /// </summary>
-        //--------------------------------------------------------------------------------------
-        public void BeginClippingOLD(Vector2 position, Vector2 size)
-        {
-            position -= DrawOffset;
-            EndSpriteBatch();
-
-            _graphics.GraphicsDevice.ScissorRectangle =
-                new Rectangle(
-                    (int)(position.X * _backBufferWidth),
-                    (int)(position.Y * _backBufferWidth),
-                    (int)(size.X * _backBufferWidth),
-                    (int)(size.Y * _backBufferWidth));
-
-            EnsureSpriteBatch(new RasterizerState() { ScissorTestEnable = true });
-        }
-
-        //--------------------------------------------------------------------------------------
-        /// <summary>
-        /// allow drawing on the entire area
-        /// </summary>
-        //--------------------------------------------------------------------------------------
-        public void EndClippingOLD()
-        {
-            EndSpriteBatch();
+                rotationOrigin,
+                Vector2.One,
+                SpriteEffects.None,
+                0);
         }
     }
 }

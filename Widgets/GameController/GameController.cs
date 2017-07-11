@@ -240,19 +240,13 @@ namespace MonoVarmint.Widgets
             //Debug.WriteLine("AAA_spriteBatch.Begin();");
             _spriteBatch.Begin();
             GraphicsDevice.Clear(GlobalBackgroundColor);
-            BeginClipping(DrawOffset, ScreenSize);
             _visualTree.Prepare(_widgetSpace.StyleLibrary);
             _visualTree.RenderMe(gameTime);
+            _visualTree.Compose(gameTime);
 
             if (ShowFps)
             {
                 DrawText("Fps: " + _fps.ToString(".0"), null, .05f, DrawOffset + new Vector2(0.01f, 0.01f), Color.Black);
-            }
-
-            EndClipping(0, Vector2.Zero,new Vector2(1), false, false);
-            if(_drawBuffers.Count > 0)
-            {
-                throw new ApplicationException("There was an unmatch BeginClipping call.");
             }
 
             //Debug.WriteLine("AAA_spriteBatch.End();");
