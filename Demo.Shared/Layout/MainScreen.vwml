@@ -31,14 +31,15 @@
       Content="WOW!"
       VerticalContentAlignment="Center"
       Rotate="{WowRotate}" />
-    <Slider Size=".8,.2" BackgroundColor="Red">
+    <Slider Size=".8,.1" BackgroundColor="Red" Value="{MySliderValue}">
       <Slider.Track>
-        <Label Content="|-----------------------------------------|" Stretch="1,1"/> 
+        <Label Content="|-------------------------|" Stretch="1,1"/> 
       </Slider.Track>
       <Slider.Thumb>
         <Label Content="V" Size=".05,.1" Stretch=",1"/>
       </Slider.Thumb>
     </Slider>
+    <Label Size=".5,.1" FontSize=".1" Content="{MyAdjustedSliderValue}" />
 
   </StackPanel>
   <Button
