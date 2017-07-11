@@ -10,7 +10,7 @@ namespace MonoVarmint.Widgets
 {
     public partial class VarmintWidget
     {
-        List<Action> _bindingActions = new List<Action>();
+        List<Action> _bindingReadActions = new List<Action>();
         Dictionary<string, Action> _bindingPostActions = new Dictionary<string, Action>();
 
         protected void PostBackProperty(string propertyName)
@@ -44,12 +44,13 @@ namespace MonoVarmint.Widgets
 
             BindingContext = newContext;
 
-            _bindingActions = new List<Action>();
+            _bindingReadActions = new List<Action>();
             foreach (var bindingPair in _bindingTemplates)
             {
                 if (bindingPair.Key == BindingContextPropertyName) continue;
                 var bindingName = bindingPair.Value.Trim('{', '}', ' ');
 
+                // Events are handled differently from value bindings
                 var targetEventInfo = GetType().GetEvent(bindingPair.Key, _publicInstance);
                 if (targetEventInfo != null)
                 {
@@ -67,7 +68,7 @@ namespace MonoVarmint.Widgets
                     targetEventInfo.AddEventHandler(this, handler);
 
                 }
-                else
+                else // This is a value binding
                 {
                     if (BindingContext != null)
                     {
@@ -78,7 +79,7 @@ namespace MonoVarmint.Widgets
                         var targetPropertyInfo = GetType().GetProperty(targetPropertyName);
                         if (targetPropertyInfo == null) throw new ApplicationException("Could not find property '"
                             + targetPropertyName + "' on " + GetType());
-                        _bindingActions.Add(() =>
+                        _bindingReadActions.Add(() =>
                         {
                             object newValue = sourcePropertyInfo.GetValue(BindingContext);
                             targetPropertyInfo.SetValue(this, newValue);
@@ -108,13 +109,13 @@ namespace MonoVarmint.Widgets
         {
             if (recurse)
             {
-                foreach (var child in children)
+                foreach (var child in Children)
                 {
                     child.ReadBindings(true);
                 }
             }
 
-            foreach (var bindingAction in _bindingActions)
+            foreach (var bindingAction in _bindingReadActions)
             {
                 bindingAction();
             }
