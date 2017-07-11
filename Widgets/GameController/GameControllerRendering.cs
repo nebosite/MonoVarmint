@@ -12,7 +12,7 @@ namespace MonoVarmint.Widgets
         readonly GraphicsDeviceManager _graphics;
         SpriteBatch _spriteBatch;
 
-        //todo: add basic effect property
+        private BasicEffect _effect;
 
         public double SoundVolume { get; set; }
 
@@ -553,7 +553,7 @@ namespace MonoVarmint.Widgets
             //Debug.WriteLine("AAAGraphicsDevice.SetRenderTarget(RenderBuffer" + newBuffer.RawSize + ");");
             GraphicsDevice.SetRenderTarget(renderTarget);
             // Debug.WriteLine("AAA_spriteBatch.Begin();");
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(effect: _effect);
             GraphicsDevice.Clear(new Color(0, 0, 0, 0));
         }
 
@@ -567,19 +567,13 @@ namespace MonoVarmint.Widgets
             GraphicsDevice.SetRenderTarget(null);
         }
 
-        public void DrawCachedWidget(VarmintWidget widget, Vector2 offset, Vector2 size, float rotation, Vector2 rotationOrigin, bool flipHorizontal, bool flipVertical)
+        public void DrawCachedWidget(VarmintWidget widget, Matrix transform)
         {
             if (!_renderTargets.TryGetValue(widget, out var renderTarget)) return;
-            
-            _spriteBatch.Draw(renderTarget,
-                offset,
-                null,
-                Color.White,
-                rotation,
-                rotationOrigin,
-                Vector2.One,
-                SpriteEffects.None,
-                0);
+
+            _effect.World = transform;
+            _spriteBatch.Draw(renderTarget, Vector2.Zero, Color.White);
+            _effect.World = Matrix.Identity;
         }
     }
 }

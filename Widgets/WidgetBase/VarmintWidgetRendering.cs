@@ -50,32 +50,33 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public virtual void RenderChildren(GameTime gameTime)
         {
-            if (HasChildren)
+            if (!HasChildren) return;
+            // Make a local copy because children can modify parent/child relationships
+            var localChildren = new List<VarmintWidget>(Children);
+            foreach (var child in localChildren)
             {
-                // Make a local copy because children can modify parent/child relationships
-                var localChildren = new List<VarmintWidget>(Children);
-                foreach (var child in localChildren)
+                if (Renderer != null && Renderer.IsInRenderingWindow(child.AbsoluteOffset, child.Size))
                 {
-                    if (Renderer.IsInRenderingWindow(child.AbsoluteOffset, child.Size))
-                    {
-                        child.RenderMe(gameTime);
-                    }
+                    child.RenderMe(gameTime);
                 }
             }
         }
 
         public virtual void Compose(GameTime gameTime)
         {
-            ComposeInternal(gameTime, Vector2.Zero, Vector2.One, 0, false, false);
+            ComposeInternal(Matrix.Identity);
         }
 
-        private void ComposeInternal(GameTime gameTime, Vector2 offset, Vector2 scale, float rotate, bool flipHorizontal,
-            bool flipVertical)
+        private void ComposeInternal(Matrix transform)
         {
-            Renderer?.DrawCachedWidget(this, Offset + offset, Size * scale, Rotate + rotate, Size * scale / 2, FlipHorizontal ^ flipHorizontal, FlipVertical ^ flipVertical);
+            if (FlipHorizontal) transform *= Matrix.CreateScale(-1, 1, 1);
+            if (FlipVertical) transform *= Matrix.CreateScale(1, -1, 1);
+            transform *= Matrix.CreateRotationZ(Rotate);
+            transform *= Matrix.CreateTranslation(Offset.X, Offset.Y, 0);
+            Renderer?.DrawCachedWidget(this, transform);
             foreach (var child in children)
             {
-                child.ComposeInternal(gameTime, Offset + offset, scale, Rotate + rotate, FlipHorizontal ^ flipHorizontal, FlipVertical ^ flipVertical);
+                child.ComposeInternal(transform);
             }
         }
 
