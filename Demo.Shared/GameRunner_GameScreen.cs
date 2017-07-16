@@ -39,9 +39,9 @@ namespace Demo.Shared
             _currentGame = new GameState();
 
             // Hook up events on the game for playing sounds, showing UI, etc.
-            _currentGame.OnpassBunny += () => {  _controller.PlaySound("Sounds/Cowbell"); };
-            _currentGame.OnFInishJump += () => { _controller.PlaySound("Sounds/Thump"); };
-            _currentGame.OnStartJump += () => { _controller.PlaySound("Sounds/Jump"); };
+            _currentGame.OnpassBunny += () => {  _controller.PlaySoundEffect("Sounds/Cowbell"); };
+            _currentGame.OnFInishJump += () => { _controller.PlaySoundEffect("Sounds/Thump"); };
+            _currentGame.OnStartJump += () => { _controller.PlaySoundEffect("Sounds/Jump"); };
 
             // Hook up the tap event on the game window for jumping
             gameWindow.OnTap += (widget, location) =>

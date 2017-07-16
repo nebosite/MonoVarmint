@@ -77,13 +77,13 @@ namespace MonoVarmint.Widgets
                     if (animationProgressSeconds > animationDurationSeconds)
                     {
                         animationProgressSeconds = animationDurationSeconds;
-                        OnComplete?.Invoke();
                         IsComplete = true;
                     }
                     delta = (animationProgressSeconds / animationDurationSeconds);
                 }
 
                 _animate(widget, delta);
+                if(IsComplete) OnComplete?.Invoke();
             }
         }
 

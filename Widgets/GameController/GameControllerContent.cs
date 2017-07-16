@@ -1,21 +1,21 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Text;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Audio;
 using System.IO;
 
 namespace MonoVarmint.Widgets
 {
-    public partial class GameController : IMediaRenderer
+    public partial class GameController
     {
         Dictionary<string, SpriteFont> _fontsByName = new Dictionary<string, SpriteFont>();
-        Dictionary<string, VarmintSoundEffect> _soundsByName = new Dictionary<string, VarmintSoundEffect>();
         Dictionary<string, Texture2D> _glyphsByName = new Dictionary<string, Texture2D>();
         Dictionary<string, VarmintSprite> _spritesByName = new Dictionary<string, VarmintSprite>();
+
+        Dictionary<string, SoundEffect> _soundEffectsByName = new Dictionary<string, SoundEffect>();
+        Dictionary<string, Song> _songsByName = new Dictionary<string, Song>();
 
         //-----------------------------------------------------------------------------------------------
         /// <summary>
@@ -25,9 +25,10 @@ namespace MonoVarmint.Widgets
         //-----------------------------------------------------------------------------------------------
         protected override void LoadContent()
         {
-            Content = new EmbeddedContentManager(_graphics.GraphicsDevice);
-            Content.RootDirectory = "Content";
-
+            Content = new EmbeddedContentManager(_graphics.GraphicsDevice)
+            {
+                RootDirectory = "Content"
+            };
             // Set up a back buffer to render to
             _backBufferWidth = GraphicsDevice.PresentationParameters.BackBufferWidth;
             _backBufferHeight = GraphicsDevice.PresentationParameters.BackBufferHeight;
@@ -54,6 +55,8 @@ namespace MonoVarmint.Widgets
 
             _visualTree = _widgetSpace.GetScreen("_default_screen_", null);
             OnLoaded?.Invoke();
+
+            
         }
 
         //-----------------------------------------------------------------------------------------------
@@ -85,7 +88,6 @@ namespace MonoVarmint.Widgets
             _fontsByName.Clear();
             _glyphsByName.Clear();
             _spritesByName.Clear();
-            _soundsByName.Clear();
             _widgetSpace = new VarmintWidgetSpace(this, _bindingContext);
         }
 
@@ -122,6 +124,7 @@ namespace MonoVarmint.Widgets
             _spritesByName.Add(name, new VarmintSprite(spriteTexture, width, height));
         }
 
+
         //-----------------------------------------------------------------------------------------------
         /// <summary>
         /// Try to load local raw files first
@@ -146,13 +149,24 @@ namespace MonoVarmint.Widgets
         /// Load sound effects
         /// </summary>
         //-----------------------------------------------------------------------------------------------
-        public void LoadSounds(params string[] names)
+        public void LoadSFX(params string[] names)
         {
             foreach (var name in names)
             {
-                _soundsByName.Add(name, new VarmintSoundEffect() { Effect = Content.Load<SoundEffect>(name) });
+                if (_soundEffectsByName.ContainsKey(name))
+                    return;
+                _soundEffectsByName.Add(name, Content.Load<SoundEffect>(name));
             }
         }
 
+        public void LoadMusic(params string[] names)
+        {
+            foreach (var name in names)
+            {
+                if (_songsByName.ContainsKey(name))
+                    return;
+                _songsByName.Add(name, Content.Load<Song>(name));
+            }
+        }
     }
 }

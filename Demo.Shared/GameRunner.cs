@@ -51,7 +51,7 @@ namespace Demo.Shared
                 _controller.LoadGlyph("Images/Ground");
                 _controller.LoadSprite("Images/Bunny", 100, 100);
                 _controller.LoadSprite("Images/Monster", 100, 100);
-                _controller.LoadSounds("Sounds/Cowbell", "Sounds/Jump", "Sounds/Thump");
+                _controller.LoadSFX("Sounds/Cowbell", "Sounds/Jump", "Sounds/Thump");
                 _controller.SetScreen(_controller.GetScreen("MainScreen", this));
             };
 
@@ -60,6 +60,7 @@ namespace Demo.Shared
                 WowRotate += 1;
                 if (_currentGame != null) _currentGame.Update(gameTime);
             };
+
         }
 
         //-----------------------------------------------------------------------------------------------

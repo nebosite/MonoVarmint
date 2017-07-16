@@ -53,7 +53,6 @@ namespace MonoVarmint.Widgets
             };
             _graphics.IsFullScreen = true;
             _bindingContext = bindingContext;
-            SoundVolume = 1.0;
         }
 
         //-----------------------------------------------------------------------------------------------
@@ -145,6 +144,8 @@ namespace MonoVarmint.Widgets
 
             OnUpdate?.Invoke(gameTime);
             base.Update(gameTime);
+            AudioUpdate(gameTime);
+            
         }
 
         //--------------------------------------------------------------------------------------

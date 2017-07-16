@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Animation\VarmintWidgetAnimation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Animation\VarmintWidgetAnimationCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)GameController\GameControllerAudio.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WidgetBase\VarmintWidgetChildren.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WidgetBase\VarmintWidgetAnimationHandling.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WidgetBase\VarmintWidgetDataBinding.cs" />
