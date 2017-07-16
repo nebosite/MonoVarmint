@@ -25,8 +25,7 @@ namespace MonoVarmint.Widgets
         //-----------------------------------------------------------------------------------------------
         protected override void LoadContent()
         {
-            Content = new EmbeddedContentManager(_graphics.GraphicsDevice);
-            Content.RootDirectory = "Content";
+            Content = new EmbeddedContentManager(_graphics.GraphicsDevice) {RootDirectory = "Content"};
 
             // Set up a back buffer to render to
             _backBufferWidth = GraphicsDevice.PresentationParameters.BackBufferWidth;
@@ -41,6 +40,15 @@ namespace MonoVarmint.Widgets
             Matrix.CreateScale(new Vector3(scaleFactor, scaleFactor, 1));
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+            _effect = new BasicEffect(GraphicsDevice)
+            {
+                TextureEnabled = true,
+                VertexColorEnabled = true,
+                World = Matrix.Identity,
+                View = Matrix.Identity,
+                Projection = Matrix.CreateTranslation(-0.5f, -0.5f, 0) 
+                             * Matrix.CreateOrthographicOffCenter(0, _backBufferWidth, _backBufferHeight, 0, 0, 1)
+            };
 
             _utilityBlockTexture = Content.Load<Texture2D>("_utility_block");
             _circleTexture = Content.Load<Texture2D>("_utility_circle");

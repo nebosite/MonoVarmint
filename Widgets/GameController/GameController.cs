@@ -238,7 +238,7 @@ namespace MonoVarmint.Widgets
 
             //Debug.WriteLine("AAA---------------------- BEGIN ------------------------");
             //Debug.WriteLine("AAA_spriteBatch.Begin();");
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(effect: _effect);
             GraphicsDevice.Clear(GlobalBackgroundColor);
             _visualTree.Prepare(_widgetSpace.StyleLibrary);
             _visualTree.RenderMe(gameTime);

@@ -12,7 +12,7 @@ namespace MonoVarmint.Widgets
         readonly GraphicsDeviceManager _graphics;
         SpriteBatch _spriteBatch;
 
-        //todo: add basic effect property
+        private BasicEffect _effect;
 
         public double SoundVolume { get; set; }
 
@@ -263,6 +263,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void DrawText(string text, string fontName, float fontSize, Vector2 offset, Color color, float wrapWidth = 0)
         {
+            if (!_clippingActive) System.Diagnostics.Debugger.Break();
             offset -= DrawOffset;
             text = FixText(text);
             float scale = fontSize * _backBufferWidth / _selectedFontPixelSize;
@@ -360,6 +361,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void DrawLine(Vector2 start, Vector2 end, float lineWidth, Color color)
         {
+            if (!_clippingActive) System.Diagnostics.Debugger.Break();
             start -= DrawOffset;
             end -= DrawOffset;
             EnsureSpriteBatch();
@@ -503,7 +505,8 @@ namespace MonoVarmint.Widgets
         private Stack<ClipBuffer> _drawBuffers = new Stack<ClipBuffer>();
 
         private readonly Dictionary<VarmintWidget, RenderTarget2D> _renderTargets = new Dictionary<VarmintWidget, RenderTarget2D>();
-
+        private bool _clippingActive = false;
+        
         RenderTarget2D GetRenderTarget(GraphicsDevice graphicsDevice, VarmintWidget widget, Vector2 rawSize)
         {
             RenderTarget2D renderTarget;
@@ -553,8 +556,9 @@ namespace MonoVarmint.Widgets
             //Debug.WriteLine("AAAGraphicsDevice.SetRenderTarget(RenderBuffer" + newBuffer.RawSize + ");");
             GraphicsDevice.SetRenderTarget(renderTarget);
             // Debug.WriteLine("AAA_spriteBatch.Begin();");
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(effect: _effect);
             GraphicsDevice.Clear(new Color(0, 0, 0, 0));
+            _clippingActive = true;
         }
 
         //--------------------------------------------------------------------------------------
@@ -565,21 +569,16 @@ namespace MonoVarmint.Widgets
         public void EndClipping()
         {
             GraphicsDevice.SetRenderTarget(null);
+            _clippingActive = false;
         }
 
-        public void DrawCachedWidget(VarmintWidget widget, Vector2 offset, Vector2 size, float rotation, Vector2 rotationOrigin, bool flipHorizontal, bool flipVertical)
+        public void DrawCachedWidget(VarmintWidget widget, Matrix transform)
         {
             if (!_renderTargets.TryGetValue(widget, out var renderTarget)) return;
-            
-            _spriteBatch.Draw(renderTarget,
-                offset,
-                null,
-                Color.White,
-                rotation,
-                rotationOrigin,
-                Vector2.One,
-                SpriteEffects.None,
-                0);
+
+            _effect.World = transform;
+            _spriteBatch.Draw(renderTarget, Vector2.Zero, Color.White);
+            _effect.World = Matrix.Identity;
         }
     }
 }

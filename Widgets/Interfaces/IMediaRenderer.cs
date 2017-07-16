@@ -23,8 +23,7 @@ namespace MonoVarmint.Widgets
         void BeginClipping(VarmintWidget widget, Vector2 size);
         void EndClipping();
 
-        void DrawCachedWidget(VarmintWidget widget, Vector2 offset, Vector2 size, float rotation,
-            Vector2 rotationOrigin, bool flipHorizontal, bool flipVertical);
+        void DrawCachedWidget(VarmintWidget widget, Matrix transform);
         bool IsInRenderingWindow(Vector2 offset, Vector2 size);
     }
 }
