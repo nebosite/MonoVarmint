@@ -12,6 +12,7 @@ namespace MonoVarmint.Widgets
     {
         public float LineWidth { get; set; }
         public bool HasBorder { get; set; }
+        public string BackgroundImage { get; set; }
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// ctor
@@ -46,7 +47,15 @@ namespace MonoVarmint.Widgets
         {
             var textToDisplay = (Content == null) ? "" : Content.ToString();
 
-            Renderer.DrawBox(AbsoluteOffset, Size, BackgroundColor);
+            if (BackgroundImage != null)
+            {
+                LineWidth = 0;
+                Renderer.DrawGlyph(BackgroundImage, AbsoluteOffset, Size, BackgroundColor);
+            }
+            else
+            {
+                Renderer.DrawBox(AbsoluteOffset, Size, BackgroundColor);
+            }
 
             Vector2 alignedOffset = AbsoluteOffset;
             Vector2 textSize = Renderer.MeasureText(textToDisplay, FontName, FontSize);
