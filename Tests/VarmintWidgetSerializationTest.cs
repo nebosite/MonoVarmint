@@ -105,7 +105,7 @@ namespace MonoVarmint.Tools.Tests
 </ChildPropertyWidget>";
             var bindToMe = new BindingThing();
 
-            Assert.AreEqual("Property ChildPropertyWidget.Name is not of Type ChildPropertyWidget",
+            Assert.AreEqual("Property ChildPropertyWidget.Name cannot be assigned Type ChildPropertyWidget",
                 Assert.ThrowsException<ApplicationException>(() => { TestUtils.LoadFromText(this, layoutText, "CP"); }).Message);
         }
 

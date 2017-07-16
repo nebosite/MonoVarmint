@@ -25,6 +25,8 @@ namespace Demo.Shared
         public string TimeText {  get { return "Current Time: " + DateTime.Now.ToLongTimeString(); } }
         public Vector2 ScreenSize { get { return _controller.ScreenSize; } }
         public float WowRotate { get; set; }
+        public float MySliderValue { get; set; } = 0.5f;
+        public string MyAdjustedSliderValue { get { return (MySliderValue * 100).ToString(".0"); } }
 
         //-----------------------------------------------------------------------------------------------
         // NATIVE METHODS - These methods are called when an action occurs that needs to be handled

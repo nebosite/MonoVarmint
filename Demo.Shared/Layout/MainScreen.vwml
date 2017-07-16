@@ -9,7 +9,7 @@
       Size=".8,.15"
       FontSize=".15"
       BackgroundColor="#FF8080"
-      Content="Hello"/>
+      Content="Hello?"/>
     <Label
       Content="The current time is:"
       FontSize=".04"
@@ -23,46 +23,23 @@
       VerticalContentAlignment="Center"
       BackgroundColor="LightBlue" />
     <Label
-      Size=".5,.4"
+      Size=".5,.3"
       FontSize=".1"
-      Margin=",.01"
+      Margin=",.25"
       BackgroundColor="Blue"
       ForegroundColor="Yellow"
       Content="WOW!"
       VerticalContentAlignment="Center"
-      Rotate="{WowRotate}"
-      >
-      <Label
-        Size =".2,.1"
-        FontSize =".08"
-        ClipToBounds="True"
-        Margin=".3,0,0,.3"
-        BackgroundColor="#50FF0000"
-        ForegroundColor="White"
-        Content="spi3"/>
-    </Label>
-    <Label
-      Size=".3,.1"
-      FontSize=".1"
-      Margin=",.01"
-      BackgroundColor="Green"
-      ForegroundColor="Yellow"
-      Content="WOW2"
-      VerticalContentAlignment="Center"
-      ClipToBounds="true"
-          >
-      <Grid Size=".1,.1" BackgroundColor="#40ffffff" ClipToBounds="true" />
-    </Label>
-    <Label
-      Size=".3,.1"
-      FontSize=".1"
-      Margin=",.01"
-      BackgroundColor="Black"
-      ForegroundColor="Yellow"
-      Content="WOW3"
-      VerticalContentAlignment="Center"
-      ClipToBounds="true"
-          />
+      Rotate="{WowRotate}" />
+    <Slider Size=".8,.1" BackgroundColor="Red" Value="{MySliderValue}">
+      <Slider.Track>
+        <Label Content="|-------------------------|" Stretch="1,1"/> 
+      </Slider.Track>
+      <Slider.Thumb>
+        <Label Content="V" Size=".05,.1" Stretch=",1"/>
+      </Slider.Thumb>
+    </Slider>
+    <Label Size=".5,.1" FontSize=".1" Content="{MyAdjustedSliderValue}" />
 
   </StackPanel>
   <Button

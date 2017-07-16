@@ -33,6 +33,7 @@ namespace Demo.Shared
             _controller.SetScreen(_controller.GetScreen("GameScreen", this));
             var holder = _controller.GetVisibleWidgetByName("GameContainer");
             var gameWindow = new VarmintWidgetGrid();
+            gameWindow.Renderer = _controller;
             gameWindow.Size = holder.Size;
             holder.AddChild(gameWindow);
 
