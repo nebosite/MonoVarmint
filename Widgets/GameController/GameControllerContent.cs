@@ -5,17 +5,18 @@ using Microsoft.Xna.Framework.Media;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Microsoft.Xna.Framework.Content;
 
 namespace MonoVarmint.Widgets
 {
     public partial class GameController
     {
-        Dictionary<string, SpriteFont> _fontsByName = new Dictionary<string, SpriteFont>();
-        Dictionary<string, Texture2D> _glyphsByName = new Dictionary<string, Texture2D>();
-        Dictionary<string, VarmintSprite> _spritesByName = new Dictionary<string, VarmintSprite>();
-
-        Dictionary<string, SoundEffect> _soundEffectsByName = new Dictionary<string, SoundEffect>();
-        Dictionary<string, Song> _songsByName = new Dictionary<string, Song>();
+        private readonly Dictionary<string, SpriteFont> _fontsByName = new Dictionary<string, SpriteFont>();
+        private readonly Dictionary<string, Texture2D> _glyphsByName = new Dictionary<string, Texture2D>();
+        private readonly Dictionary<string, VarmintSprite> _spritesByName = new Dictionary<string, VarmintSprite>();
+        
+        private readonly Dictionary<string, SoundEffect> _soundEffectsByName = new Dictionary<string, SoundEffect>();
+        private readonly Dictionary<string, Song> _songsByName = new Dictionary<string, Song>();
 
         //-----------------------------------------------------------------------------------------------
         /// <summary>
@@ -149,12 +150,14 @@ namespace MonoVarmint.Widgets
         /// Load sound effects
         /// </summary>
         //-----------------------------------------------------------------------------------------------
-        public void LoadSFX(params string[] names)
+        public void LoadSoundEffects(params string[] names)
         {
             foreach (var name in names)
             {
                 if (_soundEffectsByName.ContainsKey(name))
                     return;
+                if(_songsByName.ContainsKey(name))
+                    throw new ContentLoadException("Cannot load same file as both a sound effect and song.");
                 _soundEffectsByName.Add(name, Content.Load<SoundEffect>(name));
             }
         }
@@ -165,6 +168,8 @@ namespace MonoVarmint.Widgets
             {
                 if (_songsByName.ContainsKey(name))
                     return;
+                if (_soundEffectsByName.ContainsKey(name))
+                    throw new ContentLoadException("Cannot laod same file as both a sound effect and song.");
                 _songsByName.Add(name, Content.Load<Song>(name));
             }
         }

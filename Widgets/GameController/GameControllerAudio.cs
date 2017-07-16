@@ -1,23 +1,23 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
+using Microsoft.Xna.Framework.Audio;
 
 namespace MonoVarmint.Widgets
 {
     public partial class GameController
     {
 
-        public readonly List<VarmintWidgetAnimation> _audioAnimations = new List<VarmintWidgetAnimation>();
+        public readonly List<VarmintWidgetAnimation> AudioAnimations = new List<VarmintWidgetAnimation>();
 
         private void AudioUpdate(GameTime gameTime)
         {
-            foreach(var animation in new List<VarmintWidgetAnimation>( _audioAnimations))
+            foreach(var animation in new List<VarmintWidgetAnimation>( AudioAnimations))
             {
                 animation.Update(null, gameTime);
                 if (animation.IsComplete)
-                    _audioAnimations.Remove(animation);
+                    AudioAnimations.Remove(animation);
             }
         }
 
@@ -30,40 +30,35 @@ namespace MonoVarmint.Widgets
             });
         }
 
-        /// <summary>
-        /// Play a loaded sound effect by filename.
-        /// If the sound is not loaded, attempt to load it.
-        /// </summary>
-        /// <param name="name">
-        /// The filename to play.
-        /// </param>
-        /// <returns>
-        /// True if the was played.
-        /// </returns>
-        public void PlaySoundEffect(string name)
+
+        private VarmintAudioInstance PlaySoundEffect(string name)
         {
             var sfx = _soundEffectsByName[name].CreateInstance();
             sfx.Volume *= (float)SoundEffectVolume;
             sfx.Play();
+            return new VarmintSoundEffectInstance(sfx);
         }
 
-        public string CurrentSong { get; private set; }
-        /// <summary>
-        /// The current music playing. Set to null to stop playing.
-        /// </summary>
-	    public void PlaySong(string value)
-        {
+        public static string CurrentSong { get; private set; }
 
-            if (CurrentSong == value) return;
-            CurrentSong = value;
-            if (value != null)
-            {
-                MediaPlayer.Play(_songsByName[value]);
-            }
-            else
-            {
-                MediaPlayer.Stop();
-            }
+	    public VarmintAudioInstance PlaySound(string name)
+        {
+            VarmintAudioInstance instance;
+            if (_soundEffectsByName.ContainsKey(name))
+                instance = PlaySoundEffect(name);
+            else if (_songsByName.ContainsKey(name))
+                instance = PlaySong(name);
+            else throw new ArgumentException($"No sound with the name {name} has been loaded.");
+            return instance;
+        }
+
+        private VarmintAudioInstance PlaySong(string name)
+        {
+            if (CurrentSong != null)
+                throw new InvalidOperationException("Cannot play a song while another song is currently playing.");
+            CurrentSong = name;
+            MediaPlayer.Play(_songsByName[name]);
+            return new VarmintSongInstance(_songsByName[name]);
         }
 
         /// <summary>
@@ -100,15 +95,15 @@ namespace MonoVarmint.Widgets
             var animation = FadeMusic(outDuration);
             animation.OnComplete += () => {
                 MusicVolume = volume;
-                PlaySong(newSong);
+                PlaySound(newSong);
             };
-            _audioAnimations.Add(animation);
+            AudioAnimations.Add(animation);
         }
 
         /// <summary>
         /// Pause the current music.
         /// </summary>
-	    public static void Pause()
+	    public static void PauseMusic()
         {
             MediaPlayer.Pause();
         }
@@ -116,7 +111,7 @@ namespace MonoVarmint.Widgets
         /// <summary>
         /// Resume the current music.
         /// </summary>
-	    public static void Play()
+	    public static void ResumeMusic()
         {
             MediaPlayer.Resume();
         }
@@ -129,5 +124,81 @@ namespace MonoVarmint.Widgets
             set => MediaPlayer.IsRepeating = value;
             get => MediaPlayer.IsRepeating;
         }
+
+#region classes
+
+        private class VarmintSoundEffectInstance : VarmintAudioInstance
+        {
+            private readonly SoundEffectInstance _instance;
+            public VarmintSoundEffectInstance(SoundEffectInstance instance) : base(false)
+            {
+                _instance = instance;
+            }
+
+            public override void Stop()
+            {
+                _instance.Stop();
+            }
+
+            public override void Pause()
+            {
+                _instance.Pause();
+            }
+
+            public override void Resume()
+            {
+                _instance.Resume();
+            }
+
+            public override bool IsLooping
+            {
+                get => _instance.IsLooped;
+                set => _instance.IsLooped = value;
+            }
+            
+            public override void Dispose()
+            {
+                _instance.Dispose();
+                base.Dispose();
+            }
+        }
+
+        private class VarmintSongInstance : VarmintAudioInstance
+        {
+            private readonly Song _song;
+
+            public VarmintSongInstance(Song song) : base(true)
+            {
+                _song = song;
+            }
+
+            public override void Stop()
+            {
+                CurrentSong = null;
+                MediaPlayer.Stop();
+            }
+
+            public override void Pause()
+            {
+                MediaPlayer.Pause();
+            }
+
+            public override void Resume()
+            {
+                MediaPlayer.Resume();
+            }
+
+            public override bool IsLooping
+            {
+                get => MediaPlayer.IsRepeating;
+                set => MediaPlayer.IsRepeating = value;
+            }
+
+            public override void Dispose()
+            {
+                Stop();
+            }
+        }
+#endregion
     }
 }

@@ -12,6 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Animation\VarmintWidgetAnimation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Animation\VarmintWidgetAnimationCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GameController\GameControllerAudio.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\VarmintAudioInstance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WidgetBase\VarmintWidgetChildren.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WidgetBase\VarmintWidgetAnimationHandling.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WidgetBase\VarmintWidgetDataBinding.cs" />
@@ -45,9 +46,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetShortNameAttribute.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetStackPanel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetTextInput.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)Interfaces\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)EmbeddedContent\_utility_circle.xnb" />
