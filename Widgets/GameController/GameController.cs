@@ -238,10 +238,13 @@ namespace MonoVarmint.Widgets
 
             //Debug.WriteLine("AAA---------------------- BEGIN ------------------------");
             //Debug.WriteLine("AAA_spriteBatch.Begin();");
-            _spriteBatch.Begin(effect: _effect);
             GraphicsDevice.Clear(GlobalBackgroundColor);
             _visualTree.Prepare(_widgetSpace.StyleLibrary);
             _visualTree.RenderMe(gameTime);
+
+            _effect.Projection = Matrix.CreateTranslation(-0.5f, -0.5f, 0)
+                 * Matrix.CreateOrthographicOffCenter(0, _backBufferWidth, _backBufferHeight, 0, 0, 1);
+            _spriteBatch.Begin(effect: _effect);
             _visualTree.Compose(gameTime);
 
             if (ShowFps)

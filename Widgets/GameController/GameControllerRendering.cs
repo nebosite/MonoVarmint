@@ -395,7 +395,6 @@ namespace MonoVarmint.Widgets
                 scale: scale,
                 effects: SpriteEffects.None,
                 layerDepth: 0);
-
         }
 
 
@@ -457,7 +456,6 @@ namespace MonoVarmint.Widgets
                 scale: scale,
                 effects: SpriteEffects.None,
                 layerDepth: 0);
-
         }
 
 
@@ -470,6 +468,7 @@ namespace MonoVarmint.Widgets
         {
             DrawSprite(spriteName, spriteNumber, offset, size, color, 0, Vector2.Zero);
         }
+
         public void DrawSprite(string spriteName, int spriteNumber, Vector2 offset, Vector2 size, Color color, float rotation, Vector2 origin)
         {
             offset -= DrawOffset;
@@ -558,16 +557,16 @@ namespace MonoVarmint.Widgets
         public void BeginClipping(VarmintWidget widget, Vector2 size)
         {
             var rawSize = size * _backBufferWidth;
-            // [ ] Set up a new buffer and push onto the stack
             var renderTarget = GetRenderTarget(_graphics.GraphicsDevice, widget, rawSize);
 
-            //Debug.WriteLine("AAA_spriteBatch.End();");
-            _spriteBatch.End();
-            //Debug.WriteLine("AAAGraphicsDevice.SetRenderTarget(RenderBuffer" + newBuffer.RawSize + ");");
             GraphicsDevice.SetRenderTarget(renderTarget);
-            // Debug.WriteLine("AAA_spriteBatch.Begin();");
-            _spriteBatch.Begin(effect: _effect);
             GraphicsDevice.Clear(new Color(0, 0, 0, 0));
+
+            _effect.Projection = Matrix.CreateTranslation(-0.5f, -0.5f, 0)
+                             * Matrix.CreateOrthographicOffCenter(0, renderTarget.Width, renderTarget.Height, 0, 0, 1);
+
+            _spriteBatch.Begin(effect: _effect);
+
             _clippingActive = true;
         }
 
@@ -578,6 +577,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void EndClipping()
         {
+            _spriteBatch.End();
             GraphicsDevice.SetRenderTarget(null);
             _clippingActive = false;
         }
