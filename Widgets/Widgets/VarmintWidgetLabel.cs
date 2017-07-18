@@ -33,8 +33,8 @@ namespace MonoVarmint.Widgets
         {
             var textToDisplay = (Content == null) ? "" : Content.ToString();
 
-            Renderer.DrawBox(Offset, Size, BackgroundColor);
-            Vector2 alignedOffset = Offset;
+            Renderer.DrawBox(Vector2.Zero, Size, BackgroundColor);
+            Vector2 alignedOffset = Vector2.Zero;
             var margin = 0f;
             if (WrapContent) margin = Size.X;
             Vector2 textSize = Renderer.MeasureText(textToDisplay, FontName, FontSize, margin);

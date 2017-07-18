@@ -117,7 +117,7 @@ namespace MonoVarmint.Widgets
         /// <param name="flipHorizontally"></param>
         /// <param name="flipVertically"></param>
         /// <param name="shouldClip"></param>
-        void BeginInnerCoordinateSpace(Vector2 offset, Vector2 size, float rotate, bool flipHorizontally, bool flipVertically, bool shouldClip);
+        void BeginInnerCoordinateSpace(Vector2 offset, Vector2 size, float rotate, Vector2 rotationOrigin, bool flipHorizontally, bool flipVertically, bool shouldClip);
         /// <summary>
         /// Revert to the previously set coordinate space
         /// </summary>

@@ -56,14 +56,14 @@ namespace Demo.Shared
             gameWindow.SetCustomRender((GameTime gameTime, VarmintWidget widget) =>
             {
                 // draw the sky
-                _controller.DrawBox(widget.Offset, widget.Size, Color.SkyBlue);
+                _controller.DrawBox(Vector2.Zero, widget.Size, Color.SkyBlue);
 
                 // Helper to easily draw a scolling object
                 Action<string, float> drawScrollingThing = (glyphName, relativeSize) =>
                 {
                     float offset = ((_currentGame.MonsterPosition.X / relativeSize) % 1.0f) * widget.Size.X;
-                    _controller.DrawGlyph(glyphName, widget.Offset - new Vector2(offset, 0), widget.Size, Color.White);
-                    _controller.DrawGlyph(glyphName, widget.Offset + new Vector2(widget.Size.X - offset, 0), widget.Size, Color.White);
+                    _controller.DrawGlyph(glyphName, new Vector2(-offset, 0), widget.Size, Color.White);
+                    _controller.DrawGlyph(glyphName, new Vector2(widget.Size.X - offset, 0), widget.Size, Color.White);
                 };
 
                 // draw the far scrolling background

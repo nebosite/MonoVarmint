@@ -244,7 +244,7 @@ namespace MonoVarmint.Widgets
 
             _effect.Projection = Matrix.CreateTranslation(-0.5f, -0.5f, 0)
                  * Matrix.CreateOrthographicOffCenter(0, _backBufferWidth, _backBufferHeight, 0, 0, 1);
-            _spriteBatch.Begin(effect: _effect);
+            _spriteBatch.Begin(effect: _effect, sortMode:SpriteSortMode.Immediate);
             _visualTree.Compose(gameTime);
 
             if (ShowFps)

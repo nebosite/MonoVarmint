@@ -50,11 +50,11 @@ namespace MonoVarmint.Widgets
             if (BackgroundImage != null)
             {
                 LineWidth = 0;
-                Renderer.DrawGlyph(BackgroundImage, Offset, Size, BackgroundColor);
+                Renderer.DrawGlyph(BackgroundImage, Vector2.Zero, Size, BackgroundColor);
             }
             else
             {
-                Renderer.DrawBox(Offset, Size, BackgroundColor);
+                Renderer.DrawBox(Vector2.Zero, Size, BackgroundColor);
             }
 
             Vector2 alignedOffset = Offset;
@@ -66,10 +66,10 @@ namespace MonoVarmint.Widgets
 
             if (HasBorder)
             {
-                Renderer.DrawLine(Offset, Offset + new Vector2(Size.X, 0), LineWidth, ForegroundColor);
-                Renderer.DrawLine(Offset, Offset + new Vector2(0, Size.Y), LineWidth, ForegroundColor);
-                Renderer.DrawLine(Offset + Size, Offset + new Vector2(Size.X, 0), LineWidth, ForegroundColor);
-                Renderer.DrawLine(Offset + Size, Offset + new Vector2(0, Size.Y), LineWidth, ForegroundColor);
+                Renderer.DrawLine(Vector2.Zero, new Vector2(Size.X, 0), LineWidth, ForegroundColor);
+                Renderer.DrawLine(Vector2.Zero, new Vector2(0, Size.Y), LineWidth, ForegroundColor);
+                Renderer.DrawLine(Size, new Vector2(Size.X, 0), LineWidth, ForegroundColor);
+                Renderer.DrawLine(Size, new Vector2(0, Size.Y), LineWidth, ForegroundColor);
             }
         }
     }

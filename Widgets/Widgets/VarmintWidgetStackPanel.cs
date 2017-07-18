@@ -51,7 +51,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         void Render(GameTime gameTime, VarmintWidget widget)
         {
-            Renderer.DrawBox(Offset, Size, BackgroundColor);
+            Renderer.DrawBox(Vector2.Zero, Size, BackgroundColor);
         }
 
         bool isUpdating = false;

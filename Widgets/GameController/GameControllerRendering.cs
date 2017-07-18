@@ -570,7 +570,7 @@ namespace MonoVarmint.Widgets
             _clippingActive = true;
         }
 
-        public void BeginInnerCoordinateSpace(Vector2 offset, Vector2 size, float rotate, bool flipHorizontally, bool flipVertically, bool shouldClip)
+        public void BeginInnerCoordinateSpace(Vector2 offset, Vector2 size, float rotate, Vector2 rotationOrigin, bool flipHorizontally, bool flipVertically, bool shouldClip)
         {
             throw new NotImplementedException();
         }
@@ -591,6 +591,11 @@ namespace MonoVarmint.Widgets
         {
             if (!_renderTargets.TryGetValue(widget, out var renderTarget)) return;
 
+            // NOTE: Screen coordinates here are in pixels, rotations are in radians.
+            // This accounts for screen coordinates, but not rotations
+            transform.M41 *= _backBufferWidth;
+            transform.M42 *= _backBufferWidth;
+            transform.M43 *= _backBufferWidth;
             _effect.World = transform;
             _spriteBatch.Draw(renderTarget, Vector2.Zero, Color.White);
             _effect.World = Matrix.Identity;
