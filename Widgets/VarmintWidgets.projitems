@@ -9,10 +9,11 @@
     <Import_RootNamespace>MonoVarmint.Widgets</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Animation\VarmintAudioAnimationCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Animation\VarmintWidgetAnimation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Animation\VarmintWidgetAnimationCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GameController\GameControllerAudio.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\VarmintAudioInstance.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IVarmintAudioInstance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WidgetBase\VarmintWidgetChildren.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WidgetBase\VarmintWidgetAnimationHandling.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WidgetBase\VarmintWidgetDataBinding.cs" />

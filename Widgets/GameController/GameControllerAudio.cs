@@ -21,6 +21,8 @@ namespace MonoVarmint.Widgets
             }
         }
 
+        
+        // TODO: move this out of the controller similar to how widget animations work
         public VarmintWidgetAnimation FadeMusic(double durationSeconds)
         {
             var startVolume = MusicVolume;
@@ -31,7 +33,7 @@ namespace MonoVarmint.Widgets
         }
 
 
-        private VarmintAudioInstance PlaySoundEffect(string name)
+        private IVarmintAudioInstance PlaySoundEffect(string name)
         {
             var sfx = _soundEffectsByName[name].CreateInstance();
             sfx.Volume *= (float)SoundEffectVolume;
@@ -41,9 +43,9 @@ namespace MonoVarmint.Widgets
 
         public static string CurrentSong { get; private set; }
 
-	    public VarmintAudioInstance PlaySound(string name)
+	    public IVarmintAudioInstance PlaySound(string name) // Add volume here
         {
-            VarmintAudioInstance instance;
+            IVarmintAudioInstance instance;
             if (_soundEffectsByName.ContainsKey(name))
                 instance = PlaySoundEffect(name);
             else if (_songsByName.ContainsKey(name))
@@ -52,7 +54,7 @@ namespace MonoVarmint.Widgets
             return instance;
         }
 
-        private VarmintAudioInstance PlaySong(string name)
+        private IVarmintAudioInstance PlaySong(string name)
         {
             if (CurrentSong != null)
                 throw new InvalidOperationException("Cannot play a song while another song is currently playing.");
@@ -100,104 +102,137 @@ namespace MonoVarmint.Widgets
             AudioAnimations.Add(animation);
         }
 
-        /// <summary>
-        /// Pause the current music.
-        /// </summary>
-	    public static void PauseMusic()
-        {
-            MediaPlayer.Pause();
-        }
-
-        /// <summary>
-        /// Resume the current music.
-        /// </summary>
-	    public static void ResumeMusic()
-        {
-            MediaPlayer.Resume();
-        }
-
-        /// <summary>
-        /// Is the music repeating?
-        /// </summary>
-        public static bool Looping
-        {
-            set => MediaPlayer.IsRepeating = value;
-            get => MediaPlayer.IsRepeating;
-        }
-
 #region classes
 
-        private class VarmintSoundEffectInstance : VarmintAudioInstance
+        private class VarmintSoundEffectInstance : IVarmintAudioInstance
         {
             private readonly SoundEffectInstance _instance;
-            public VarmintSoundEffectInstance(SoundEffectInstance instance) : base(false)
+            
+            /// <summary>
+            /// The constructor by default sets looping to false.
+            /// </summary>
+            /// <param name="instance">The SoundEffectInstance this object should represent</param>
+            public VarmintSoundEffectInstance(SoundEffectInstance instance)
             {
                 _instance = instance;
+                IsLooping = false;
             }
 
-            public override void Stop()
+            /// <inheritdoc />
+            public void Stop()
             {
                 _instance.Stop();
             }
 
-            public override void Pause()
+            /// <inheritdoc />
+            public void Pause()
             {
                 _instance.Pause();
             }
 
-            public override void Resume()
+            /// <inheritdoc />
+            public void Resume()
             {
                 _instance.Resume();
             }
 
-            public override bool IsLooping
+            /// <inheritdoc />
+            public bool IsLooping
             {
                 get => _instance.IsLooped;
                 set => _instance.IsLooped = value;
             }
-            
-            public override void Dispose()
+
+            /// <inheritdoc />
+            public void Play()
+            {
+                _instance.Play();
+            }
+
+            /// <inheritdoc />
+            public void Dispose()
             {
                 _instance.Dispose();
-                base.Dispose();
             }
+
+            /// <inheritdoc />
+            public AudioType Type => AudioType.SoundEffect;
+            
         }
 
-        private class VarmintSongInstance : VarmintAudioInstance
+        private class VarmintSongInstance : IVarmintAudioInstance
         {
             private readonly Song _song;
 
-            public VarmintSongInstance(Song song) : base(true)
+            /// <summary>
+            /// The constructor by default sets looping to true.
+            /// </summary>
+            /// <param name="song">The Song this object should represent</param>
+            public VarmintSongInstance(Song song)
             {
                 _song = song;
+                IsLooping = true;
             }
 
-            public override void Stop()
+            /// <inheritdoc />
+            /// <summary>
+            /// Throws an exception if this is not the current song.
+            /// </summary>
+            public void Stop()
             {
+                if (_song.Name != CurrentSong)
+                    throw new InvalidOperationException("Attempted to stop a song when it is not the current song.");
                 CurrentSong = null;
                 MediaPlayer.Stop();
             }
 
-            public override void Pause()
+            /// <inheritdoc />
+            /// <summary>
+            /// Throws an exception if this is not the current song.
+            /// </summary>
+            public void Pause()
             {
+                if (_song.Name != CurrentSong)
+                    throw new InvalidOperationException("Attempted to pause a song when it is not the current song.");
                 MediaPlayer.Pause();
             }
 
-            public override void Resume()
+            /// <inheritdoc />
+            /// <summary>
+            /// Throws an exception if this is not the current song.
+            /// </summary>
+            public void Resume()
             {
+                if (_song.Name != CurrentSong)
+                    throw new InvalidOperationException("Attempted to resume a song when it is not the current song.");
                 MediaPlayer.Resume();
             }
 
-            public override bool IsLooping
+            /// <inheritdoc />
+            /// <summary>
+            /// Throws an exception if this is not the current song.
+            /// </summary>
+            public void Play()
+            {
+                if (CurrentSong != null)
+                    throw new InvalidOperationException("Cannnot play a song while a different song is playing.");
+                CurrentSong = _song.Name;
+                MediaPlayer.Play(_song);
+            }
+
+            /// <inheritdoc />
+            public bool IsLooping
             {
                 get => MediaPlayer.IsRepeating;
                 set => MediaPlayer.IsRepeating = value;
             }
 
-            public override void Dispose()
+            public void Dispose()
             {
                 Stop();
             }
+            
+            public AudioType Type => AudioType.Song;
         }
 #endregion
     }
