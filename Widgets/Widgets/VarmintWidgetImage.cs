@@ -28,7 +28,7 @@ namespace MonoVarmint.Widgets
         private void Render(GameTime gameTime, VarmintWidget widget)
         {
             if (Content == null) return;
-            Renderer.DrawGlyph(Content.ToString(), AbsoluteOffset, Size, Color.White);
+            Renderer.DrawGlyph(Content.ToString(), Offset, Size, Color.White);
         }
     }
 

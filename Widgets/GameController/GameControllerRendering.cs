@@ -554,7 +554,7 @@ namespace MonoVarmint.Widgets
         /// Clip any drawing outside of the specified area
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public void BeginClipping(VarmintWidget widget, Vector2 size)
+        public void BeginInnerCoordinateSpace(VarmintWidget widget, Vector2 size)
         {
             var rawSize = size * _backBufferWidth;
             var renderTarget = GetRenderTarget(_graphics.GraphicsDevice, widget, rawSize);
@@ -570,12 +570,17 @@ namespace MonoVarmint.Widgets
             _clippingActive = true;
         }
 
+        public void BeginInnerCoordinateSpace(Vector2 offset, Vector2 size, float rotate, bool flipHorizontally, bool flipVertically, bool shouldClip)
+        {
+            throw new NotImplementedException();
+        }
+
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// allow drawing on the entire area
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public void EndClipping()
+        public void EndInnerCoordinateSpace()
         {
             _spriteBatch.End();
             GraphicsDevice.SetRenderTarget(null);

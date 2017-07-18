@@ -50,14 +50,14 @@ namespace MonoVarmint.Widgets
             if (BackgroundImage != null)
             {
                 LineWidth = 0;
-                Renderer.DrawGlyph(BackgroundImage, AbsoluteOffset, Size, BackgroundColor);
+                Renderer.DrawGlyph(BackgroundImage, Offset, Size, BackgroundColor);
             }
             else
             {
-                Renderer.DrawBox(AbsoluteOffset, Size, BackgroundColor);
+                Renderer.DrawBox(Offset, Size, BackgroundColor);
             }
 
-            Vector2 alignedOffset = AbsoluteOffset;
+            Vector2 alignedOffset = Offset;
             Vector2 textSize = Renderer.MeasureText(textToDisplay, FontName, FontSize);
             alignedOffset.X += (Size.X - textSize.X) / 2;
             alignedOffset.Y += (Size.Y - textSize.Y) / 2;
@@ -66,10 +66,10 @@ namespace MonoVarmint.Widgets
 
             if (HasBorder)
             {
-                Renderer.DrawLine(AbsoluteOffset, AbsoluteOffset + new Vector2(Size.X, 0), LineWidth, ForegroundColor);
-                Renderer.DrawLine(AbsoluteOffset, AbsoluteOffset + new Vector2(0, Size.Y), LineWidth, ForegroundColor);
-                Renderer.DrawLine(AbsoluteOffset + Size, AbsoluteOffset + new Vector2(Size.X, 0), LineWidth, ForegroundColor);
-                Renderer.DrawLine(AbsoluteOffset + Size, AbsoluteOffset + new Vector2(0, Size.Y), LineWidth, ForegroundColor);
+                Renderer.DrawLine(Offset, Offset + new Vector2(Size.X, 0), LineWidth, ForegroundColor);
+                Renderer.DrawLine(Offset, Offset + new Vector2(0, Size.Y), LineWidth, ForegroundColor);
+                Renderer.DrawLine(Offset + Size, Offset + new Vector2(Size.X, 0), LineWidth, ForegroundColor);
+                Renderer.DrawLine(Offset + Size, Offset + new Vector2(0, Size.Y), LineWidth, ForegroundColor);
             }
         }
     }

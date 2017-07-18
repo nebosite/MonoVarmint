@@ -38,11 +38,11 @@ namespace MonoVarmint.Widgets
             if (!IsVisible) return;
             if (Size.X > 0 && Size.Y > 0)
             {
-                Renderer.BeginClipping(this, Size);
+                Renderer.BeginInnerCoordinateSpace(this, Size);
 
                 OnRender?.Invoke(gameTime, this);
 
-                Renderer.EndClipping();
+                Renderer.EndInnerCoordinateSpace();
             }
 
             RenderChildren(gameTime);
@@ -60,10 +60,7 @@ namespace MonoVarmint.Widgets
             var localChildren = new List<VarmintWidget>(Children);
             foreach (var child in localChildren)
             {
-                if (Renderer != null && Renderer.IsInRenderingWindow(child.AbsoluteOffset, child.Size))
-                {
-                    child.RenderMe(gameTime);
-                }
+                child.RenderMe(gameTime);
             }
         }
 

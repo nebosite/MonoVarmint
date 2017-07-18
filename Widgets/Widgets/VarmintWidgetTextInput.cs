@@ -129,8 +129,8 @@ namespace MonoVarmint.Widgets
         {
             var textToDisplay = GetTextToDisplay();
 
-            Renderer.DrawBox(AbsoluteOffset, Size, BackgroundColor);
-            Vector2 alignedOffset = AbsoluteOffset + GetTextStartOffset();
+            Renderer.DrawBox(Offset, Size, BackgroundColor);
+            Vector2 alignedOffset = Offset + GetTextStartOffset();
 
             var leftOfCursor = textToDisplay.Substring(0, CursorSpot);
             var rightOfCusor = textToDisplay.Substring(CursorSpot);

@@ -125,7 +125,6 @@ namespace MonoVarmint.Widgets
         //-----------------------------------------------------------------------------------------------
         public void LoadSprite(string name, int width, int height)
         {
-           
             var spriteTexture = LoadTexture(name);
             _spritesByName.Add(name, new VarmintSprite(spriteTexture, width, height));
         }
