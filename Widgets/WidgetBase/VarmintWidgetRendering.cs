@@ -29,6 +29,11 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public virtual void RenderMe(GameTime gameTime)
         {
+            if(Renderer == null)
+            {
+                throw new InvalidOperationException("The Renderer property is null on " + this.GetType().Name + " with Name=" + Name);
+            }
+
             Update();
             if (!IsVisible) return;
             if (Size.X > 0 && Size.Y > 0)
