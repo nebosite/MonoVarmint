@@ -35,7 +35,7 @@ namespace MonoVarmint.Widgets
         /// RotateConsistent - animate a rotation of a specified amount with a consistent speed
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public static VarmintWidgetAnimation RotateConsistent(
+        public static VarmintWidgetAnimation RotateLinear(
             double durationSeconds,
             float rotationAmount)
         {
@@ -50,7 +50,7 @@ namespace MonoVarmint.Widgets
         /// ScaleConsistent - animate a scale with a specified factor in relation to the current size with a consistent speed
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public static VarmintWidgetAnimation ScaleConsistent(
+        public static VarmintWidgetAnimation ScaleLinear(
             Vector2 originalSize,
             double durationSeconds,
             float scaleFactor)
