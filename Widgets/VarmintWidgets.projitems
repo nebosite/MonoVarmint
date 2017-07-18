@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Animation\VarmintAudioAnimationCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Animation\VarmintAnimation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Animation\VarmintWidgetAnimation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Animation\VarmintWidgetAnimationCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)GameController\GameControllerAudio.cs" />
