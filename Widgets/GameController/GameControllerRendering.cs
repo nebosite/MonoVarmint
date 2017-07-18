@@ -137,6 +137,16 @@ namespace MonoVarmint.Widgets
 
         //--------------------------------------------------------------------------------------
         /// <summary>
+        /// SetDefaultFont - Sets the default font to fontName
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public void SetDefaultFont(string fontName)
+        {
+            _defaultFont = _fontsByName[fontName];
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
         /// SelectFont - Select the Active font for text operations
         /// </summary>
         //--------------------------------------------------------------------------------------

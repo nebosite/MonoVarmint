@@ -9,6 +9,7 @@
     <Import_RootNamespace>MonoVarmint.Widgets</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Animation\VarmintAnimation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Animation\VarmintWidgetAnimation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Animation\VarmintWidgetAnimationCollection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WidgetBase\VarmintWidgetChildren.cs" />
@@ -30,6 +31,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)GameController\GameControllerRendering.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Templates\GameRunner.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WidgetSpace\VarmintWidgetSpace.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetPanelSlider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetScrollView.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetSprite.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetControl.cs" />
