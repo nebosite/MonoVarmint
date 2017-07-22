@@ -93,6 +93,7 @@ namespace MonoVarmint.Widgets
             {
                 updatedChildren.Add(child);
             }
+            children = updatedChildren;
             if (ChildrenAffectFormatting && !suppressChildUpdate)
             {
                 UpdateChildFormatting();
