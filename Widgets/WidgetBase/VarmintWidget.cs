@@ -19,8 +19,7 @@ namespace MonoVarmint.Widgets
         [VarmintWidgetInject]
         public IMediaRenderer Renderer { get; set; }
 
-        public string Name { get;
-            set; }
+        public string Name { get; set; }
         public string Style { get; set; }
         public VarmintWidget Parent { get; set; }
         public Color BackgroundColor { get; set; }

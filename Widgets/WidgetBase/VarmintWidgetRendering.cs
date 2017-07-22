@@ -35,30 +35,28 @@ namespace MonoVarmint.Widgets
         {
             if (Renderer == null)
             {
-                // throw new InvalidOperationException("The Renderer property is null on " + this.GetType().Name + " with Name=" + Name);
+                throw new InvalidOperationException("The Renderer property is null on " + this.GetType().Name + " with Name=" + Name);
             }
-            else
+
+            Update();
+            if (!IsVisible) return;
+
+            bool shouldClip = ClipToBounds
+                || Rotate != 0 || FlipHorizontal || FlipVertical;
+            if (shouldClip) Renderer.BeginClipping(AbsoluteOffset, Size);
+            OnRender?.Invoke(gameTime, this);
+
+            RenderChildren(gameTime);
+
+            if (shouldClip)
             {
-                Update();
-                if (!IsVisible) return;
-
-                bool shouldClip = ClipToBounds
-                    || Rotate != 0 || FlipHorizontal || FlipVertical;
-                if (shouldClip) Renderer.BeginClipping(AbsoluteOffset, Size);
-                OnRender?.Invoke(gameTime, this);
-
-                RenderChildren(gameTime);
-
-                if (shouldClip)
-                {
-                    float rotation = 0;
-                    Renderer.EndClipping(
-                        (float)(Rotate / 180.0 * Math.PI),
-                        new Vector2(.5f),
-                        new Vector2(1),
-                        FlipHorizontal,
-                        FlipVertical);
-                }
+                float rotation = 0;
+                Renderer.EndClipping(
+                    (float)(Rotate / 180.0 * Math.PI),
+                    new Vector2(.5f),
+                    new Vector2(1),
+                    FlipHorizontal,
+                    FlipVertical);
             }
         }
 
