@@ -19,7 +19,8 @@ namespace MonoVarmint.Widgets
         [VarmintWidgetInject]
         public IMediaRenderer Renderer { get; set; }
 
-        public string Name { get; set; }
+        public string Name { get;
+            set; }
         public string Style { get; set; }
         public VarmintWidget Parent { get; set; }
         public Color BackgroundColor { get; set; }
@@ -178,6 +179,11 @@ namespace MonoVarmint.Widgets
                 return AbsoluteOffset + Size / 2;
             }
         }
+
+        /// <summary>
+        /// When set to true it should not be rendered, allowing for better layering of objects
+        /// </summary>
+        public bool InhibitRendering { get; set; }
 
         public Dictionary<string, string> Parameters { get; set; }
 

@@ -45,6 +45,8 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         private void Render(GameTime gameTime, VarmintWidget widget)
         {
+            if(InhibitRendering) { return; }
+
             VarmintWidgetImage image = Content as VarmintWidgetImage;
             string textToDisplay = (image == null) ? Content.ToString() : "";
 
@@ -57,7 +59,6 @@ namespace MonoVarmint.Widgets
             {
                 LineWidth = 0;
                 BackgroundColor = Color.White;
-                Content = Content as VarmintWidgetImage;
                 Renderer.DrawGlyph(image.Content.ToString(), AbsoluteOffset, Size, BackgroundColor);
             }
             else
