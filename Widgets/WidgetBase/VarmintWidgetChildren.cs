@@ -86,14 +86,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public virtual void InsertChild(VarmintWidget widget, bool suppressChildUpdate = false)
         {
-            List<VarmintWidget> updatedChildren = new List<VarmintWidget>();
-            updatedChildren.Add(widget);
-            widget.Parent = this;
-            foreach (var child in children)
-            {
-                updatedChildren.Add(child);
-            }
-            children = updatedChildren;
+            children.Insert(0, widget);
             if (ChildrenAffectFormatting && !suppressChildUpdate)
             {
                 UpdateChildFormatting();
