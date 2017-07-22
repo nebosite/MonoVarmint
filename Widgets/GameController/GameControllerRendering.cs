@@ -249,7 +249,7 @@ namespace MonoVarmint.Widgets
             {
                 var lineBuilder = new StringBuilder();
                 currentTextWidth = 0;
-                var parts = text.Split(' ');
+                var parts = line.Split(' ');
                 foreach (var part in parts)
                 {
                     if (part.Length > 0)
@@ -326,6 +326,11 @@ namespace MonoVarmint.Widgets
             var output = new StringBuilder();
             for (int i = 0; i < text.Length; i++)
             {
+                if(text[i] == '\n' || text[i] == '\r')
+                {
+                    output.Append(text[i]);
+                    continue;
+                }
                 output.Append(_selectedFont.Characters.Contains(text[i]) ?
                               text[i] : ' ');
             }
