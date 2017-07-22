@@ -45,7 +45,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         private void Render(GameTime gameTime, VarmintWidget widget)
         {
-            if(InhibitRendering) { return; }
+            if (InhibitRendering) { return; }
 
             VarmintWidgetImage image = Content as VarmintWidgetImage;
             string textToDisplay = (image == null) ? Content.ToString() : "";
