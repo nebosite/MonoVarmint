@@ -12,8 +12,6 @@ namespace MonoVarmint.Widgets
     {
         public float LineWidth { get; set; }
         public bool HasBorder { get; set; }
-        public string BackgroundImage { get; set; }
-        public Vector2 TextOffset { get; set; }
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// ctor
@@ -47,25 +45,26 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         private void Render(GameTime gameTime, VarmintWidget widget)
         {
-            var textToDisplay = (Content == null) ? "" : Content.ToString();
-
-            if (BackgroundImage != null)
-            {
-                LineWidth = 0;
-                BackgroundColor = Color.White;
-                Renderer.DrawGlyph(BackgroundImage, AbsoluteOffset, Size, BackgroundColor);
-            }
-            else
-            {
-                Renderer.DrawBox(AbsoluteOffset, Size, BackgroundColor);
-            }
+            VarmintWidgetImage image = Content as VarmintWidgetImage;
+            string textToDisplay = (image == null) ? Content.ToString() : "";
 
             Vector2 alignedOffset = AbsoluteOffset;
             Vector2 textSize = Renderer.MeasureText(textToDisplay, FontName, FontSize);
             alignedOffset.X += (Size.X - textSize.X) / 2;
             alignedOffset.Y += (Size.Y - textSize.Y) / 2;
-
-            Renderer.DrawText(textToDisplay, FontName, FontSize, alignedOffset + TextOffset, ForegroundColor, WrapContent ? Size.X : 0);
+            
+            if (textToDisplay.Equals(""))
+            {
+                LineWidth = 0;
+                BackgroundColor = Color.White;
+                Content = Content as VarmintWidgetImage;
+                Renderer.DrawGlyph(image.Content.ToString(), AbsoluteOffset, Size, BackgroundColor);
+            }
+            else
+            {
+                Renderer.DrawText(textToDisplay, FontName, FontSize, alignedOffset + TextOffset, ForegroundColor, WrapContent ? Size.X : 0);
+                Renderer.DrawBox(AbsoluteOffset, Size, BackgroundColor);
+            }            
 
             if (HasBorder)
             {
