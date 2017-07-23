@@ -30,7 +30,16 @@
       ForegroundColor="Yellow"
       Content="WOW!"
       VerticalContentAlignment="Center"
-      Rotate="{WowRotate}" />
+      Rotate="{WowRotate}" >
+      <Label
+        Size=".1,.1"
+        FontSize=".04"
+        Margin=".01,.01"
+        ForegroundColor="White"
+        Content="WOW!"
+        VerticalContentAlignment="Center"
+        Rotate="{WowRotate}"/>
+    </Label>
     <Slider Size=".8,.1" BackgroundColor="Red" Value="{MySliderValue}">
       <Slider.Track>
         <Label Content="|-------------------------|" Stretch="1,1"/> 
