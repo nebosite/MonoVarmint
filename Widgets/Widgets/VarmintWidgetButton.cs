@@ -8,11 +8,34 @@ namespace MonoVarmint.Widgets
     /// </summary>
     //--------------------------------------------------------------------------------------
     [VarmintWidgetShortName("Button")]
-    public class VarmintWidgetButton : VarmintWidgetLabel
+    public class VarmintWidgetButton : VarmintWidget
     {
+        /// <summary>
+        /// LineWidth (Deprecated- use the content to do the drawing of borders)
+        /// </summary>
         public float LineWidth { get; set; }
+
+        /// <summary>
+        /// HasBorder (Deprecated- use the content to do the drawing of borders)
+        /// </summary>
         public bool HasBorder { get; set; }
-        public string BackgroundImage { get; set; }
+
+        public override object Content
+        {
+            get => base.Content;
+            set
+            {
+                if(value is string)
+                {
+                    var label = new VarmintWidgetLabel();
+                    label.Content = value;
+                    label.Renderer = this.Renderer;
+                    base.Content = label;
+                }
+                else base.Content = value;
+            }
+        }
+
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// ctor
@@ -21,9 +44,6 @@ namespace MonoVarmint.Widgets
         public VarmintWidgetButton(): base() 
         {
             LineWidth = 0.006f;
-            FontSize = .05f;
-            HasBorder = true;
-
             SetCustomRender(Render);
             OnFlick += Ignore_OnFlick;
         }
@@ -47,22 +67,7 @@ namespace MonoVarmint.Widgets
         {
             var textToDisplay = (Content == null) ? "" : Content.ToString();
 
-            if (BackgroundImage != null)
-            {
-                LineWidth = 0;
-                Renderer.DrawGlyph(BackgroundImage, Vector2.Zero, Size, BackgroundColor);
-            }
-            else
-            {
-                Renderer.DrawBox(Vector2.Zero, Size, BackgroundColor);
-            }
-
-            Vector2 alignedOffset = Offset;
-            Vector2 textSize = Renderer.MeasureText(textToDisplay, FontName, FontSize);
-            alignedOffset.X += (Size.X - textSize.X) / 2;
-            alignedOffset.Y += (Size.Y - textSize.Y) / 2;
-
-            Renderer.DrawText(textToDisplay, FontName, FontSize, alignedOffset, ForegroundColor, WrapContent ? Size.X : 0);
+            Renderer.DrawBox(Vector2.Zero, Size, BackgroundColor);
 
             if (HasBorder)
             {

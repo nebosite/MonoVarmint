@@ -322,6 +322,11 @@ namespace MonoVarmint.Widgets
             var output = new StringBuilder();
             for (int i = 0; i < text.Length; i++)
             {
+                if(text[i] == '\n' || text[i] == '\r')
+                {
+                    output.Append(text[i]);
+                    continue;
+                }
                 output.Append(_selectedFont.Characters.Contains(text[i]) ?
                               text[i] : ' ');
             }

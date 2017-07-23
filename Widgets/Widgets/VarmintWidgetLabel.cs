@@ -10,8 +10,6 @@ namespace MonoVarmint.Widgets
     [VarmintWidgetShortName("Label")]
     public class VarmintWidgetLabel : VarmintWidget
     {
-        public float FontSize { get; set; }
-        public string FontName { get; set; }
 
         //--------------------------------------------------------------------------------------
         /// <summary>
@@ -20,7 +18,6 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public VarmintWidgetLabel()
         {
-            this.FontSize = 0.1f;
             this.OnRender += Render;
         }
 
