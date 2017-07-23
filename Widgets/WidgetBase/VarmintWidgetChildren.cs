@@ -92,6 +92,21 @@ namespace MonoVarmint.Widgets
 
         //--------------------------------------------------------------------------------------
         /// <summary>
+        /// InsertChild
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public virtual void InsertChild(VarmintWidget widget, bool suppressChildUpdate = false)
+        {
+            children.Insert(0, widget);
+            widget.Parent = this;
+            if (ChildrenAffectFormatting && !suppressChildUpdate)
+            {
+                UpdateChildFormatting();
+            }
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
         /// RemoveChild
         /// </summary>
         //--------------------------------------------------------------------------------------
