@@ -40,17 +40,31 @@
       </Slider.Thumb>
     </Slider>
     <Label Size=".5,.1" FontSize=".1" Content="{MyAdjustedSliderValue}" />
+  <StackPanel
+    FontSize=".2"
+    Margin=",.1"
+    Orientation="Horizontal">
+    <!--- There are two ways to do button conent you can specify text or a widget-->
+    <Button
+      Name="PlayButton"
+      Content="Play"
+      Size =".4,.2"
+      Margin=",,.1"
+      HasBorder="true"
+      BackgroundColor="Yellow"
+      OnTap="PlayButtonOnTap"
+        />
+    <Button
+      Name="PlayButton"
+      Size =".4,.2"
+      OnTap="PlayButtonOnTap">
+      <Button.Content>
+        <Label Content="Go!" BackgroundColor="Green" Stretch="1,1" />
+      </Button.Content>
+    </Button>
 
   </StackPanel>
-  <Button
-    Name="PlayButton"
-    Content="Play"
-    Margin=",,,.1"
-    Size =".4,.2"
-    FontSize=".2"
-    HasBorder="true"
-    BackgroundColor="Yellow"
-    OnTap="PlayButtonOnTap"
-      />
+
+  </StackPanel>
 
 </Grid>
