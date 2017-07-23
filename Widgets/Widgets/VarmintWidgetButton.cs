@@ -8,10 +8,34 @@ namespace MonoVarmint.Widgets
     /// </summary>
     //--------------------------------------------------------------------------------------
     [VarmintWidgetShortName("Button")]
-    public class VarmintWidgetButton : VarmintWidgetLabel
+    public class VarmintWidgetButton : VarmintWidget
     {
+        /// <summary>
+        /// LineWidth (Deprecated- use the content to do the drawing of borders)
+        /// </summary>
         public float LineWidth { get; set; }
+
+        /// <summary>
+        /// HasBorder (Deprecated- use the content to do the drawing of borders)
+        /// </summary>
         public bool HasBorder { get; set; }
+
+        public override object Content
+        {
+            get => base.Content;
+            set
+            {
+                if(value is string)
+                {
+                    var label = new VarmintWidgetLabel();
+                    label.Content = value;
+                    label.Renderer = this.Renderer;
+                    base.Content = label;
+                }
+                else base.Content = value;
+            }
+        }
+
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// ctor
@@ -20,10 +44,6 @@ namespace MonoVarmint.Widgets
         public VarmintWidgetButton(): base() 
         {
             LineWidth = 0.006f;
-            FontSize = .05f;
-            TextOffset = new Vector2();
-            HasBorder = true;
-
             SetCustomRender(Render);
             OnFlick += Ignore_OnFlick;
         }
@@ -45,27 +65,9 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         private void Render(GameTime gameTime, VarmintWidget widget)
         {
-            if (InhibitRendering) { return; }
+            var textToDisplay = (Content == null) ? "" : Content.ToString();
 
-            VarmintWidgetImage image = Content as VarmintWidgetImage;
-            string textToDisplay = (image == null) ? Content.ToString() : "";
-
-            Vector2 alignedOffset = AbsoluteOffset;
-            Vector2 textSize = Renderer.MeasureText(textToDisplay, FontName, FontSize);
-            alignedOffset.X += (Size.X - textSize.X) / 2;
-            alignedOffset.Y += (Size.Y - textSize.Y) / 2;
-            
-            if (textToDisplay.Equals(""))
-            {
-                LineWidth = 0;
-                BackgroundColor = Color.White;
-                Renderer.DrawGlyph(image.Content.ToString(), AbsoluteOffset, Size, BackgroundColor);
-            }
-            else
-            {
-                Renderer.DrawText(textToDisplay, FontName, FontSize, alignedOffset + TextOffset, ForegroundColor, WrapContent ? Size.X : 0);
-                Renderer.DrawBox(AbsoluteOffset, Size, BackgroundColor);
-            }            
+            Renderer.DrawBox(AbsoluteOffset, Size, BackgroundColor);
 
             if (HasBorder)
             {

@@ -53,7 +53,18 @@ namespace MonoVarmint.Widgets
         /// <summary>
         /// Enumerated list of children in visual order
         /// </summary>
-        public virtual IEnumerable<VarmintWidget> Children { get { return (IEnumerable<VarmintWidget>)children; } }
+        public virtual IEnumerable<VarmintWidget> Children
+        {
+            get
+            {
+                if (Content is VarmintWidget) yield return Content as VarmintWidget;
+                foreach (var child in children)
+                {
+                    yield return child;
+                }
+            }
+        }
+
         public List<VarmintWidget> ChildrenCopy { get { return new List<VarmintWidget>(Children); } }
 
         public bool HasChildren

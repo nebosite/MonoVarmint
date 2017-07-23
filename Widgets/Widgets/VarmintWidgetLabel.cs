@@ -10,9 +10,7 @@ namespace MonoVarmint.Widgets
     [VarmintWidgetShortName("Label")]
     public class VarmintWidgetLabel : VarmintWidget
     {
-        public float FontSize { get; set; }
-        public string FontName { get; set; }
-        public Vector2 TextOffset { get; set; }
+
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// ctor
@@ -20,9 +18,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public VarmintWidgetLabel()
         {
-            this.FontSize = 0.1f;
             this.OnRender += Render;
-            this.TextOffset = new Vector2();
         }
 
         //--------------------------------------------------------------------------------------
@@ -53,7 +49,7 @@ namespace MonoVarmint.Widgets
                 case VerticalContentAlignment.Bottom: alignedOffset.Y += (Size.Y - textSize.Y);  break;
             }
 
-            Renderer.DrawText(textToDisplay, FontName, FontSize, alignedOffset + TextOffset, ForegroundColor, margin);
+            Renderer.DrawText(textToDisplay, FontName, FontSize, alignedOffset, ForegroundColor, margin);
         }
     }
 }

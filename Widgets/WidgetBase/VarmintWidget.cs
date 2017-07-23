@@ -113,9 +113,51 @@ namespace MonoVarmint.Widgets
             set { _verticalContentAlignment = value; }
         }
 
+        float? _fontSize;
+        public float FontSize
+        {
+            get
+            {
+                if (_fontSize != null) return _fontSize.Value;
+                if (Parent == null) return 0.1f;
+                return Parent.FontSize;
+            }
+            set { _fontSize = value; }
+        }
+
+
+        string _fontName;
+        public string FontName
+        {
+            get
+            {
+                if (_fontName != null) return _fontName;
+                if (Parent == null) return null;
+                return Parent.FontName;
+            }
+            set { _fontName = value; }
+        }
+
+
+
         public virtual WidgetMargin Margin { get; set; }
         public virtual StretchParameter Stretch { get; set; }
-        public object Content { get; set; }
+
+        private object _content;
+        public virtual object Content
+        {
+            get => _content;
+            set
+            {
+                if(value is VarmintWidget)
+                {
+                    var widget = value as VarmintWidget;
+                    widget.Parent = this;
+                }
+                _content = value;
+            }
+        }
+
         public bool WrapContent { get; set; }
 
         private object _xbindingContext;
