@@ -29,10 +29,12 @@ namespace MonoVarmint.Widgets
         /// </summary>
         void Play();
         
+        float Volume { get; set; }
+        
         /// <summary>
         /// Type of this sound: song or sound effect.
         /// </summary>
-        AudioType Type { get;  }
+        AudioType Type { get; }
     }
 
     public enum AudioType

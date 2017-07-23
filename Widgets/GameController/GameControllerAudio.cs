@@ -3,24 +3,30 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Audio;
+using MonoVarmint.Widgets.Animation;
 
 namespace MonoVarmint.Widgets
 {
     public partial class GameController
     {
-
-        public readonly List<VarmintWidgetAnimation> AudioAnimations = new List<VarmintWidgetAnimation>();
+        
+        private readonly List<(IVarmintAudioInstance, VarmintAudioAnimation)> _audioAnimations = new List<(IVarmintAudioInstance, VarmintAudioAnimation)>();
 
         private void AudioUpdate(GameTime gameTime)
         {
-            foreach(var animation in new List<VarmintWidgetAnimation>( AudioAnimations))
+            foreach(var animation in new List<(IVarmintAudioInstance instance, VarmintAudioAnimation animation)>(_audioAnimations))
             {
-                animation.Update(null, gameTime);
-                if (animation.IsComplete)
-                    AudioAnimations.Remove(animation);
+                animation.animation.Update(animation.instance, gameTime);
+                if (animation.animation.IsComplete)
+                    _audioAnimations.Remove(animation);
             }
         }
+        
 
+        public void ApplyAnimation(IVarmintAudioInstance instance, VarmintAudioAnimation animation)
+        {
+            _audioAnimations.Add((instance, animation));
+        }
         
         // TODO: move this out of the controller similar to how widget animations work
         public VarmintWidgetAnimation FadeMusic(double durationSeconds)
@@ -43,6 +49,15 @@ namespace MonoVarmint.Widgets
 
         public static string CurrentSong { get; private set; }
 
+        public IVarmintAudioInstance GetNewAudioInstance(string audioFileName)
+        {
+            if (_soundEffectsByName.ContainsKey(audioFileName))
+                return new VarmintSoundEffectInstance(_soundEffectsByName[audioFileName].CreateInstance());
+            if (_songsByName.ContainsKey(audioFileName))
+                return new VarmintSongInstance(_songsByName[audioFileName]);
+            throw new ArgumentException($"No sound with the name {audioFileName} has been loaded.");
+        }
+        
 	    public IVarmintAudioInstance PlaySound(string name) // Add volume here
         {
             IVarmintAudioInstance instance;
@@ -73,34 +88,6 @@ namespace MonoVarmint.Widgets
         }
 
         public double SoundEffectVolume { get; set; } = 1.0;
-
-        /// <summary>
-		/// Fade out of a song and stop.
-		/// </summary>
-		/// <param name="outDuration"></param>
-	    public void FadeoutMusic(double outDuration)
-        {
-            FadeToSong(outDuration, null);
-        }
-        /// <summary>
-        /// Fade out the current song and play a new one.
-        /// </summary>
-        /// <param name="outDuration">
-        /// Time in seconds of the fade out.
-        /// </param>
-        /// <param name="newSong">
-        /// The song to play after the fade.
-        /// </param>
-        public void FadeToSong(double outDuration, string newSong)
-        {
-            var volume = MusicVolume;
-            var animation = FadeMusic(outDuration);
-            animation.OnComplete += () => {
-                MusicVolume = volume;
-                PlaySound(newSong);
-            };
-            AudioAnimations.Add(animation);
-        }
 
 #region classes
 
@@ -157,6 +144,13 @@ namespace MonoVarmint.Widgets
 
             /// <inheritdoc />
             public AudioType Type => AudioType.SoundEffect;
+            
+            /// <inheritdoc />
+            public float Volume
+            {
+                get => _instance.Volume;
+                set => _instance.Volume = value;
+            }
             
         }
 
@@ -225,6 +219,12 @@ namespace MonoVarmint.Widgets
             {
                 get => MediaPlayer.IsRepeating;
                 set => MediaPlayer.IsRepeating = value;
+            }
+
+            public float Volume
+            {
+                get => MediaPlayer.Volume;
+                set => MediaPlayer.Volume = value;
             }
 
             public void Dispose()
