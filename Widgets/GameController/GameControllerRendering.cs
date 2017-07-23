@@ -659,7 +659,7 @@ namespace MonoVarmint.Widgets
                 origin,
                 scale,
                 effects,
-                _drawBuffers.Count / 16384.0f); // anything outside of [0..1] gets clipped away - support reasonable depth
+                1f - (_drawBuffers.Count / 16384.0f)); // anything outside of [0..1] gets clipped away - support reasonable depth
             ReturnRenderTarget(drawBuffer.RenderBuffer);
             DrawOffset = drawBuffer.PreviousDrawOffset;
         }
