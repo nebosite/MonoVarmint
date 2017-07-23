@@ -51,16 +51,16 @@ namespace MonoVarmint.Widgets
         /// </summary>
         //--------------------------------------------------------------------------------------
         public static VarmintWidgetAnimation ScaleLinear(
-            Vector2 originalSize,
             double durationSeconds,
-            float scaleFactor)
+            Vector2 originalSize,
+            Vector2 scaleFactor)
         {
+            var sizeChange = originalSize * scaleFactor - originalSize;
             return new VarmintWidgetAnimation(durationSeconds, (widget, delta) =>
             {
-                if (scaleFactor < 0) throw new ArgumentException();
+                if ( (scaleFactor.X < 0) || (scaleFactor.Y < 0)) throw new ArgumentException();
 
                 // Scales from 1 (current size) to scale factor
-                var sizeChange = originalSize * scaleFactor - originalSize; 
                 widget.Size = originalSize + sizeChange * (float)delta;
             });
         }
