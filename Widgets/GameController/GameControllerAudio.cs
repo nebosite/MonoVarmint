@@ -27,16 +27,6 @@ namespace MonoVarmint.Widgets
         {
             _audioAnimations.Add((instance, animation));
         }
-        
-        // TODO: move this out of the controller similar to how widget animations work
-        public VarmintWidgetAnimation FadeMusic(double durationSeconds)
-        {
-            var startVolume = MusicVolume;
-            return new VarmintWidgetAnimation(durationSeconds, (widget, delta) =>
-            {
-                MusicVolume = (1 - delta) * startVolume;   
-            });
-        }
 
 
         private IVarmintAudioInstance PlaySoundEffect(string name)
