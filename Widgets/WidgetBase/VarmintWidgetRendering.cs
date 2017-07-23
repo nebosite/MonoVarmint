@@ -71,12 +71,15 @@ namespace MonoVarmint.Widgets
 
         private void ComposeInternal(Matrix transform)
         {
+            // TODO:HANS - Varmint widgets should not know about radians
             if (FlipHorizontal) transform *= Matrix.CreateScale(-1, 1, 1);
             if (FlipVertical) transform *= Matrix.CreateScale(1, -1, 1);
-            transform *= Matrix.CreateRotationZ(Rotate);
+            transform *= Matrix.CreateTranslation(-Size.X / 2, -Size.Y / 2, 0);
+            transform *= Matrix.CreateRotationZ(Rotate * MathHelper.Pi / 180);
+            transform *= Matrix.CreateTranslation(Size.X / 2, Size.Y / 2, 0);
             transform *= Matrix.CreateTranslation(Offset.X, Offset.Y, 0);
             Renderer.DrawCachedWidget(this, transform);
-            foreach (var child in children)
+            foreach (var child in Children)
             {
                 child.ComposeInternal(transform);
             }

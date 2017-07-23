@@ -46,7 +46,7 @@
     Orientation="Horizontal">
     <!--- There are two ways to do button conent you can specify text or a widget-->
     <Button
-      Name="PlayButton"
+      Name="TextContentPlayButton"
       Content="Play"
       Size =".4,.2"
       Margin=",,.1"
@@ -55,7 +55,7 @@
       OnTap="PlayButtonOnTap"
         />
     <Button
-      Name="PlayButton"
+      Name="WidgetContentPlayButton"
       Size =".4,.2"
       OnTap="PlayButtonOnTap">
       <Button.Content>

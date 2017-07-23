@@ -27,6 +27,8 @@ namespace MonoVarmint.Widgets
             {
                 if(value is string)
                 {
+                    // TODO: This label should have its size and shape updated
+                    // as the button updates.
                     var label = new VarmintWidgetLabel();
                     label.Content = value;
                     label.Renderer = this.Renderer;
