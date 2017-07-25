@@ -69,6 +69,7 @@ namespace MonoVarmint.Widgets
             if (Content is VarmintWidgetImage) { return; }
 
             Renderer.DrawBox(AbsoluteOffset, Size, BackgroundColor);
+
             if (HasBorder)
             {
                 Renderer.DrawLine(AbsoluteOffset, AbsoluteOffset + new Vector2(Size.X, 0), LineWidth, ForegroundColor);

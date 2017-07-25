@@ -33,7 +33,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public virtual void RenderMe(GameTime gameTime)
         {
-            if (Renderer == null)
+            if(Renderer == null)
             {
                 throw new InvalidOperationException("The Renderer property is null on " + this.GetType().Name + " with Name=" + Name);
             }
@@ -52,7 +52,7 @@ namespace MonoVarmint.Widgets
             {
                 float rotation = 0;
                 Renderer.EndClipping(
-                    (float)(Rotate / 180.0 * Math.PI),
+                    (float)(Rotate / 180.0 * Math.PI), 
                     new Vector2(.5f),
                     new Vector2(1),
                     FlipHorizontal,
