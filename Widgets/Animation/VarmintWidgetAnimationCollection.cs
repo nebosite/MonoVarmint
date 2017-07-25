@@ -36,7 +36,7 @@ namespace MonoVarmint.Widgets
         /// Fade - animate opacity
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public static VarmintWidgetAnimation Fade(
+        public static VarmintWidgetAnimation FadeLinear(
             double durationSeconds,
             float startOpacity,
             float endOpacity)
