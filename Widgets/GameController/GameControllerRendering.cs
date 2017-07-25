@@ -557,7 +557,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void BeginClipping(Vector2 absolutePosition, Vector2 size)
         {
-            
+
             var position = absolutePosition - DrawOffset;
             var rawPosition = position * _backBufferWidth;
             var rawSize = size * _backBufferWidth;
@@ -620,7 +620,7 @@ namespace MonoVarmint.Widgets
                 origin,
                 scale,
                 effects,
-                _drawBuffers.Count);
+                1f - (_drawBuffers.Count / 16384.0f)); // anything outside of [0..1] gets clipped away - support reasonable depth
             ReturnRenderTarget(drawBuffer.RenderBuffer);
             DrawOffset = drawBuffer.PreviousDrawOffset;
         }
