@@ -12,6 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Animation\VarmintAnimation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Animation\VarmintWidgetAnimation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Animation\VarmintWidgetAnimationCollection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UIHelpers.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WidgetBase\VarmintWidgetChildren.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WidgetBase\VarmintWidgetAnimationHandling.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WidgetBase\VarmintWidgetDataBinding.cs" />
