@@ -12,6 +12,12 @@ namespace MonoVarmint.Widgets
         
         internal readonly List<SoundInstanceBase> AnimatingInstances = new List<SoundInstanceBase>();
 
+        //-----------------------------------------------------------------------------------------------
+        /// <summary>
+        /// Update audio animations
+        /// </summary>
+        /// <param name="gameTime"></param>
+        //-----------------------------------------------------------------------------------------------
         private void UpdateAudio(GameTime gameTime)
         {
             foreach(var instance in new List<SoundInstanceBase>(AnimatingInstances))
@@ -25,20 +31,18 @@ namespace MonoVarmint.Widgets
                 }
             }
         }
+
+
         
-
-
-        private IVarmintAudioInstance PlaySoundEffect(string name)
-        {
-            var soundEffectInstance = _soundEffectsByName[name].CreateInstance();
-            soundEffectInstance.Volume *= (float)SoundEffectVolume;
-            soundEffectInstance.Play();
-            return new VarmintSoundEffectInstance(soundEffectInstance, this);
-        }
-
         public static IVarmintAudioInstance CurrentSong { get; private set; }
-        
-	    public IVarmintAudioInstance PlaySound(string name) // Add volume here
+        //-----------------------------------------------------------------------------------------------
+        /// <summary>
+        /// Play a sound
+        /// </summary>
+        /// <param name="name">The name of the sound to play</param>
+        /// <returns>Returns an IVarmintAudioInstance of the played sound.</returns>
+        //-----------------------------------------------------------------------------------------------
+        public IVarmintAudioInstance PlaySound(string name) // Add volume here
         {
             IVarmintAudioInstance instance;
             if (_soundEffectsByName.ContainsKey(name))
@@ -49,6 +53,28 @@ namespace MonoVarmint.Widgets
             return instance;
         }
 
+        //-----------------------------------------------------------------------------------------------
+        /// <summary>
+        /// Play a sound effect
+        /// </summary>
+        /// <param name="name">The name of the sound to play</param>
+        /// <returns>Returns an IVarmintAudioInstance from the played sound</returns>
+        //-----------------------------------------------------------------------------------------------
+        private IVarmintAudioInstance PlaySoundEffect(string name)
+        {
+            var soundEffectInstance = _soundEffectsByName[name].CreateInstance();
+            soundEffectInstance.Volume *= (float)SoundEffectVolume;
+            soundEffectInstance.Play();
+            return new VarmintSoundEffectInstance(soundEffectInstance, this, name);
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        /// <summary>
+        /// Play a song
+        /// </summary>
+        /// <param name="name">The name of the song to play</param>
+        /// <returns>Returns an IVarmintAudioInstance from the played sound</returns>
+        //-----------------------------------------------------------------------------------------------
         private IVarmintAudioInstance PlaySong(string name)
         {
             if (CurrentSong != null)
@@ -59,10 +85,12 @@ namespace MonoVarmint.Widgets
             return instance;
         }
 
+        //-----------------------------------------------------------------------------------------------
         /// <summary>
         /// Current music from 0 to 1.
         /// </summary>
-	    public double MusicVolume
+        //-----------------------------------------------------------------------------------------------
+        public double MusicVolume
         {
             set => MediaPlayer.Volume = (float)value;
             get => MediaPlayer.Volume;
@@ -83,8 +111,15 @@ namespace MonoVarmint.Widgets
             public abstract bool IsLooping { get; set; }
             public abstract void Play();
             public abstract float Volume { get; set; }
+            
             internal readonly List<VarmintAudioAnimation> Animations = new List<VarmintAudioAnimation>();
-            public void ApplyAnimation(VarmintAudioAnimation animation)
+            //-----------------------------------------------------------------------------------------------
+            /// <summary>
+            /// Apply an animation to this instance.
+            /// </summary>
+            /// <param name="animation">The animation to add</param>
+            //-----------------------------------------------------------------------------------------------
+            public void AddAnimation(VarmintAudioAnimation animation)
             {
                 Animations.Add(animation);
                 _renderer.AnimatingInstances.Add(this);
@@ -104,12 +139,14 @@ namespace MonoVarmint.Widgets
         {
             private readonly SoundEffectInstance _instance;
 
+            //-----------------------------------------------------------------------------------------------
             /// <summary>
             /// The constructor by default sets looping to false.
             /// </summary>
             /// <param name="instance">The SoundEffectInstance this object should represent</param>
             /// <param name="renderer">The renderer to use with animations</param>
             /// <param name="name">The name of the sound effect</param>
+            //-----------------------------------------------------------------------------------------------
             public VarmintSoundEffectInstance(SoundEffectInstance instance, GameController renderer, string name) : base(renderer)
             {
                 Name = name;
@@ -117,51 +154,67 @@ namespace MonoVarmint.Widgets
                 IsLooping = false;
             }
 
+            //-----------------------------------------------------------------------------------------------
             /// <inheritdoc />
+            //-----------------------------------------------------------------------------------------------
             public override void Stop()
             {
                 _instance.Stop();
             }
 
+            //-----------------------------------------------------------------------------------------------
             /// <inheritdoc />
+            //-----------------------------------------------------------------------------------------------
             public override void Pause()
             {
                 _instance.Pause();
             }
 
+            //-----------------------------------------------------------------------------------------------
             /// <inheritdoc />
+            //-----------------------------------------------------------------------------------------------
             public override void Resume()
             {
                 _instance.Resume();
             }
 
+            //-----------------------------------------------------------------------------------------------
             /// <inheritdoc />
+            //-----------------------------------------------------------------------------------------------
             public override bool IsLooping
             {
                 get => _instance.IsLooped;
                 set => _instance.IsLooped = value;
             }
 
+            //-----------------------------------------------------------------------------------------------
             /// <inheritdoc />
+            //-----------------------------------------------------------------------------------------------
             public override void Play()
             {
                 _instance.Play();
             }
 
+            //-----------------------------------------------------------------------------------------------
             /// <inheritdoc />
+            //-----------------------------------------------------------------------------------------------
             public override void Dispose()
             {
                 _instance.Dispose();
             }
 
-            
 
+
+            //-----------------------------------------------------------------------------------------------
             /// <inheritdoc />
+            //-----------------------------------------------------------------------------------------------
             public override AudioType Type => AudioType.SoundEffect;
 
             public override string Name { get; }
 
+            //-----------------------------------------------------------------------------------------------
             /// <inheritdoc />
+            //-----------------------------------------------------------------------------------------------
             public override float Volume
             {
                 get => _instance.Volume;
@@ -173,7 +226,8 @@ namespace MonoVarmint.Widgets
         private sealed class VarmintSongInstance : SoundInstanceBase
         {
             private readonly Song _song;
-
+            
+            //-----------------------------------------------------------------------------------------------
             /// <summary>
             /// The constructor by default sets looping to true.
             /// </summary>
@@ -185,10 +239,9 @@ namespace MonoVarmint.Widgets
                 IsLooping = false;
             }
 
+            //-----------------------------------------------------------------------------------------------
             /// <inheritdoc />
-            /// <summary>
-            /// Throws an exception if this is not the current song.
-            /// </summary>
+            //-----------------------------------------------------------------------------------------------
             public override void Stop()
             {
                 if (this != CurrentSong)
@@ -197,10 +250,9 @@ namespace MonoVarmint.Widgets
                 MediaPlayer.Stop();
             }
 
+            //-----------------------------------------------------------------------------------------------
             /// <inheritdoc />
-            /// <summary>
-            /// Throws an exception if this is not the current song.
-            /// </summary>
+            //-----------------------------------------------------------------------------------------------
             public override void Pause()
             {
                 if (this != CurrentSong)
@@ -208,10 +260,12 @@ namespace MonoVarmint.Widgets
                 MediaPlayer.Pause();
             }
 
+            //-----------------------------------------------------------------------------------------------
             /// <inheritdoc />
             /// <summary>
             /// Throws an exception if this is not the current song.
             /// </summary>
+            //-----------------------------------------------------------------------------------------------
             public override void Resume()
             {
                 if (this != CurrentSong)
@@ -219,10 +273,9 @@ namespace MonoVarmint.Widgets
                 MediaPlayer.Resume();
             }
 
+            //-----------------------------------------------------------------------------------------------
             /// <inheritdoc />
-            /// <summary>
-            /// Throws an exception if this is not the current song.
-            /// </summary>
+            //-----------------------------------------------------------------------------------------------
             public override void Play()
             {
                 CurrentSong.Stop();
@@ -230,26 +283,34 @@ namespace MonoVarmint.Widgets
                 MediaPlayer.Play(_song);
             }
 
+            //-----------------------------------------------------------------------------------------------
             /// <inheritdoc />
+            //-----------------------------------------------------------------------------------------------
             public override bool IsLooping
             {
                 get => MediaPlayer.IsRepeating;
                 set => MediaPlayer.IsRepeating = value;
             }
 
+            //-----------------------------------------------------------------------------------------------
+            /// <inheritdoc />
+            //-----------------------------------------------------------------------------------------------
             public override float Volume
             {
                 get => MediaPlayer.Volume;
                 set => MediaPlayer.Volume = value;
             }
 
+            //-----------------------------------------------------------------------------------------------
+            /// <inheritdoc />
+            //-----------------------------------------------------------------------------------------------
             public override void Dispose()
             {
                 Stop();
             }
 
             public override AudioType Type => AudioType.Song;
-            public override string Name => _song
+            public override string Name => _song.Name;
         }
 #endregion
     }
