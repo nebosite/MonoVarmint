@@ -8,10 +8,34 @@ namespace MonoVarmint.Widgets
     /// </summary>
     //--------------------------------------------------------------------------------------
     [VarmintWidgetShortName("Button")]
-    public class VarmintWidgetButton : VarmintWidgetLabel
+    public class VarmintWidgetButton : VarmintWidget
     {
+        /// <summary>
+        /// LineWidth (Deprecated- use the content to do the drawing of borders)
+        /// </summary>
         public float LineWidth { get; set; }
+
+        /// <summary>
+        /// HasBorder (Deprecated- use the content to do the drawing of borders)
+        /// </summary>
         public bool HasBorder { get; set; }
+
+        public override object Content
+        {
+            get => base.Content;
+            set
+            {
+                if(value is string)
+                {
+                    var label = new VarmintWidgetLabel();
+                    label.Content = value;
+                    label.Renderer = this.Renderer;
+                    base.Content = label;
+                }
+                else base.Content = value;
+            }
+        }
+
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// ctor
