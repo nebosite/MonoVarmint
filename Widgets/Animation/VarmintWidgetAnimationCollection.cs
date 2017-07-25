@@ -32,6 +32,45 @@ namespace MonoVarmint.Widgets
 
         //--------------------------------------------------------------------------------------
         /// <summary>
+        /// RotateConsistent - animate a rotation of a specified amount with a consistent speed
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public static VarmintWidgetAnimation RotateLinear(
+            double durationSeconds,
+            float rotationAmount)
+        {
+            return new VarmintWidgetAnimation(durationSeconds, (widget, delta) =>
+            {
+                widget.Rotate = rotationAmount * (float)delta;
+            });
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// ScaleConsistent - animate a scale with a specified factor in relation to the current size with a consistent speed
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public static VarmintWidgetAnimation ScaleLinear(
+            Vector2 originalSize,
+            double durationSeconds,
+            float scaleFactor)
+        {
+            return new VarmintWidgetAnimation(durationSeconds, (widget, delta) =>
+            {
+
+                // Animations scales from 1 (current size) to scale factor
+                float changeFactor = 0;
+                if (scaleFactor < 0) throw new ArgumentException();
+                if (scaleFactor < 1) changeFactor = -scaleFactor;
+                if (scaleFactor >= 1) changeFactor = 1 - scaleFactor;
+
+                widget.Size = originalSize * (1 + (changeFactor * (float)delta));
+
+            });
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
         /// MoveOffsetLinear - animate an offset from one value to another in a straight line
         /// </summary>
         //--------------------------------------------------------------------------------------

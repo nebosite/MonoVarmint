@@ -53,7 +53,18 @@ namespace MonoVarmint.Widgets
         /// <summary>
         /// Enumerated list of children in visual order
         /// </summary>
-        public virtual IEnumerable<VarmintWidget> Children { get { return (IEnumerable<VarmintWidget>)children; } }
+        public virtual IEnumerable<VarmintWidget> Children
+        {
+            get
+            {
+                if (Content is VarmintWidget) yield return Content as VarmintWidget;
+                foreach (var child in children)
+                {
+                    yield return child;
+                }
+            }
+        }
+
         public List<VarmintWidget> ChildrenCopy { get { return new List<VarmintWidget>(Children); } }
 
         public bool HasChildren
@@ -72,6 +83,21 @@ namespace MonoVarmint.Widgets
         public virtual void AddChild(VarmintWidget widget, bool suppressChildUpdate = false)
         {
             children.Add(widget);
+            widget.Parent = this;
+            if (ChildrenAffectFormatting && !suppressChildUpdate)
+            {
+                UpdateChildFormatting();
+            }
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// InsertChild
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public virtual void InsertChild(VarmintWidget widget, bool suppressChildUpdate = false)
+        {
+            children.Insert(0, widget);
             widget.Parent = this;
             if (ChildrenAffectFormatting && !suppressChildUpdate)
             {

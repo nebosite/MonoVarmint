@@ -16,7 +16,7 @@ To get started (Windows Desktop Example):
 	- Create a MonoGame project for Windows Desktop
 		- Best Practice: Name this "ForWindowsDesktop"
 		- Add a reference to the three shared code projects:
-			- For VS 2017 and later: simple right-click and "add reference", then choose from shared projects
+			- For VS 2017 and later: simply right-click and "add reference", then choose from shared projects
 			- For VS 2015 or earlier,  Unload your monogame for Windows project, edit the csproj file, and Add shared project references 
 			  to your monogame project by adding these lines near the other imports (you will have to corret
 			  the relative paths and project names)
@@ -31,6 +31,7 @@ To get started (Windows Desktop Example):
 		- Change the namespace in the new GameRunner.cs to match your own
 	- Modify the ForWindowsDesktop Project:
 		- Delete the Game1 class 
+		- Delete the Content Folder
 		- Modify the project namespace to be what you want
 			- Best Practive [SharedProjectNamespace].ForWindowsDesktop
 		- Create a new class that inherits from GameRunner
@@ -42,7 +43,7 @@ To get started (Windows Desktop Example):
 ==== STEP 2: Add your first screen
 	- In the shared code project:
 		- Create a folder called "Layout"  
-		- Copy "SimpleScreen.vwml" from VarmintWidgets/Temples to your Layout folder
+		- Copy "SimpleScreen.vwml" from VarmintWidgets/Templates to your Layout folder
 			- rename it to "MainScreen.vwml"
 		- Right click on MainScreen.vwml and select "Properties"
 		- Change Build action to "Embedded Resource"
@@ -60,7 +61,7 @@ To get started (Windows Desktop Example):
             return VarmintWidget.EventHandledState.Handled;
         }
 	- In the GameRunner constructor:
-		- Set up the GameController.OnLoaded event to call  GameController.SetScreen("MainScreen") 
+		- Set up the GameController.OnLoaded event to call  GameController.SetScreen("MainScreen", this) 
 	- At this point, you should be able to run the program and see your first simple screen
 		
 ==== STEP 3: Adding Content (Under construction)
