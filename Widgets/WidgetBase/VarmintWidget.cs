@@ -221,11 +221,6 @@ namespace MonoVarmint.Widgets
             }
         }
 
-        /// <summary>
-        /// When set to true it should not be rendered, allowing for better layering of objects
-        /// </summary>
-        public bool InhibitRendering { get; set; }
-
         public Dictionary<string, string> Parameters { get; set; }
 
         static int _globalWidgetCount = 0;

@@ -66,9 +66,9 @@ namespace MonoVarmint.Widgets
         private void Render(GameTime gameTime, VarmintWidget widget)
         {
             var textToDisplay = (Content == null) ? "" : Content.ToString();
+            if (Content is VarmintWidgetImage) { return; }
 
             Renderer.DrawBox(AbsoluteOffset, Size, BackgroundColor);
-
             if (HasBorder)
             {
                 Renderer.DrawLine(AbsoluteOffset, AbsoluteOffset + new Vector2(Size.X, 0), LineWidth, ForegroundColor);
