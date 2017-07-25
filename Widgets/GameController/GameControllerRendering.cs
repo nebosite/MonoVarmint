@@ -249,7 +249,7 @@ namespace MonoVarmint.Widgets
             {
                 var lineBuilder = new StringBuilder();
                 currentTextWidth = 0;
-                var parts = text.Split(' ');
+                var parts = line.Split(' ');
                 foreach (var part in parts)
                 {
                     if (part.Length > 0)
@@ -326,6 +326,11 @@ namespace MonoVarmint.Widgets
             var output = new StringBuilder();
             for (int i = 0; i < text.Length; i++)
             {
+                if(text[i] == '\n' || text[i] == '\r')
+                {
+                    output.Append(text[i]);
+                    continue;
+                }
                 output.Append(_selectedFont.Characters.Contains(text[i]) ?
                               text[i] : ' ');
             }
@@ -591,7 +596,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void BeginClipping(Vector2 absolutePosition, Vector2 size)
         {
-            
+
             var position = absolutePosition - DrawOffset;
             var rawPosition = position * _backBufferWidth;
             var rawSize = size * _backBufferWidth;
@@ -654,7 +659,7 @@ namespace MonoVarmint.Widgets
                 origin,
                 scale,
                 effects,
-                _drawBuffers.Count);
+                1f - (_drawBuffers.Count / 16384.0f)); // anything outside of [0..1] gets clipped away - support reasonable depth
             ReturnRenderTarget(drawBuffer.RenderBuffer);
             DrawOffset = drawBuffer.PreviousDrawOffset;
         }

@@ -32,6 +32,41 @@ namespace MonoVarmint.Widgets
 
         //--------------------------------------------------------------------------------------
         /// <summary>
+        /// RotateLinear - animate a rotation of a specified amount with a consistent speed
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public static VarmintWidgetAnimation RotateLinear(
+            double durationSeconds,
+            float rotationDegrees)
+        {
+            return new VarmintWidgetAnimation(durationSeconds, (widget, delta) =>
+            {
+                widget.Rotate = rotationDegrees * (float)delta;
+            });
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// ScaleLinear - animate a scale with a specified factor in relation to the current size with a consistent speed
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public static VarmintWidgetAnimation ScaleLinear(
+            double durationSeconds,
+            Vector2 originalSize,
+            Vector2 scaleFactor)
+        {
+            var sizeChange = originalSize * scaleFactor - originalSize;
+            return new VarmintWidgetAnimation(durationSeconds, (widget, delta) =>
+            {
+                if ( (scaleFactor.X < 0) || (scaleFactor.Y < 0)) throw new ArgumentException();
+
+                // Scales from 1 (current size) to scale factor
+                widget.Size = originalSize + sizeChange * (float)delta;
+            });
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
         /// MoveOffsetLinear - animate an offset from one value to another in a straight line
         /// </summary>
         //--------------------------------------------------------------------------------------
