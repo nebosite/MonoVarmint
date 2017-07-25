@@ -1,0 +1,5 @@
+*.cs		text eol=crlf
+*.vcproj	text eol=crlf
+*.csproj	text eol=crlf
+*.projitems	text eol=crlf
+*.txt		text eol=crlf
