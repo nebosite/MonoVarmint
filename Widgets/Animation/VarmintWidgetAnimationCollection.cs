@@ -30,6 +30,25 @@ namespace MonoVarmint.Widgets
             });
         }
 
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// Fade - animate opacity
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public static VarmintWidgetAnimation Fade(
+            double durationSeconds,
+            float startOpacity,
+            float endOpacity)
+        {
+            var opacityChange = startOpacity - endOpacity;
+            return new VarmintWidgetAnimation(durationSeconds, (widget, delta) =>
+            {
+                widget.Opacity = startOpacity + opacityChange * (float)delta;
+            });
+        }
+
+
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// RotateLinear - animate a rotation of a specified amount with a consistent speed
