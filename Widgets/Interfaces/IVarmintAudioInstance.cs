@@ -29,6 +29,9 @@ namespace MonoVarmint.Widgets
         /// </summary>
         void Play();
         
+        /// <summary>
+        /// The volume of the sound.
+        /// </summary>
         float Volume { get; set; }
         
         /// <summary>
