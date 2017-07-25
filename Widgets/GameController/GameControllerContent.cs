@@ -89,6 +89,8 @@ namespace MonoVarmint.Widgets
             _fontsByName.Clear();
             _glyphsByName.Clear();
             _spritesByName.Clear();
+            _songsByName.Clear();
+            _soundEffectsByName.Clear();
             _widgetSpace = new VarmintWidgetSpace(this, _bindingContext);
         }
 

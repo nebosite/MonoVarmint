@@ -1,9 +1,11 @@
 ﻿using System;
+using MonoVarmint.Widgets.Animation;
 
 namespace MonoVarmint.Widgets
 {
     public interface IVarmintAudioInstance : IDisposable
     {
+        
         /// <summary>
         /// Stop this sound
         /// </summary>
@@ -33,11 +35,16 @@ namespace MonoVarmint.Widgets
         /// The volume of the sound.
         /// </summary>
         float Volume { get; set; }
+
+        void ApplyAnimation(VarmintAudioAnimation animation);
         
         /// <summary>
         /// Type of this sound: song or sound effect.
         /// </summary>
         AudioType Type { get; }
+        
+        string Name { get; }
+        
     }
 
     public enum AudioType

@@ -15,6 +15,7 @@ namespace MonoVarmint.Widgets
         private readonly double _animationDurationSeconds;
         private double _animationProgressSeconds;
         protected Action<double> Animate;
+        
 
         /// <summary>
         /// IsComplete
@@ -84,7 +85,6 @@ namespace MonoVarmint.Widgets
             Animate(delta);
         }
 
-        protected readonly TimeSpan Forever = TimeSpan.FromDays(100000);
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// Finish - call this to force an animation to complete

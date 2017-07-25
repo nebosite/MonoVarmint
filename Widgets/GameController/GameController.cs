@@ -143,7 +143,7 @@ namespace MonoVarmint.Widgets
 
             OnUpdate?.Invoke(gameTime);
             base.Update(gameTime);
-            AudioUpdate(gameTime);
+            UpdateAudio(gameTime);
             
         }
 
