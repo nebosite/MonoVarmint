@@ -56,14 +56,14 @@ namespace Demo.Shared
             gameWindow.SetCustomRender((GameTime gameTime, VarmintWidget widget) =>
             {
                 // draw the sky
-                _controller.DrawBox(widget.AbsoluteOffset, widget.Size, Color.SkyBlue);
+                _controller.DrawBox(widget.AbsoluteOffset, widget.Size, new Color(Color.SkyBlue, widget.AbsoluteOpacity));
 
                 // Helper to easily draw a scolling object
                 Action<string, float> drawScrollingThing = (glyphName, relativeSize) =>
                 {
                     float offset = ((_currentGame.MonsterPosition.X / relativeSize) % 1.0f) * widget.Size.X;
-                    _controller.DrawGlyph(glyphName, widget.AbsoluteOffset - new Vector2(offset, 0), widget.Size, Color.White);
-                    _controller.DrawGlyph(glyphName, widget.AbsoluteOffset + new Vector2(widget.Size.X - offset, 0), widget.Size, Color.White);
+                    _controller.DrawGlyph(glyphName, widget.AbsoluteOffset - new Vector2(offset, 0), widget.Size, widget.RenderGraphicColor);
+                    _controller.DrawGlyph(glyphName, widget.AbsoluteOffset + new Vector2(widget.Size.X - offset, 0), widget.Size, widget.RenderGraphicColor);
                 };
 
                 // draw the far scrolling background
@@ -78,13 +78,13 @@ namespace Demo.Shared
                 var bunnyDrawPosition = widget.AbsoluteOffset;
                 bunnyDrawPosition.X += bunnyDelta * widget.Size.X;
                 bunnyDrawPosition.Y = widget.Size.Y * .82f;
-                 _controller.DrawSprite("Images/Bunny", (_controller.CurrentFrameNumber / 10) % 2, bunnyDrawPosition, new Vector2(.1f), Color.White);
+                 _controller.DrawSprite("Images/Bunny", (_controller.CurrentFrameNumber / 10) % 2, bunnyDrawPosition, new Vector2(.1f), widget.RenderGraphicColor);
 
                 // Draw the monster
                 var monsterDrawPosition = widget.AbsoluteOffset;
                 monsterDrawPosition.X += monsterDelta * widget.Size.X;
                 monsterDrawPosition.Y = widget.Size.Y * .65f + _currentGame.MonsterPosition.Y * widget.Size.Y;
-                _controller.DrawSprite("Images/Monster", (_controller.CurrentFrameNumber / 10) % 4, monsterDrawPosition, new Vector2(.2f), Color.White);
+                _controller.DrawSprite("Images/Monster", (_controller.CurrentFrameNumber / 10) % 4, monsterDrawPosition, new Vector2(.2f), widget.RenderGraphicColor);
 
                 // Draw the ground
                 drawScrollingThing("Images/Ground", 1);

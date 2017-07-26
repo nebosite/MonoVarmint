@@ -26,6 +26,7 @@
       Size=".5,.3"
       FontSize=".1"
       Margin=",.25"
+      Opacity=".8"
       BackgroundColor="Blue"
       ForegroundColor="Yellow"
       Content="WOW!"
@@ -40,12 +41,12 @@
         VerticalContentAlignment="Center"
         Rotate="{WowRotate}"/>
     </Label>
-    <Slider Size=".8,.1" BackgroundColor="Red" Value="{MySliderValue}">
+    <Slider Size=".8,.1" BackgroundColor="Red" Opacity=".2" Value="{MySliderValue}">
       <Slider.Track>
-        <Label Content="|-------------------------|" Stretch="1,1"/> 
+        <Label Content="|-------------------------|" Opacity="2" Stretch="1,1"/> 
       </Slider.Track>
       <Slider.Thumb>
-        <Label Content="V" Size=".05,.1" Stretch=",1"/>
+        <Label Content="V" Size=".05,.1" Opacity="4" Stretch=",1"/>
       </Slider.Thumb>
     </Slider>
     <Label Size=".5,.1" FontSize=".1" Content="{MyAdjustedSliderValue}" />
