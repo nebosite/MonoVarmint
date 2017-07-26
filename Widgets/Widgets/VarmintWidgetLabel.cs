@@ -30,7 +30,7 @@ namespace MonoVarmint.Widgets
         {
             var textToDisplay = (Content == null) ? "" : Content.ToString();
 
-            Renderer.DrawBox(AbsoluteOffset, Size, BackgroundColor);
+            Renderer.DrawBox(AbsoluteOffset, Size, RenderBackgroundColor);
             Vector2 alignedOffset = AbsoluteOffset;
             var margin = 0f;
             if (WrapContent) margin = Size.X;
@@ -49,7 +49,7 @@ namespace MonoVarmint.Widgets
                 case VerticalContentAlignment.Bottom: alignedOffset.Y += (Size.Y - textSize.Y);  break;
             }
 
-            Renderer.DrawText(textToDisplay, FontName, FontSize, alignedOffset, ForegroundColor, margin);
+            Renderer.DrawText(textToDisplay, FontName, FontSize, alignedOffset, RenderForegroundColor, margin);
         }
     }
 }

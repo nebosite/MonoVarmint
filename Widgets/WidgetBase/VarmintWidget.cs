@@ -37,6 +37,8 @@ namespace MonoVarmint.Widgets
             set { _foregroundColor = value; }
         }
 
+        public float Opacity { get; set; } = 1.0f;
+
         private Vector2 _offset;
         public virtual Vector2 Offset
         {
@@ -210,6 +212,7 @@ namespace MonoVarmint.Widgets
             }
         }
 
+
         /// <summary>
         /// Center of this widget in absolute coordinates
         /// </summary>
@@ -225,6 +228,33 @@ namespace MonoVarmint.Widgets
 
         static int _globalWidgetCount = 0;
 
+
+        /// <summary>
+        /// AbsoluteOpacity
+        /// </summary>
+        public virtual float AbsoluteOpacity
+        {
+            get
+            {
+                if (Parent == null) return Opacity;
+                else return Parent.AbsoluteOpacity * Opacity;
+            }
+        }
+
+        public virtual Color RenderBackgroundColor
+        {
+            get { return new Color(BackgroundColor, AbsoluteOpacity * BackgroundColor.A / 255);  }
+        }
+
+        public virtual Color RenderForegroundColor
+        {
+            get { return new Color(ForegroundColor, AbsoluteOpacity * ForegroundColor.A / 255); }
+        }
+
+        public virtual Color RenderGraphicColor
+        {
+            get { return new Color(Color.White, AbsoluteOpacity); }
+        }
 
         //--------------------------------------------------------------------------------------
         /// <summary>
