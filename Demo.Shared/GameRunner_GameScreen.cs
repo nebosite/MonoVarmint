@@ -38,7 +38,7 @@ namespace Demo.Shared
             holder.AddChild(gameWindow);
 
             _currentGame = new GameState();
-
+            _controller.SoundEffectVolume = 1;
             // Hook up events on the game for playing sounds, showing UI, etc.
             _currentGame.OnpassBunny += () => {  _controller.PlaySound("Sounds/Cowbell"); };
             _currentGame.OnFInishJump += () => { _controller.PlaySound("Sounds/Thump"); };

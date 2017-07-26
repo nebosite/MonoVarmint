@@ -20,7 +20,7 @@ namespace MonoVarmint.Widgets
         public VarmintWidgetAnimation(double durationSeconds, Action<VarmintWidget, double> animator) : 
             base(durationSeconds)
         {
-            _animate = (delta) => animator(_widget, delta);
+            Animate = delta => animator(_widget, delta);
         }
 
         //--------------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ namespace MonoVarmint.Widgets
         internal void Update(VarmintWidget widget, GameTime gameTime)
         {
             _widget = widget;
-            base.Update(gameTime);
+            Update(gameTime);
         }
     }
 }

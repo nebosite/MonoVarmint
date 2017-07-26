@@ -12,9 +12,10 @@ namespace MonoVarmint.Widgets
     //--------------------------------------------------------------------------------------
     public class VarmintAnimation
     {
-        double animationDurationSeconds = 0;
-        double animationProgressSeconds = 0;
-        protected Action<double> _animate;
+        private readonly double _animationDurationSeconds;
+        private double _animationProgressSeconds;
+        protected Action<double> Animate;
+        
 
         /// <summary>
         /// IsComplete
@@ -38,7 +39,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public VarmintAnimation(double durationSeconds)
         {
-            animationDurationSeconds = durationSeconds;
+            _animationDurationSeconds = durationSeconds;
         }
 
         //--------------------------------------------------------------------------------------
@@ -57,7 +58,7 @@ namespace MonoVarmint.Widgets
             }
 
             IsComplete = false;
-            animationProgressSeconds = 0;
+            _animationProgressSeconds = 0;
         }
 
         //--------------------------------------------------------------------------------------
@@ -67,26 +68,23 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         internal void Update(GameTime gameTime)
         {
-            if (!IsComplete)
+            if (IsComplete) return;
+            _animationProgressSeconds += gameTime.ElapsedGameTime.TotalSeconds;
+            var delta = _animationProgressSeconds;
+            if (_animationDurationSeconds > 0)
             {
-                animationProgressSeconds += gameTime.ElapsedGameTime.TotalSeconds;
-                var delta = animationProgressSeconds;
-                if (animationDurationSeconds > 0)
+                if (_animationProgressSeconds > _animationDurationSeconds)
                 {
-                    if (animationProgressSeconds > animationDurationSeconds)
-                    {
-                        animationProgressSeconds = animationDurationSeconds;
-                        OnComplete?.Invoke();
-                        IsComplete = true;
-                    }
-                    delta = (animationProgressSeconds / animationDurationSeconds);
+                    _animationProgressSeconds = _animationDurationSeconds;
+                    OnComplete?.Invoke();
+                    IsComplete = true;
                 }
-
-                _animate(delta);
+                delta = _animationProgressSeconds / _animationDurationSeconds;
             }
+
+            Animate(delta);
         }
 
-        TimeSpan Forever = TimeSpan.FromDays(100000);
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// Finish - call this to force an animation to complete
@@ -94,7 +92,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         internal void Finish(VarmintWidget widget)
         {
-            if (animationDurationSeconds > 0) Update(new GameTime(Forever, Forever));
+            if (_animationDurationSeconds > 0) Update(new GameTime(Forever, Forever));
             else
             {
                 OnComplete?.Invoke();

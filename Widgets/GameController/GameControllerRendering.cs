@@ -16,8 +16,6 @@ namespace MonoVarmint.Widgets
         GraphicsDeviceManager _graphics;
         SpriteBatch _spriteBatch;
 
-        public double SoundVolume { get; set; }
-
         public Vector2 DrawOffset { get; set; }
 
         // these are used to allow a portrait-oriented app on any resolution
@@ -39,20 +37,6 @@ namespace MonoVarmint.Widgets
         }
 
         bool _inSpriteBatch = false;
-
-        //--------------------------------------------------------------------------------------
-        /// <summary>
-        /// VarmintSoundEffect - Tacks on some useful info for playing sound effects
-        /// </summary>
-        //--------------------------------------------------------------------------------------
-        public class VarmintSoundEffect
-        {
-            public SoundEffect Effect { get; set; }
-            public double PreferredVolume { get; set; }
-            public DateTime LastPlayTime { get; set; }
-
-            public VarmintSoundEffect() { PreferredVolume = 1.0; LastPlayTime = DateTime.MinValue; }
-        }
 
         //--------------------------------------------------------------------------------------
         /// <summary>
@@ -404,29 +388,6 @@ namespace MonoVarmint.Widgets
                 effects: SpriteEffects.None,
                 layerDepth: 0);
 
-        }
-
-
-        //--------------------------------------------------------------------------------------
-        /// <summary>
-        /// PlaySound
-        /// </summary>
-        //--------------------------------------------------------------------------------------
-        public void PlaySound(string soundName, double volumeAdjust = 1.0)
-        {
-            if (SoundVolume == 0) return;
-            if (!_soundsByName.ContainsKey(soundName)) throw new ApplicationException("Can't find sound named '" + soundName + "'");
-            var effect = _soundsByName[soundName];
-            if ((DateTime.Now - effect.LastPlayTime).TotalMilliseconds > 20)
-            {
-                var volume = effect.PreferredVolume;
-                volume *= SoundVolume;
-                if (volume > 1.0) volume = 1.0;
-                if (volume < 0) volume = 0;
-
-                effect.Effect.Play((float)volume, 0, 0);
-                effect.LastPlayTime = DateTime.Now;
-            }
         }
 
         //--------------------------------------------------------------------------------------
