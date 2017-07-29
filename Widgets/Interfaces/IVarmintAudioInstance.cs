@@ -36,7 +36,7 @@ namespace MonoVarmint.Widgets
         /// </summary>
         float Volume { get; set; }
 
-        void ApplyAnimation(VarmintAudioAnimation animation);
+        void AddAnimation(VarmintAudioAnimation animation);
         
         /// <summary>
         /// Type of this sound: song or sound effect.
