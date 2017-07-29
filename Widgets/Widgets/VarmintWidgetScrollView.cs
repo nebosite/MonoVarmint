@@ -44,7 +44,7 @@ namespace MonoVarmint.Widgets
             this.SetCustomRender((gt, w) => {
                 ScrollBy(_momentum);
                 _momentum *= .9f;
-                Renderer.DrawBox(AbsoluteOffset, Size, BackgroundColor);
+                Renderer.DrawBox(AbsoluteOffset, Size, RenderBackgroundColor);
             });
             this.OnDrag += VarmintWidgetScrollView_OnDrag;
             this.OnFlick += VarmintWidgetScrollView_OnFlick;

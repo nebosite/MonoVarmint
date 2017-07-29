@@ -1,15 +1,7 @@
 ﻿#region Using Statements
 using System;
-using System.Reflection;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 using MonoVarmint.Widgets;
-using System.Text;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework.Content;
-using System.Diagnostics;
-using System.IO;
 
 #endregion
 
@@ -53,15 +45,16 @@ namespace Demo.Shared
                 _controller.LoadGlyph("Images/Ground");
                 _controller.LoadSprite("Images/Bunny", 100, 100);
                 _controller.LoadSprite("Images/Monster", 100, 100);
-                _controller.LoadSounds("Sounds/Cowbell", "Sounds/Jump", "Sounds/Thump");
+                _controller.LoadSoundEffects("Sounds/Cowbell", "Sounds/Jump", "Sounds/Thump");
                 _controller.SetScreen(_controller.GetScreen("MainScreen", this));
             };
 
             _controller.OnUpdate += (gameTime) =>
             {
                 WowRotate += 1;
-                if (_currentGame != null) _currentGame.Update(gameTime);
+                _currentGame?.Update(gameTime);
             };
+
         }
 
         //-----------------------------------------------------------------------------------------------

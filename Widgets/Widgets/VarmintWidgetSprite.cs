@@ -29,7 +29,7 @@ namespace MonoVarmint.Widgets
         private void Render(GameTime gameTime, VarmintWidget widget)
         {
             if (Content == null) return;
-            Renderer.DrawSprite(Content.ToString(), Frame, AbsoluteOffset, Size, Color.White);
+            Renderer.DrawSprite(Content.ToString(), Frame, AbsoluteOffset, Size, RenderGraphicColor);
         }
     }
 

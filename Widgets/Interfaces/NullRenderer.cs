@@ -5,7 +5,7 @@ using System.Text;
 
 namespace MonoVarmint.Widgets
 {
-    class NullRenderer : IMediaRenderer
+     public class NullRenderer : IMediaRenderer
     {
         public void BeginClipping(Vector2 position, Vector2 size) { }
         public void DrawBox(Vector2 offset, Vector2 size, Color fillColor) { }
@@ -21,5 +21,4 @@ namespace MonoVarmint.Widgets
         public Vector2 MeasureText(string text, string fontName, float fontSize, float wrapWidth = 0) { return Vector2.Zero; }
         public void PlaySound(string name, double volume = 1) { }
     }
-
 }

@@ -66,15 +66,14 @@ namespace MonoVarmint.Widgets
         private void Render(GameTime gameTime, VarmintWidget widget)
         {
             var textToDisplay = (Content == null) ? "" : Content.ToString();
-
-            Renderer.DrawBox(AbsoluteOffset, Size, BackgroundColor);
+            Renderer.DrawBox(AbsoluteOffset, Size, RenderBackgroundColor);
 
             if (HasBorder)
             {
-                Renderer.DrawLine(AbsoluteOffset, AbsoluteOffset + new Vector2(Size.X, 0), LineWidth, ForegroundColor);
-                Renderer.DrawLine(AbsoluteOffset, AbsoluteOffset + new Vector2(0, Size.Y), LineWidth, ForegroundColor);
-                Renderer.DrawLine(AbsoluteOffset + Size, AbsoluteOffset + new Vector2(Size.X, 0), LineWidth, ForegroundColor);
-                Renderer.DrawLine(AbsoluteOffset + Size, AbsoluteOffset + new Vector2(0, Size.Y), LineWidth, ForegroundColor);
+                Renderer.DrawLine(AbsoluteOffset, AbsoluteOffset + new Vector2(Size.X, 0), LineWidth, RenderForegroundColor);
+                Renderer.DrawLine(AbsoluteOffset, AbsoluteOffset + new Vector2(0, Size.Y), LineWidth, RenderForegroundColor);
+                Renderer.DrawLine(AbsoluteOffset + Size, AbsoluteOffset + new Vector2(Size.X, 0), LineWidth, RenderForegroundColor);
+                Renderer.DrawLine(AbsoluteOffset + Size, AbsoluteOffset + new Vector2(0, Size.Y), LineWidth, RenderForegroundColor);
             }
         }
     }
