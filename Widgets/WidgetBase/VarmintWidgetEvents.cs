@@ -26,6 +26,8 @@ namespace MonoVarmint.Widgets
         public event Action<GameTime, VarmintWidget> OnRender;
         public event Action<VarmintWidget> OnInit;
         public event Func<char, EventHandledState> OnInputCharacter;
+        public event Func<VarmintWidget, EventHandledState> OnSizeChanged;
+
 
         //--------------------------------------------------------------------------------------
         /// <summary>

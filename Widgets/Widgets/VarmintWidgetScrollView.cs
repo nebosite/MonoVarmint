@@ -50,6 +50,7 @@ namespace MonoVarmint.Widgets
             this.OnFlick += VarmintWidgetScrollView_OnFlick;
 
             _innerContent = new PlainFormatter();
+            _innerContent.Renderer = new NullRenderer();
             base.AddChild(_innerContent);
         }
 
@@ -69,6 +70,7 @@ namespace MonoVarmint.Widgets
         protected override void UpdateChildFormatting_Internal(Vector2? updatedSize)
         {
             // child formatting is static - the scrollview does not update it
+            _innerContent.RecalculateExtremes();
         }
 
         //--------------------------------------------------------------------------------------
@@ -145,6 +147,8 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         void ScrollBy(Vector2 delta)
         {
+            if (delta.Length() == 0) return;
+
             if (_innerContent.ExtremeLeft + ScrollOffset.X >= 0
                 && _innerContent.ExtremeRight + ScrollOffset.X <= Size.X)
             {
@@ -177,7 +181,7 @@ namespace MonoVarmint.Widgets
                 this.SetCustomRender((gt, w) => { });
             }
 
-            void RecalculateExtremes()
+            internal void RecalculateExtremes()
             {
                 ExtremeLeft = float.MaxValue;
                 ExtremeTop = float.MaxValue;

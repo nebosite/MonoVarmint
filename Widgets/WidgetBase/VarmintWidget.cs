@@ -72,6 +72,7 @@ namespace MonoVarmint.Widgets
                     }
                     _size = value;
                     UpdateChildFormatting(_size);
+                    OnSizeChanged?.Invoke(this);
                 }
             }
         }
