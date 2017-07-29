@@ -26,7 +26,9 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void Focus()
         {
+            if (_focusedContol != null) _focusedContol.HasFocus = false;
             _focusedContol = this;
+            _focusedContol.HasFocus = true;
         }
 
         //--------------------------------------------------------------------------------------
@@ -329,7 +331,9 @@ namespace MonoVarmint.Widgets
                     {
                         // Remember this widget was touched so we can process a leave correctly later.
                         touchMemory.AddTouchedWidget(w);
-                        return w.HandleTouchDown(touch);
+                        var returnValue = w.HandleTouchDown(touch);
+                        if (returnValue == EventHandledState.Handled) w.Focus();
+                        return returnValue;
                     });
 
                     for(int i = 0; i < hitList.Count; i++)

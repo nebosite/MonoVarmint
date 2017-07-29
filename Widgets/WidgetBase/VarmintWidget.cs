@@ -24,6 +24,7 @@ namespace MonoVarmint.Widgets
         public VarmintWidget Parent { get; set; }
         public Color BackgroundColor { get; set; }
         public bool ChildrenAffectFormatting { get; set; }
+        public bool HasFocus { get; set; }
 
         private Color? _foregroundColor;
         public Color ForegroundColor

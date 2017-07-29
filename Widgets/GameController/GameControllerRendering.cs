@@ -338,7 +338,7 @@ namespace MonoVarmint.Widgets
             text = FixText(text);
             if (text == null || text == "")
             {
-                var size = _selectedFont.MeasureString("I") * fontSize * _backBufferWidth / _selectedFontPixelSize;
+                var size = _selectedFont.MeasureString("I") * fontSize  / _selectedFontPixelSize;
                 size.X = 0;
                 return size;
             }
