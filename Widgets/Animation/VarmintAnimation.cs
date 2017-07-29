@@ -92,7 +92,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         internal void Finish(VarmintWidget widget)
         {
-            if (_animationDurationSeconds > 0) Update(new GameTime(Forever, Forever));
+            if (_animationDurationSeconds > 0) Update(new GameTime(TimeSpan.MaxValue, TimeSpan.MaxValue));
             else
             {
                 OnComplete?.Invoke();
