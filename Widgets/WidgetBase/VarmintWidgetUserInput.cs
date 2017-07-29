@@ -54,11 +54,12 @@ namespace MonoVarmint.Widgets
             return hitList;
         }
 
-        public float DragLengthThreshhold { get; set; }
-        public double FlickThreshholdSeconds { get; set; }       
-        public double DoubleTapIntervalSeconds { get; set; }
-        public double TouchOrphanTimeoutSeconds { get; set; }
-        public float DoubleTapRadius { get; set; }
+        public float DragLengthThreshhold { get; set; } = .05f;
+        public double FlickThreshholdSeconds { get; set; } = 0.15;
+        public double DoubleTapIntervalSeconds { get; set; } = 0.25;
+        public double ContextHoldThreshholdSeconds { get; set; } = 0.4;
+        public double TouchOrphanTimeoutSeconds { get; set; } = 1.0;
+        public float DoubleTapRadius { get; set; } = 0.1f;
 
         //--------------------------------------------------------------------------------------
         /// <summary>
@@ -122,10 +123,19 @@ namespace MonoVarmint.Widgets
             return AllowInput ? EventHandledState.NotHandled : EventHandledState.Handled;
         }
 
+        private EventHandledState HandleContextTap(Vector2 absoluteLocation)
+        {
+            if (AllowInput && OnDoubleTap != null)
+            {
+                var relativeLocation = absoluteLocation - this.AbsoluteOffset;
+                return OnContextTap(this, relativeLocation);
+            }
+            return AllowInput ? EventHandledState.NotHandled : EventHandledState.Handled;
+        }
+
         //--------------------------------------------------------------------------------------
         /// <summary>
-        ///         private EventHandledState HandleFlick(Vector2 absoluteLocation)
-
+        /// HandleFlick
         /// </summary>
         //--------------------------------------------------------------------------------------
         private EventHandledState HandleFlick(Vector2 absoluteStart, Vector2 delta)
@@ -414,12 +424,13 @@ namespace MonoVarmint.Widgets
                 }
             }
 
-            // One touch could be dragging
+            // One touch could be dragging or holding
             if(_currentTouches.Count == 1)
             {
                 var touchMemory = _currentTouches[0];
-                if(touchMemory.UnresolvedCount > 0 
-                    && touchMemory.TotalDistance > DragLengthThreshhold 
+
+                if (touchMemory.UnresolvedCount > 0
+                    && touchMemory.TotalDistance > DragLengthThreshhold
                     && touchMemory.SecondsAfterStart(gameTime) >= FlickThreshholdSeconds)
                 {
                     touchMemory.GestureType = GestureType.FreeDrag;
@@ -427,6 +438,20 @@ namespace MonoVarmint.Widgets
                     processHit(w => w.HandleDrag(touchMemory.CurrentTouch.Position,
                             touchMemory.CurrentTouch.Position - touchMemory.LastUnresolvedTouch.Position));
                     touchMemory.MarkResolved();
+                }
+                else if (touchMemory.TotalDistance < DragLengthThreshhold
+                    && touchMemory.SecondsAfterStart(gameTime) >= ContextHoldThreshholdSeconds)
+                {
+                    hitList = touchMemory.StartWidgets;
+                    // if we haven't started reporting as a hold, report as a hold
+                    // and do a context tap
+                    if (touchMemory.GestureType != GestureType.Hold)
+                    {
+                        processHit(w => w.HandleContextTap(touchMemory.CurrentTouch.Position));
+                        touchMemory.GestureType = GestureType.Hold;
+                        // TODO: Do a haptic vibrate here, using a native method in the game runner
+                    }
+                    // TODO: Process extended hold events here when needed
                 }
             }
         }
