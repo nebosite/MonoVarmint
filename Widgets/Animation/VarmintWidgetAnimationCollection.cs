@@ -4,13 +4,29 @@ using System.Collections.Generic;
 
 namespace MonoVarmint.Widgets
 {
-    //--------------------------------------------------------------------------------------
-    /// <summary>
-    /// MoveOffsetLinear - animate an offset from one value to another
-    /// </summary>
-    //--------------------------------------------------------------------------------------
     public partial class VarmintWidgetAnimation
     {
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// Fade - animate opacity
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public static VarmintWidgetAnimation CycleFade(
+            double durationSeconds,
+            float startOpacity,
+            float endOpacity,
+            float cycleTime
+            )
+        {
+            var opacityChange = startOpacity - endOpacity;
+            return new VarmintWidgetAnimation(durationSeconds, (widget, delta) =>
+            {
+                var amplitude = (startOpacity - endOpacity) / 2;
+                var cosineAdjustment = (float)delta * 2 * Math.PI / cycleTime;
+                var verticalTranslation = amplitude + endOpacity;
+                widget.Opacity = amplitude * (float)Math.Cos(cosineAdjustment) + verticalTranslation;
+            });
+        }
 
         //--------------------------------------------------------------------------------------
         /// <summary>
