@@ -8,7 +8,7 @@ namespace MonoVarmint.Widgets
     {
         //--------------------------------------------------------------------------------------
         /// <summary>
-        /// Fade - animate opacity
+        /// CycleFade - Fades between a start and end opacity in a sinusoidal manner
         /// </summary>
         //--------------------------------------------------------------------------------------
         public static VarmintWidgetAnimation CycleFade(
@@ -22,7 +22,7 @@ namespace MonoVarmint.Widgets
             return new VarmintWidgetAnimation(durationSeconds, (widget, delta) =>
             {
                 var amplitude = (startOpacity - endOpacity) / 2;
-                var cosineAdjustment = (float)delta * 2 * Math.PI / cycleTime;
+                var cosineAdjustment = ((durationSeconds!=0) ? durationSeconds : 1) * (float)delta * 2 * Math.PI / cycleTime;
                 var verticalTranslation = amplitude + endOpacity;
                 widget.Opacity = amplitude * (float)Math.Cos(cosineAdjustment) + verticalTranslation;
             });
