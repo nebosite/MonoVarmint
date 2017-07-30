@@ -238,7 +238,7 @@ namespace MonoVarmint.Widgets
 
             //Debug.WriteLine("AAA---------------------- BEGIN ------------------------");
             //Debug.WriteLine("AAA_spriteBatch.Begin();");
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
             GraphicsDevice.Clear(GlobalBackgroundColor);
             BeginClipping(DrawOffset, ScreenSize);
             _visualTree.Prepare(_widgetSpace.StyleLibrary);
@@ -249,8 +249,8 @@ namespace MonoVarmint.Widgets
                 DrawText("Fps: " + _fps.ToString(".0"), null, .05f, DrawOffset + new Vector2(0.01f, 0.01f), Color.Black);
             }
 
-            EndClipping(0, Vector2.Zero,new Vector2(1), false, false);
-            if(_drawBuffers.Count > 0)
+            EndClipping(0, Vector2.Zero, new Vector2(1), false, false);
+            if (_drawBuffers.Count > 0)
             {
                 throw new ApplicationException("There was an unmatch BeginClipping call.");
             }

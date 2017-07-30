@@ -615,7 +615,7 @@ namespace MonoVarmint.Widgets
             //Debug.WriteLine("AAAGraphicsDevice.SetRenderTarget(RenderBuffer" + newBuffer.RawSize + ");");
            GraphicsDevice.SetRenderTarget(newBuffer.RenderBuffer);
            // Debug.WriteLine("AAA_spriteBatch.Begin();");
-           _spriteBatch.Begin();
+           _spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
             GraphicsDevice.Clear(new Color(0, 0, 0, 0));
             _drawBuffers.Push(newBuffer);
         }
@@ -643,7 +643,7 @@ namespace MonoVarmint.Widgets
                 GraphicsDevice.SetRenderTarget(null);
             }
             //Debug.WriteLine("AAA_spriteBatch.Begin();");
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
 
             SpriteEffects effects = SpriteEffects.None;
             if (flipHorizontal) effects |= SpriteEffects.FlipHorizontally;
