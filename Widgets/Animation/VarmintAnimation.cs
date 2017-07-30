@@ -78,6 +78,7 @@ namespace MonoVarmint.Widgets
                     _animationProgressSeconds = _animationDurationSeconds;
                     OnComplete?.Invoke();
                     IsComplete = true;
+                    return;
                 }
                 delta = _animationProgressSeconds / _animationDurationSeconds;
             }
