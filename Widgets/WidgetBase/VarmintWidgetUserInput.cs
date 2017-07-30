@@ -125,7 +125,7 @@ namespace MonoVarmint.Widgets
 
         private EventHandledState HandleContextTap(Vector2 absoluteLocation)
         {
-            if (AllowInput && OnDoubleTap != null)
+            if (AllowInput && OnContextTap != null)
             {
                 var relativeLocation = absoluteLocation - this.AbsoluteOffset;
                 return OnContextTap(this, relativeLocation);
