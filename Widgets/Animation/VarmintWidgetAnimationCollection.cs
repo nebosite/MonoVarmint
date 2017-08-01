@@ -118,6 +118,21 @@ namespace MonoVarmint.Widgets
 
         //--------------------------------------------------------------------------------------
         /// <summary>
+        /// RotateLinear - animate a rotation from one value to another with linear velocity
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public static VarmintWidgetAnimation RotateLinear(
+            double durationSeconds,
+            float startRotation,
+            float endRotation)
+        {
+            return new VarmintWidgetAnimation(durationSeconds, (widget, delta) =>
+            {
+                widget.Rotate = startRotation + (endRotation - startRotation) * (float)delta;
+            });
+        }
+        //--------------------------------------------------------------------------------------
+        /// <summary>
         /// MoveOffsetNaturalLinear - animate an offset from one value to another in a 
         ///                           straight line, with some acceleration and deceleration
         /// </summary>

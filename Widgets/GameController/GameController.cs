@@ -1,15 +1,14 @@
 ﻿#region Using Statements
 
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Input.Touch;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Input.Touch;
 
 #endregion
 
@@ -20,11 +19,12 @@ namespace MonoVarmint.Widgets
     /// </summary>
     public partial class GameController : Game, IVarmintWidgetInjector
     {
-        public Color GlobalBackgroundColor { get { return Color.DarkGray; } }
-        public Vector2 ScreenSize { get { return new Vector2(1.0f, (float)_backBufferHeight/_backBufferWidth); } }
+        public Color GlobalBackgroundColor => Color.DarkGray;
+        public Vector2 ScreenSize => new Vector2(1.0f, (float)_backBufferHeight/_backBufferWidth);
         public int CurrentFrameNumber { get; set; }
         public bool PauseInput { get; set; }
-        public double Fps { get { return _fps; } }
+        public double Fps { get; private set; }
+
         public bool ShowFps { get; set; }
 
         // events
@@ -33,10 +33,9 @@ namespace MonoVarmint.Widgets
         public event Action<Keys, bool, char> OnTypedCharacter;
         public event Action OnUserBackButtonPress;
 
-        object _bindingContext;
-        int _frameCount = 0;
+        private readonly object _bindingContext;
+        int _frameCount;
         DateTime _lastFrameMeasureTime = DateTime.Now;
-        double _fps = 0;
         VarmintWidgetSpace _widgetSpace;
 
 
@@ -53,7 +52,6 @@ namespace MonoVarmint.Widgets
             };
             _graphics.IsFullScreen = true;
             _bindingContext = bindingContext;
-            SoundVolume = 1.0;
         }
 
         //-----------------------------------------------------------------------------------------------
@@ -145,6 +143,8 @@ namespace MonoVarmint.Widgets
 
             OnUpdate?.Invoke(gameTime);
             base.Update(gameTime);
+            UpdateAudio(gameTime);
+            
         }
 
         //--------------------------------------------------------------------------------------
@@ -156,10 +156,10 @@ namespace MonoVarmint.Widgets
         {
             string output = null;
             if (key >= Keys.A && key <= Keys.Z) output = key.ToString();
-            else if (key >= Keys.NumPad0 && key <= Keys.NumPad9) output = ((int)(key - Keys.NumPad0)).ToString();
+            else if (key >= Keys.NumPad0 && key <= Keys.NumPad9) output = (key - Keys.NumPad0).ToString();
             else if (key >= Keys.D0 && key <= Keys.D9)
             {
-                string num = ((int)(key - Keys.D0)).ToString();
+                string num = (key - Keys.D0).ToString();
                 if (shifted)
                 {
                     switch (num)
@@ -174,7 +174,6 @@ namespace MonoVarmint.Widgets
                         case "8": num = "*"; break;
                         case "9": num = "("; break;
                         case "0": num = ")"; break;
-                        default: break;
                     }
                 }
                 output = num;
@@ -187,10 +186,9 @@ namespace MonoVarmint.Widgets
             else if (key == Keys.OemQuestion && shifted) output = "?";
             else if (key == Keys.Back) output = "\b";
 
-            if (!shifted && output != null) output = output.ToLower();
+            if (!shifted) output = output?.ToLower();
 
-            if (output == null) return null;
-            return output[0];
+            return output?[0];
         }
 
 
@@ -246,7 +244,7 @@ namespace MonoVarmint.Widgets
 
             if (ShowFps)
             {
-                DrawText("Fps: " + _fps.ToString(".0"), null, .05f, DrawOffset + new Vector2(0.01f, 0.01f), Color.Black);
+                DrawText("Fps: " + Fps.ToString(".0"), null, .05f, DrawOffset + new Vector2(0.01f, 0.01f), Color.Black);
             }
 
             EndClipping(0, Vector2.Zero, new Vector2(1), false, false);
@@ -271,7 +269,7 @@ namespace MonoVarmint.Widgets
                 var span = DateTime.Now - _lastFrameMeasureTime;
                 _lastFrameMeasureTime = DateTime.Now;
                 _frameCount = 0;
-                _fps = 30 / span.TotalSeconds;
+                Fps = 30 / span.TotalSeconds;
             }
         }
 
