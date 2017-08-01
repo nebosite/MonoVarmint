@@ -15,16 +15,16 @@ namespace MonoVarmint.Widgets
             double durationSeconds,
             float startOpacity,
             float endOpacity,
-            float cycleTime
+            float cycleTimeSeconds
             )
         {
-            var opacityChange = startOpacity - endOpacity;
+            var opacityChange = endOpacity - startOpacity;
+            var amplitude = opacityChange / 2;
+            var midpoint = amplitude + endOpacity;
             return new VarmintWidgetAnimation(durationSeconds, (widget, delta) =>
             {
-                var amplitude = (startOpacity - endOpacity) / 2;
-                var cosineAdjustment = ((durationSeconds!=0) ? durationSeconds : 1) * (float)delta * 2 * Math.PI / cycleTime;
-                var verticalTranslation = amplitude + endOpacity;
-                widget.Opacity = amplitude * (float)Math.Cos(cosineAdjustment) + verticalTranslation;
+                var theta = ((durationSeconds!=0) ? durationSeconds : 1) * (float)delta * 2 * Math.PI / cycleTimeSeconds;
+                widget.Opacity = amplitude * (float)Math.Cos(theta) + midpoint;
             });
         }
 
