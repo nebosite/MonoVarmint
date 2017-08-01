@@ -9,6 +9,7 @@
     <Import_RootNamespace>MonoVarmint.Tools</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)ContentHelper.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VarmintCrypto.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VarmintId.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)VarmintSerializer.cs" />
