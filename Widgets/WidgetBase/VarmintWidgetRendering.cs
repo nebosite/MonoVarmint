@@ -35,7 +35,7 @@ namespace MonoVarmint.Widgets
         {
             if(Renderer == null)
             {
-                //throw new InvalidOperationException("The Renderer property is null on " + this.GetType().Name + " with Name=" + Name);
+                throw new InvalidOperationException("The Renderer property is null on " + this.GetType().Name + " with Name=" + Name);
             }
 
             Update();
