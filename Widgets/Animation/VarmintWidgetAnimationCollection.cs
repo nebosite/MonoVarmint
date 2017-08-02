@@ -15,8 +15,7 @@ namespace MonoVarmint.Widgets
             double durationSeconds,
             float startOpacity,
             float endOpacity,
-            float cycleTimeSeconds
-            )
+            float cycleTimeSeconds)
         {
             var opacityChange = endOpacity - startOpacity;
             var amplitude = opacityChange / 2;

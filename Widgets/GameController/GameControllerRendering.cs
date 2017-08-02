@@ -554,8 +554,10 @@ namespace MonoVarmint.Widgets
             DrawOffset = absolutePosition;
 
             _spriteBatch.End();
-            GraphicsDevice.SetRenderTarget(newBuffer.RenderBuffer);
-            _spriteBatch.Begin();
+            //Debug.WriteLine("AAAGraphicsDevice.SetRenderTarget(RenderBuffer" + newBuffer.RawSize + ");");
+           GraphicsDevice.SetRenderTarget(newBuffer.RenderBuffer);
+           // Debug.WriteLine("AAA_spriteBatch.Begin();");
+           _spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
             GraphicsDevice.Clear(new Color(0, 0, 0, 0));
             _drawBuffers.Push(newBuffer);
         }
@@ -579,7 +581,8 @@ namespace MonoVarmint.Widgets
             {
                 GraphicsDevice.SetRenderTarget(null);
             }
-            _spriteBatch.Begin();
+            //Debug.WriteLine("AAA_spriteBatch.Begin();");
+            _spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
 
             SpriteEffects effects = SpriteEffects.None;
             if (flipHorizontal) effects |= SpriteEffects.FlipHorizontally;
