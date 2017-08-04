@@ -27,7 +27,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         void Render(GameTime gameTime, VarmintWidget widget)
         {
-           Renderer.DrawBox(AbsoluteOffset, Size, BackgroundColor);
+           Renderer.DrawBox(AbsoluteOffset, Size, RenderBackgroundColor);
         }
     }
 }

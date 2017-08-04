@@ -129,20 +129,20 @@ namespace MonoVarmint.Widgets
         {
             var textToDisplay = GetTextToDisplay();
 
-            Renderer.DrawBox(AbsoluteOffset, Size, BackgroundColor);
+            Renderer.DrawBox(AbsoluteOffset, Size, RenderBackgroundColor);
             Vector2 alignedOffset = AbsoluteOffset + GetTextStartOffset();
 
             var leftOfCursor = textToDisplay.Substring(0, CursorSpot);
             var rightOfCusor = textToDisplay.Substring(CursorSpot);
             var leftSize = Renderer.MeasureText(leftOfCursor, FontName, FontSize);
-            Renderer.DrawText(leftOfCursor, FontName, FontSize, alignedOffset, ForegroundColor, _margin);
-            Renderer.DrawText(rightOfCusor, FontName, FontSize, alignedOffset + new Vector2(leftSize.X, 0), ForegroundColor, _margin);
+            Renderer.DrawText(leftOfCursor, FontName, FontSize, alignedOffset, RenderForegroundColor, _margin);
+            Renderer.DrawText(rightOfCusor, FontName, FontSize, alignedOffset + new Vector2(leftSize.X, 0), RenderForegroundColor, _margin);
 
             if((gameTime.TotalGameTime.TotalSeconds * 2) % 2.0 > 1.0)
             {
                 Renderer.DrawLine(
                     alignedOffset + new Vector2(leftSize.X, 0),
-                    alignedOffset + leftSize, FontSize * .2f, ForegroundColor);
+                    alignedOffset + leftSize, FontSize * .2f, RenderForegroundColor);
             }
         }
     }

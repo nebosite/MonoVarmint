@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input.Touch;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,7 +16,7 @@ namespace MonoVarmint.Widgets
     //--------------------------------------------------------------------------------------
     public partial class VarmintWidget
     {
-        Dictionary<string, string> _declaredSettings = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> _declaredSettings = new Dictionary<string, string>();
 
         private static Dictionary<string, Type> _cachedWidgetTypes = new Dictionary<string, Type>();
         private static List<Assembly> _knownAssemblies = new List<Assembly>();
