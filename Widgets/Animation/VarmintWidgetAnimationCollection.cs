@@ -18,8 +18,10 @@ namespace MonoVarmint.Widgets
             float cycleTimeSeconds)
         {
             var opacityChange = endOpacity - startOpacity;
-            var amplitude = opacityChange / 2;
-            var midpoint = amplitude + endOpacity;
+            // Shape of cosine function
+            var amplitude = -opacityChange / 2; 
+            var midpoint = endOpacity + amplitude;
+
             return new VarmintWidgetAnimation(durationSeconds, (widget, delta) =>
             {
                 var theta = ((durationSeconds!=0) ? durationSeconds : 1) * (float)delta * 2 * Math.PI / cycleTimeSeconds;
