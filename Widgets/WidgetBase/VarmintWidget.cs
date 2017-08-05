@@ -74,6 +74,7 @@ namespace MonoVarmint.Widgets
                     }
                     _size = value;
                     UpdateChildFormatting(_size);
+                    OnSizeChanged?.Invoke(this);
                 }
             }
         }
@@ -281,12 +282,6 @@ namespace MonoVarmint.Widgets
             AllowInput = true;
             Margin = new WidgetMargin();
             Stretch = new StretchParameter();
-
-            DragLengthThreshhold = .05f;
-            FlickThreshholdSeconds = 0.15;
-            DoubleTapIntervalSeconds = 0.25;
-            DoubleTapRadius = 0.1f;
-            TouchOrphanTimeoutSeconds = 1;
        }
 
         //--------------------------------------------------------------------------------------

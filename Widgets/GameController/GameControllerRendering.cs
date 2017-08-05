@@ -387,7 +387,6 @@ namespace MonoVarmint.Widgets
                 scale: scale,
                 effects: SpriteEffects.None,
                 layerDepth: 0);
-
         }
 
         //--------------------------------------------------------------------------------------
@@ -429,7 +428,6 @@ namespace MonoVarmint.Widgets
 
         }
 
-
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// DrawSprite
@@ -439,6 +437,7 @@ namespace MonoVarmint.Widgets
         {
             DrawSprite(spriteName, spriteNumber, offset, size, color, 0, Vector2.Zero);
         }
+
         public void DrawSprite(string spriteName, int spriteNumber, Vector2 offset, Vector2 size, Color color, float rotation, Vector2 origin)
         {
             offset -= DrawOffset;
@@ -464,33 +463,11 @@ namespace MonoVarmint.Widgets
                   layerDepth: 0);
         }
 
-        //class RenderBufferAllocator
-        //{
-        //    public RenderBufferRegion GetRegion(Vector2 rawPosition, Vector2 rawSize)
-        //    {
-        //        return null;
-        //    }
-        //}
-
-        //class RenderBufferRegion
-        //{
-        //    public RenderTarget2D BigBuffer { get; private set; }
-        //    public Rectangle SourceRectangle { get; set; }
-        //    public Vector2 PreviousDrawOffset { get; set; }
-        //    public Vector2 RawPosition { get; set; }
-
-        //    public RenderBufferRegion PreviousRegion { get; set; }
-        //    public RenderBufferRegion(RenderTarget2D target, Vector2 rawPosition, Vector2 rawSize)
-        //    {
-        //        RawPosition = rawPosition;
-        //        RawSize = rawSize;
-
-        //        RenderBuffer = target;
-        //    }
-        //}
-
-
-
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// ClipBuffer - Stores information about a render target used for clipping
+        /// </summary>
+        //--------------------------------------------------------------------------------------
         class ClipBuffer
         {
             public RenderTarget2D RenderBuffer { get; private set; }
@@ -508,19 +485,19 @@ namespace MonoVarmint.Widgets
         }
 
         private Stack<ClipBuffer> _drawBuffers = new Stack<ClipBuffer>();
-
         private Dictionary<int, Stack<RenderTarget2D>> _renderTargets = new Dictionary<int, Stack<RenderTarget2D>>();
 
-
-
-
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// GetRenderTarget
+        /// </summary>
+        //--------------------------------------------------------------------------------------
         RenderTarget2D GetRenderTarget(GraphicsDevice graphicsDevice, Vector2 rawSize)
         {
-
-
             int width = (int)rawSize.X;
             int height = (int)rawSize.Y;
             int key = height * 100000 + width;
+
             if(_renderTargets.ContainsKey(key))
             {
                 var targetStack = _renderTargets[key];
@@ -536,9 +513,13 @@ namespace MonoVarmint.Widgets
                 DepthFormat.None,
                 1,
                 RenderTargetUsage.PreserveContents);
-
         }
 
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// ReturnRenderTarget
+        /// </summary>
+        //--------------------------------------------------------------------------------------
         void ReturnRenderTarget(RenderTarget2D target)
         {
             var key = target.Height * 100000 + target.Width;
@@ -557,26 +538,26 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void BeginClipping(Vector2 absolutePosition, Vector2 size)
         {
-
             var position = absolutePosition - DrawOffset;
             var rawPosition = position * _backBufferWidth;
             var rawSize = size * _backBufferWidth;
-            // [ ] Set up a new buffer and push onto the stack
+
             var newBuffer = new ClipBuffer(
                 GetRenderTarget(_graphics.GraphicsDevice, rawSize), rawPosition, rawSize);
             newBuffer.PreviousDrawOffset = DrawOffset;
+
             if (_drawBuffers.Count > 0)
             {
                 newBuffer.PreviousClipBuffer = _drawBuffers.Peek();
             }
+
             DrawOffset = absolutePosition;
 
-            //Debug.WriteLine("AAA_spriteBatch.End();");
             _spriteBatch.End();
             //Debug.WriteLine("AAAGraphicsDevice.SetRenderTarget(RenderBuffer" + newBuffer.RawSize + ");");
            GraphicsDevice.SetRenderTarget(newBuffer.RenderBuffer);
            // Debug.WriteLine("AAA_spriteBatch.Begin();");
-           _spriteBatch.Begin();
+           _spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
             GraphicsDevice.Clear(new Color(0, 0, 0, 0));
             _drawBuffers.Push(newBuffer);
         }
@@ -590,27 +571,26 @@ namespace MonoVarmint.Widgets
         {
             var drawBuffer = _drawBuffers.Pop();
 
-            //Debug.WriteLine("AAA_spriteBatch.End();");
            _spriteBatch.End();
 
             if (drawBuffer.PreviousClipBuffer != null)
             {
-                //Debug.WriteLine("AAAGraphicsDevice.SetRenderTarget(RenderBuffer" + drawBuffer.PreviousClipBuffer.RawSize +");");
                 GraphicsDevice.SetRenderTarget(drawBuffer.PreviousClipBuffer.RenderBuffer);
             }
             else
             {
-                //Debug.WriteLine("AAAGraphicsDevice.SetRenderTarget(null);");
                 GraphicsDevice.SetRenderTarget(null);
             }
             //Debug.WriteLine("AAA_spriteBatch.Begin();");
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
 
             SpriteEffects effects = SpriteEffects.None;
             if (flipHorizontal) effects |= SpriteEffects.FlipHorizontally;
             if (flipVertical) effects |= SpriteEffects.FlipVertically;
             var origin = rotationOrigin * drawBuffer.RawSize;
-            //Debug.WriteLine("AAA_spriteBatch.Draw(drawBuffer.RenderBuffer" + drawBuffer.RawSize + "...");
+
+            // anything outside of [0..1] gets clipped away - support reasonable depth            
+            var bufferDepth = 1f - (_drawBuffers.Count / 16384.0f);
 
             _spriteBatch.Draw(drawBuffer.RenderBuffer, 
                 drawBuffer.RawPosition + origin,
@@ -620,28 +600,10 @@ namespace MonoVarmint.Widgets
                 origin,
                 scale,
                 effects,
-                1f - (_drawBuffers.Count / 16384.0f)); // anything outside of [0..1] gets clipped away - support reasonable depth
+                bufferDepth); 
+
             ReturnRenderTarget(drawBuffer.RenderBuffer);
             DrawOffset = drawBuffer.PreviousDrawOffset;
-        }
-        //--------------------------------------------------------------------------------------
-        /// <summary>
-        /// Clip any drawing outside of the specified area
-        /// </summary>
-        //--------------------------------------------------------------------------------------
-        public void BeginClippingOLD(Vector2 position, Vector2 size)
-        {
-            position -= DrawOffset;
-            EndSpriteBatch();
-
-            _graphics.GraphicsDevice.ScissorRectangle =
-                new Rectangle(
-                    (int)(position.X * _backBufferWidth),
-                    (int)(position.Y * _backBufferWidth),
-                    (int)(size.X * _backBufferWidth),
-                    (int)(size.Y * _backBufferWidth));
-
-            EnsureSpriteBatch(new RasterizerState() { ScissorTestEnable = true });
         }
 
         //--------------------------------------------------------------------------------------
