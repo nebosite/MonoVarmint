@@ -56,7 +56,7 @@ namespace MonoVarmint.Widgets
             float startOpacity,
             float endOpacity)
         {
-            var opacityChange = startOpacity - endOpacity;
+            var opacityChange = endOpacity - startOpacity;
             return new VarmintWidgetAnimation(durationSeconds, (widget, delta) =>
             {
                 widget.Opacity = startOpacity + opacityChange * (float)delta;
