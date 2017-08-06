@@ -102,6 +102,26 @@ namespace MonoVarmint.Widgets
 
         //--------------------------------------------------------------------------------------
         /// <summary>
+        /// ScaleFontSizeLinear - scales the font size of a widget linearly by a scale factor
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public static VarmintWidgetAnimation ScaleFontSizeLinear(
+            double durationSeconds,
+            float originalFontSize,
+            float scaleFactor)
+        {
+            var sizeChange = originalFontSize * scaleFactor - originalFontSize;
+            return new VarmintWidgetAnimation(durationSeconds, (widget, delta) =>
+            {
+                if ((scaleFactor < 0) || (scaleFactor < 0)) throw new ArgumentException();
+
+                // Scales font size from 1 (current size) to scale factor
+                widget.FontSize = originalFontSize + sizeChange * (float)delta;
+            });
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
         /// MoveOffsetLinear - animate an offset from one value to another in a straight line
         /// </summary>
         //--------------------------------------------------------------------------------------
