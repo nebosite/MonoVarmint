@@ -14,7 +14,21 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public static object GetValueFromText(Type type, string valueText)
         {
-            switch (type.Name)
+            try
+            {
+                return GetBasicValueFromText(type.Name, valueText);
+            }
+            catch (Exception error)
+            {
+                if (type.IsEnum) return Enum.Parse(type, valueText);
+                else if (type.IsClass) return Activator.CreateInstance(type, valueText);
+                else throw error;
+            }
+        }
+
+        public static object GetBasicValueFromText(string type, string valueText)
+        {
+            switch (type)
             {
                 case "String": return valueText;
                 case "Vector2": return ParseVector(valueText);
@@ -30,10 +44,8 @@ namespace MonoVarmint.Widgets
                 case "bool": return Boolean.Parse(valueText);
                 case "Color": return ParseColor(valueText);
                 default:
-                    if (type.IsEnum) return Enum.Parse(type, valueText);
-                    else if (type.Name == "Object") return valueText;
-                    else if (type.IsClass) return Activator.CreateInstance(type, valueText);
-                    else throw new ApplicationException("Don't know create a " + type.Name);
+                    if (type == "Object") return valueText;
+                    else throw new ApplicationException("Don't know create a " + type);
             }
         }
 
