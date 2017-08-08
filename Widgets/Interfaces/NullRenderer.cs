@@ -2,10 +2,28 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using MonoVarmint.Widgets.Animation;
 
 namespace MonoVarmint.Widgets
 {
-     public class NullRenderer : IMediaRenderer
+    public class NullAudioInstance : IVarmintAudioInstance
+    {
+        public bool IsLooping { get; set; }
+        public float Volume { get; set; }
+
+        public AudioType Type =>  AudioType.Song;
+
+        public string Name =>  "gagaga" ;
+
+        public void AddAnimation(VarmintAudioAnimation animation) { }
+        public void Dispose() { }
+        public void Pause() { }
+        public void Play() { }
+        public void Resume() { }
+        public void Stop() { }
+    }
+
+    public class NullRenderer : IMediaRenderer
     {
         public void BeginClipping(Vector2 position, Vector2 size) { }
         public void DrawBox(Vector2 offset, Vector2 size, Color fillColor) { }
@@ -20,5 +38,7 @@ namespace MonoVarmint.Widgets
         public bool IsInRenderingWindow(Vector2 offset, Vector2 size) { return true; }
         public Vector2 MeasureText(string text, string fontName, float fontSize, float wrapWidth = 0) { return Vector2.Zero; }
         public void PlaySound(string name, double volume = 1) { }
+        public IVarmintAudioInstance PlaySound(string name) { return new NullAudioInstance() ; }
+        public void Vibrate(long milliseconds) { }
     }
 }
