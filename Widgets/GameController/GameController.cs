@@ -236,7 +236,7 @@ namespace MonoVarmint.Widgets
 
             //Debug.WriteLine("AAA---------------------- BEGIN ------------------------");
             //Debug.WriteLine("AAA_spriteBatch.Begin();");
-            _spriteBatch.Begin(blendState: BlendState.NonPremultiplied);
+            _spriteBatch.Begin();
             GraphicsDevice.Clear(GlobalBackgroundColor);
             BeginClipping(DrawOffset, ScreenSize);
             _visualTree.Prepare(_widgetSpace.StyleLibrary);

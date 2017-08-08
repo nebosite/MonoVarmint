@@ -244,17 +244,17 @@ namespace MonoVarmint.Widgets
 
         public virtual Color RenderBackgroundColor
         {
-            get { return new Color(BackgroundColor, AbsoluteOpacity * BackgroundColor.A / 255);  }
+            get { return BackgroundColor * AbsoluteOpacity;  }
         }
 
         public virtual Color RenderForegroundColor
         {
-            get { return new Color(ForegroundColor, AbsoluteOpacity * ForegroundColor.A / 255); }
+            get { return ForegroundColor * AbsoluteOpacity; }
         }
 
         public virtual Color RenderGraphicColor
         {
-            get { return new Color(Color.White, AbsoluteOpacity); }
+            get { return Color.White * AbsoluteOpacity; }
         }
 
         //--------------------------------------------------------------------------------------
