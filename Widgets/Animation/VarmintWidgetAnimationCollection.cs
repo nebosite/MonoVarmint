@@ -30,6 +30,18 @@ namespace MonoVarmint.Widgets
 
         //--------------------------------------------------------------------------------------
         /// <summary>
+        /// EmptyAnimation - Does nothing for a set duration
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public static VarmintWidgetAnimation EmptyAnimation(double durationSeconds)
+        {
+            return new VarmintWidgetAnimation(durationSeconds, (widget, delta) =>
+            {
+            });
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
         /// ForegroundColorFade - Smooth transition from one color to another
         /// </summary>
         //--------------------------------------------------------------------------------------
