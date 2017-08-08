@@ -16,7 +16,6 @@ namespace MonoVarmint.Widgets
         private double _animationProgressSeconds;
         protected Action<double> Animate;
         
-
         /// <summary>
         /// IsComplete
         /// </summary>
@@ -78,7 +77,6 @@ namespace MonoVarmint.Widgets
                     _animationProgressSeconds = _animationDurationSeconds;
                     OnComplete?.Invoke();
                     IsComplete = true;
-                    return;
                 }
                 delta = _animationProgressSeconds / _animationDurationSeconds;
             }
