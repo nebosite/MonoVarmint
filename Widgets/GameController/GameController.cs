@@ -247,8 +247,8 @@ namespace MonoVarmint.Widgets
                 DrawText("Fps: " + Fps.ToString(".0"), null, .05f, DrawOffset + new Vector2(0.01f, 0.01f), Color.Black);
             }
 
-            EndClipping(0, Vector2.Zero,new Vector2(1), false, false);
-            if(_drawBuffers.Count > 0)
+            EndClipping(0, Vector2.Zero, new Vector2(1), false, false);
+            if (_drawBuffers.Count > 0)
             {
                 throw new ApplicationException("There was an unmatch BeginClipping call.");
             }

@@ -34,7 +34,8 @@ namespace MonoVarmint.Widgets
 
 
         
-        public static IVarmintAudioInstance CurrentSong { get; private set; }
+        public IVarmintAudioInstance CurrentSong { get; private set; }
+        
         //-----------------------------------------------------------------------------------------------
         /// <summary>
         /// Play a sound
@@ -90,13 +91,13 @@ namespace MonoVarmint.Widgets
         /// Current music from 0 to 1.
         /// </summary>
         //-----------------------------------------------------------------------------------------------
-        public double MusicVolume
+        public float MusicVolume
         {
-            set => MediaPlayer.Volume = (float)value;
+            set => MediaPlayer.Volume = value;
             get => MediaPlayer.Volume;
         }
 
-        public double SoundEffectVolume { get; set; } = 1.0;
+        public float SoundEffectVolume { get; set; } = 1f;
 
         #region classes
 
@@ -122,16 +123,16 @@ namespace MonoVarmint.Widgets
             public void AddAnimation(VarmintAudioAnimation animation)
             {
                 Animations.Add(animation);
-                _renderer.AnimatingInstances.Add(this);
+                Renderer.AnimatingInstances.Add(this);
             }
             public abstract AudioType Type { get; }
             public abstract string Name { get; }
 
-            private readonly GameController _renderer;
+            protected readonly GameController Renderer;
 
             protected SoundInstanceBase(GameController renderer)
             {
-                _renderer = renderer;
+                Renderer = renderer;
             }
         }
 
@@ -244,9 +245,9 @@ namespace MonoVarmint.Widgets
             //-----------------------------------------------------------------------------------------------
             public override void Stop()
             {
-                if (this != CurrentSong)
+                if (this != Renderer.CurrentSong)
                     return;
-                CurrentSong = null;
+                Renderer.CurrentSong = null;
                 MediaPlayer.Stop();
             }
 
@@ -255,7 +256,7 @@ namespace MonoVarmint.Widgets
             //-----------------------------------------------------------------------------------------------
             public override void Pause()
             {
-                if (this != CurrentSong)
+                if (this != Renderer.CurrentSong)
                     return;
                 MediaPlayer.Pause();
             }
@@ -268,7 +269,7 @@ namespace MonoVarmint.Widgets
             //-----------------------------------------------------------------------------------------------
             public override void Resume()
             {
-                if (this != CurrentSong)
+                if (this != Renderer.CurrentSong)
                     throw new InvalidOperationException("Attempted to resume a song when it is not the current song.");
                 MediaPlayer.Resume();
             }
@@ -278,8 +279,8 @@ namespace MonoVarmint.Widgets
             //-----------------------------------------------------------------------------------------------
             public override void Play()
             {
-                CurrentSong.Stop();
-                CurrentSong = this;
+                Renderer.CurrentSong.Stop();
+                Renderer.CurrentSong = this;
                 MediaPlayer.Play(_song);
             }
 

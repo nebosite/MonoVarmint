@@ -246,17 +246,17 @@ namespace MonoVarmint.Widgets
 
         public virtual Color RenderBackgroundColor
         {
-            get { return new Color(BackgroundColor, AbsoluteOpacity * BackgroundColor.A / 255);  }
+            get { return BackgroundColor * AbsoluteOpacity;  }
         }
 
         public virtual Color RenderForegroundColor
         {
-            get { return new Color(ForegroundColor, AbsoluteOpacity * ForegroundColor.A / 255); }
+            get { return ForegroundColor * AbsoluteOpacity; }
         }
 
         public virtual Color RenderGraphicColor
         {
-            get { return new Color(Color.White, AbsoluteOpacity); }
+            get { return Color.White * AbsoluteOpacity; }
         }
 
         //--------------------------------------------------------------------------------------
@@ -284,12 +284,6 @@ namespace MonoVarmint.Widgets
             AllowInput = true;
             Margin = new WidgetMargin();
             Stretch = new StretchParameter();
-
-            DragLengthThreshhold = .05f;
-            FlickThreshholdSeconds = 0.15;
-            DoubleTapIntervalSeconds = 0.25;
-            DoubleTapRadius = 0.1f;
-            TouchOrphanTimeoutSeconds = 1;
        }
 
         //--------------------------------------------------------------------------------------
