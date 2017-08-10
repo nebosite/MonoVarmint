@@ -94,8 +94,8 @@ namespace MonoVarmint.Widgets
         //-----------------------------------------------------------------------------------------------
         public float MusicVolume
         {
-            set => MediaPlayer.Volume = value;
-            get => MediaPlayer.Volume;
+            set => XnaMediaPlayer.Volume = value;
+            get => XnaMediaPlayer.Volume;
         }
 
         public float SoundEffectVolume { get; set; } = 1f;
