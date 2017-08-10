@@ -125,7 +125,7 @@ namespace MonoVarmint.Widgets
             var sizeChange = originalFontSize * scaleFactor - originalFontSize;
             return new VarmintWidgetAnimation(durationSeconds, (widget, delta) =>
             {
-                if ((scaleFactor < 0) || (scaleFactor < 0)) throw new ArgumentException();
+                if (scaleFactor < 0) throw new ArgumentException();
 
                 // Scales font size from 1 (current size) to scale factor
                 widget.FontSize = originalFontSize + sizeChange * (float)delta;
