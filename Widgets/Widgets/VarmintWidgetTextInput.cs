@@ -27,8 +27,19 @@ namespace MonoVarmint.Widgets
             this.OnRender += Render;
             this.OnInputCharacter += ProcessInputCharacter;
             this.OnTap += VarmintWidgetTextInput_OnTap;
+            this.OnTouchDown += VarmintWidgetTextInput_OnTouchDown;
             CursorSpot = 0;
             Content = "";
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// VarmintWidgetTextInput_OnTouchDown
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        private EventHandledState VarmintWidgetTextInput_OnTouchDown(VarmintWidget arg1, Microsoft.Xna.Framework.Input.Touch.TouchLocation arg2)
+        {
+            return EventHandledState.Handled;
         }
 
         //--------------------------------------------------------------------------------------
@@ -138,7 +149,7 @@ namespace MonoVarmint.Widgets
             Renderer.DrawText(leftOfCursor, FontName, FontSize, alignedOffset, RenderForegroundColor, _margin);
             Renderer.DrawText(rightOfCusor, FontName, FontSize, alignedOffset + new Vector2(leftSize.X, 0), RenderForegroundColor, _margin);
 
-            if((gameTime.TotalGameTime.TotalSeconds * 2) % 2.0 > 1.0)
+            if((gameTime.TotalGameTime.TotalSeconds * 2) % 2.0 > 1.0 && HasFocus)
             {
                 Renderer.DrawLine(
                     alignedOffset + new Vector2(leftSize.X, 0),

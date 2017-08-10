@@ -22,5 +22,7 @@ namespace MonoVarmint.Widgets
         void BeginClipping(Vector2 position, Vector2 size);
         void EndClipping(float rotation, Vector2 rotationOrigin, Vector2 scale, bool flipHorizontal, bool flipVertical);
         bool IsInRenderingWindow(Vector2 offset, Vector2 size);
+        void Vibrate(long milliseconds);
+        IVarmintAudioInstance PlaySound(string name);
     }
 }

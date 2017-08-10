@@ -4,13 +4,30 @@ using System.Collections.Generic;
 
 namespace MonoVarmint.Widgets
 {
-    //--------------------------------------------------------------------------------------
-    /// <summary>
-    /// MoveOffsetLinear - animate an offset from one value to another
-    /// </summary>
-    //--------------------------------------------------------------------------------------
     public partial class VarmintWidgetAnimation
     {
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// CycleFade - Fades between a start and end opacity in a sinusoidal manner
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public static VarmintWidgetAnimation CycleFade(
+            double durationSeconds,
+            float startOpacity,
+            float endOpacity,
+            float cycleTimeSeconds)
+        {
+            var opacityChange = endOpacity - startOpacity;
+            // Shape of cosine function
+            var amplitude = -opacityChange / 2; 
+            var midpoint = endOpacity + amplitude;
+
+            return new VarmintWidgetAnimation(durationSeconds, (widget, delta) =>
+            {
+                var theta = ((durationSeconds!=0) ? durationSeconds : 1) * (float)delta * 2 * Math.PI / cycleTimeSeconds;
+                widget.Opacity = amplitude * (float)Math.Cos(theta) + midpoint;
+            });
+        }
 
         //--------------------------------------------------------------------------------------
         /// <summary>
@@ -41,7 +58,7 @@ namespace MonoVarmint.Widgets
             float startOpacity,
             float endOpacity)
         {
-            var opacityChange = startOpacity - endOpacity;
+            var opacityChange = endOpacity - startOpacity;
             return new VarmintWidgetAnimation(durationSeconds, (widget, delta) =>
             {
                 widget.Opacity = startOpacity + opacityChange * (float)delta;
