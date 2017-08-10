@@ -18,6 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)GameController\GameControllerHaptics.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\IVarmintAudioInstance.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Interfaces\NullRenderer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)UIHelpers.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WidgetBase\VarmintWidgetChildren.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WidgetBase\VarmintWidgetAnimationHandling.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)WidgetBase\VarmintWidgetDataBinding.cs" />
