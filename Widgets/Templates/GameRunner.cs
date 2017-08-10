@@ -23,7 +23,7 @@ namespace ChangeThisToYourNameSpace
     //-----------------------------------------------------------------------------------------------
     public abstract partial class GameRunner: IDisposable
     {
-        protected GameController _controller;
+        protected MonoVarmint.Widgets.GameController _controller;
         public Vector2 ScreenSize { get { return _controller.ScreenSize; } }
 
         //-----------------------------------------------------------------------------------------------
@@ -39,9 +39,9 @@ namespace ChangeThisToYourNameSpace
         {
 #if WINDOWS
             // For windows, we will show a windowed version that looks like a phone app
-            _controller = new GameController(this, 500, 900);
+            _controller = new MonoVarmint.Widgets.GameController(this, 500, 900);
 #else
-            _controller = new GameController(this);
+			_controller = new MonoVarmint.Widgets.GameController(this);
 #endif
             _controller.OnUserBackButtonPress += NativeHandleUserDeactivate;
 

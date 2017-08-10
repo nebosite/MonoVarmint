@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Audio;
 using MonoVarmint.Widgets.Animation;
+using XnaMediaPlayer = Microsoft.Xna.Framework.Media.MediaPlayer;
 
 namespace MonoVarmint.Widgets
 {
@@ -92,8 +93,9 @@ namespace MonoVarmint.Widgets
         //-----------------------------------------------------------------------------------------------
         public double MusicVolume
         {
-            set => MediaPlayer.Volume = (float)value;
-            get => MediaPlayer.Volume;
+            
+            set => XnaMediaPlayer.Volume = (float)value;
+            get => XnaMediaPlayer.Volume;
         }
 
         public double SoundEffectVolume { get; set; } = 1.0;
@@ -247,7 +249,7 @@ namespace MonoVarmint.Widgets
                 if (this != CurrentSong)
                     return;
                 CurrentSong = null;
-                MediaPlayer.Stop();
+                XnaMediaPlayer.Stop();
             }
 
             //-----------------------------------------------------------------------------------------------
@@ -257,7 +259,7 @@ namespace MonoVarmint.Widgets
             {
                 if (this != CurrentSong)
                     return;
-                MediaPlayer.Pause();
+                XnaMediaPlayer.Pause();
             }
 
             //-----------------------------------------------------------------------------------------------
@@ -270,7 +272,7 @@ namespace MonoVarmint.Widgets
             {
                 if (this != CurrentSong)
                     throw new InvalidOperationException("Attempted to resume a song when it is not the current song.");
-                MediaPlayer.Resume();
+                XnaMediaPlayer.Resume();
             }
 
             //-----------------------------------------------------------------------------------------------
@@ -280,7 +282,7 @@ namespace MonoVarmint.Widgets
             {
                 CurrentSong.Stop();
                 CurrentSong = this;
-                MediaPlayer.Play(_song);
+                XnaMediaPlayer.Play(_song);
             }
 
             //-----------------------------------------------------------------------------------------------
@@ -288,8 +290,8 @@ namespace MonoVarmint.Widgets
             //-----------------------------------------------------------------------------------------------
             public override bool IsLooping
             {
-                get => MediaPlayer.IsRepeating;
-                set => MediaPlayer.IsRepeating = value;
+                get => XnaMediaPlayer.IsRepeating;
+                set => XnaMediaPlayer.IsRepeating = value;
             }
 
             //-----------------------------------------------------------------------------------------------
@@ -297,8 +299,8 @@ namespace MonoVarmint.Widgets
             //-----------------------------------------------------------------------------------------------
             public override float Volume
             {
-                get => MediaPlayer.Volume;
-                set => MediaPlayer.Volume = value;
+                get => XnaMediaPlayer.Volume;
+                set => XnaMediaPlayer.Volume = value;
             }
 
             //-----------------------------------------------------------------------------------------------
