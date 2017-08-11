@@ -25,7 +25,6 @@ namespace ChangeThisToYourNameSpace
     {
         protected GameController _controller;
         public Vector2 ScreenSize { get { return _controller.ScreenSize; } }
-        public Vector2 PriceButtonSize = new Vector2(0.324f, 0.85f);
 
         //-----------------------------------------------------------------------------------------------
         // NATIVE METHODS - These methods are called when an action occurs that needs to be handled
