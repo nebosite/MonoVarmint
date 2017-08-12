@@ -75,7 +75,7 @@ namespace MonoVarmint.Widgets
             var animationProgressSeconds = (gameTime.TotalGameTime - _animationStartTime.Value).TotalSeconds;
             if (_animationDurationSeconds > 0)
             {
-                Animate(animationProgressSeconds / _animationDurationSeconds);
+                Animate(Math.Min(Math.Max(0, animationProgressSeconds / _animationDurationSeconds), 1));
                 if (animationProgressSeconds >= _animationDurationSeconds)
                 {
                     OnComplete?.Invoke();
