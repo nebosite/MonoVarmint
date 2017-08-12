@@ -8,7 +8,7 @@ using System.Xml;
 
 namespace MonoVarmint.Widgets
 {
-     public partial class VarmintWidget
+    public partial class VarmintWidget
     {
         //--------------------------------------------------------------------------------------
         /// <summary>

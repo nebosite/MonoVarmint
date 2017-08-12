@@ -13,10 +13,16 @@ namespace MonoVarmint.Widgets
     public class VarmintAnimation
     {
         private readonly double _animationDurationSeconds;
-        private double _animationProgressSeconds;
-        protected Action<double> Animate;
-        
+        private TimeSpan? _animationStartTime;
 
+        /// <summary>
+        /// Represents an action to take when animating
+        /// </summary>
+        /// <param name="delta">The number of seconds for infinite durations, the progress from 0 to 1 for finite durations</param>
+        protected delegate void AnimateAction(double delta);
+
+        protected AnimateAction Animate;
+        
         /// <summary>
         /// IsComplete
         /// </summary>
@@ -27,15 +33,11 @@ namespace MonoVarmint.Widgets
         /// </summary>
         public event Action OnComplete;
 
-
         //--------------------------------------------------------------------------------------
         /// <summary>
-        /// ctor
-        /// 
-        /// durationSeconds - Set this to zero for infinite animation loops.  The delta in the 
-        ///                   loop will be elapsed seconds.
-        /// animator - method to do the animation work
+        /// Instantiates a new instance of the VarmintAnimation class with the given duration
         /// </summary>
+        /// <param name="durationSeconds">The number of seconds the animation will last, with 0 meaning an infinite duration</param>
         //--------------------------------------------------------------------------------------
         public VarmintAnimation(double durationSeconds)
         {
@@ -58,7 +60,7 @@ namespace MonoVarmint.Widgets
             }
 
             IsComplete = false;
-            _animationProgressSeconds = 0;
+            _animationStartTime = null;
         }
 
         //--------------------------------------------------------------------------------------
@@ -69,21 +71,21 @@ namespace MonoVarmint.Widgets
         internal void Update(GameTime gameTime)
         {
             if (IsComplete) return;
-            _animationProgressSeconds += gameTime.ElapsedGameTime.TotalSeconds;
-            var delta = _animationProgressSeconds;
+            if (_animationStartTime == null) _animationStartTime = gameTime.TotalGameTime;
+            var animationProgressSeconds = (gameTime.TotalGameTime - _animationStartTime.Value).TotalSeconds;
             if (_animationDurationSeconds > 0)
             {
-                if (_animationProgressSeconds > _animationDurationSeconds)
+                Animate(Math.Min(Math.Max(0, animationProgressSeconds / _animationDurationSeconds), 1));
+                if (animationProgressSeconds >= _animationDurationSeconds)
                 {
-                    _animationProgressSeconds = _animationDurationSeconds;
                     OnComplete?.Invoke();
                     IsComplete = true;
-                    return;
                 }
-                delta = _animationProgressSeconds / _animationDurationSeconds;
             }
-
-            Animate(delta);
+            else
+            {
+                Animate(animationProgressSeconds);
+            }
         }
 
         //--------------------------------------------------------------------------------------
