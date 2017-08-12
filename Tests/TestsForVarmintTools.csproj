@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestUtils.cs" />
+    <Compile Include="UIHelpersTest.cs" />
     <Compile Include="VarmintWidgetStackpanelTests.cs" />
     <Compile Include="VarmintWidgetFormattingTests.cs" />
     <Compile Include="VarmintWidgetSerializationTest.cs" />
