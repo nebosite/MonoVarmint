@@ -31,6 +31,18 @@ namespace MonoVarmint.Widgets
 
         //--------------------------------------------------------------------------------------
         /// <summary>
+        /// EmptyAnimation - Does nothing for a set duration
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public static VarmintWidgetAnimation EmptyAnimation(double durationSeconds)
+        {
+            return new VarmintWidgetAnimation(durationSeconds, (widget, delta) =>
+            {
+            });
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
         /// ForegroundColorFade - Smooth transition from one color to another
         /// </summary>
         //--------------------------------------------------------------------------------------
@@ -98,6 +110,26 @@ namespace MonoVarmint.Widgets
 
                 // Scales from 1 (current size) to scale factor
                 widget.Size = originalSize + sizeChange * (float)delta;
+            });
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// ScaleFontSizeLinear - scales the font size of a widget linearly by a scale factor
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public static VarmintWidgetAnimation ScaleFontSizeLinear(
+            double durationSeconds,
+            float originalFontSize,
+            float scaleFactor)
+        {
+            var sizeChange = originalFontSize * scaleFactor - originalFontSize;
+            return new VarmintWidgetAnimation(durationSeconds, (widget, delta) =>
+            {
+                if (scaleFactor < 0) throw new ArgumentException();
+
+                // Scales font size from 1 (current size) to scale factor
+                widget.FontSize = originalFontSize + sizeChange * (float)delta;
             });
         }
 
