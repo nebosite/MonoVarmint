@@ -9,7 +9,8 @@ namespace MonoVarmint.Widgets
     {
         //--------------------------------------------------------------------------------------
         /// <summary>
-        /// GetValueFromText - Convert text from a vwml file into an value
+        /// GetValueFromText - Takes a type as a parameter and tries to convert it
+        /// into a string for GetBasicValueFromText
         /// </summary>
         //--------------------------------------------------------------------------------------
         public static object GetValueFromText(Type type, string valueText)
@@ -20,23 +21,35 @@ namespace MonoVarmint.Widgets
             }
             catch (Exception error)
             {
-                if (type.IsEnum) return Enum.Parse(type, valueText);
+                if (type.IsArray) return ParseArray(type, valueText);
+                else if (type.Name.StartsWith("Tuple")) return ParseTuple(type, valueText);
+                else if (type.IsEnum) return Enum.Parse(type, valueText);
                 else if (type.IsClass) return Activator.CreateInstance(type, valueText);
                 else throw error;
             }
         }
 
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// GetBasicValueFromText - Convert text from a vwml file into an value
+        /// </summary>
+        //--------------------------------------------------------------------------------------
         public static object GetBasicValueFromText(string type, string valueText)
         {
+            
             switch (type)
             {
+                case "System.String":
                 case "String": return valueText;
                 case "Vector2": return ParseVector(valueText);
                 case "Point": return ParsePoint(valueText);
                 case "Single":
                 case "float": return float.Parse(valueText);
+                case "Double":
                 case "double": return double.Parse(valueText);
                 case "Int32":
+                case "System.Int32":
                 case "int": return int.Parse(valueText);
                 case "Int64":
                 case "long": return long.Parse(valueText);
@@ -44,9 +57,45 @@ namespace MonoVarmint.Widgets
                 case "bool": return Boolean.Parse(valueText);
                 case "Color": return ParseColor(valueText);
                 default:
-                    if (type == "Object") return valueText;
-                    else throw new ApplicationException("Don't know create a " + type);
+                    if (type == "Object") return valueText;                    
+                    else throw new ApplicationException("Don't know how to create a " + type);
             }
+
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// ParseArray 
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public static object ParseArray(Type type, string valueText)
+        {
+            var arrayElementType = type.GetElementType();
+            var splitValues = valueText.Split(',');
+            var parsedElements = new List<object>();
+
+            foreach (var value in splitValues)
+            {
+                parsedElements.Add(GetValueFromText(arrayElementType, value));
+            }
+            var output = Activator.CreateInstance(type, parsedElements.Count);
+            Array.Copy(parsedElements.ToArray(), (Array)output, parsedElements.Count);
+
+            return output;
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// ParseTuple 
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public static object ParseTuple(Type type, string valueText)
+        {
+            var splitValues = valueText.Split(':');
+            var firstTupleValue = GetValueFromText(type.GenericTypeArguments[0], splitValues[0].TrimStart('('));
+            var secondTupleValue = GetValueFromText(type.GenericTypeArguments[1], splitValues[1].TrimEnd(')'));
+
+            return Activator.CreateInstance(type, firstTupleValue, secondTupleValue);
         }
 
         //--------------------------------------------------------------------------------------
@@ -109,3 +158,4 @@ namespace MonoVarmint.Widgets
         }
     }
 }
+
