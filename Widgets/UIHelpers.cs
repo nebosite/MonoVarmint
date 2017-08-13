@@ -72,7 +72,7 @@ namespace MonoVarmint.Widgets
             var splitValues = valueText.Split(',');
             var parsedElements = new List<object>();
 
-            foreach (var value in splitValues)
+            foreach(var value in splitValues)
             {
                 parsedElements.Add(GetValueFromText(arrayElementType, value));
             }
