@@ -36,8 +36,7 @@ namespace MonoVarmint.Widgets
         /// </summary>
         //--------------------------------------------------------------------------------------
         public static object GetBasicValueFromText(string type, string valueText)
-        {
-            
+        {            
             switch (type)
             {
                 case "System.String":
@@ -60,7 +59,6 @@ namespace MonoVarmint.Widgets
                     if (type == "Object") return valueText;                    
                     else throw new ApplicationException("Don't know how to create a " + type);
             }
-
         }
 
         //--------------------------------------------------------------------------------------
@@ -158,4 +156,3 @@ namespace MonoVarmint.Widgets
         }
     }
 }
-
