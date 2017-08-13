@@ -9,14 +9,35 @@ namespace MonoVarmint.Widgets
     {
         //--------------------------------------------------------------------------------------
         /// <summary>
-        /// GetValueFromText - Convert text from a vwml file into an value
+        /// GetValueFromText - Takes a type as a parameter and tries to convert it
+        /// into a string for GetBasicValueFromText
         /// </summary>
         //--------------------------------------------------------------------------------------
         public static object GetValueFromText(Type type, string valueText)
         {
-            if(type.IsArray) return ParseArray(type, valueText);
+            try
+            {
+                return GetBasicValueFromText(type.Name, valueText);
+            }
+            catch (Exception error)
+            {
+                if (type.IsArray) return ParseArray(type, valueText);
+                else if (type.Name.StartsWith("Tuple")) return ParseTuple(type, valueText);
+                else if (type.IsEnum) return Enum.Parse(type, valueText);
+                else if (type.IsClass) return Activator.CreateInstance(type, valueText);
+                else throw error;
+            }
+        }
 
-            switch (type.Name)
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// GetBasicValueFromText - Convert text from a vwml file into an value
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public static object GetBasicValueFromText(string type, string valueText)
+        {            
+            switch (type)
             {
                 case "System.String":
                 case "String": return valueText;
@@ -35,13 +56,9 @@ namespace MonoVarmint.Widgets
                 case "bool": return Boolean.Parse(valueText);
                 case "Color": return ParseColor(valueText);
                 default:
-                    if (type.Name == "Object") return valueText;
-                    else if (type.Name.StartsWith("Tuple")) return ParseTuple(type, valueText);
-                    else if (type.IsEnum) return Enum.Parse(type, valueText);
-                    else if (type.IsClass) return Activator.CreateInstance(type, valueText);
-                    else throw new ApplicationException("Don't know create a " + type);
+                    if (type == "Object") return valueText;                    
+                    else throw new ApplicationException("Don't know how to create a " + type);
             }
-
         }
 
         //--------------------------------------------------------------------------------------
