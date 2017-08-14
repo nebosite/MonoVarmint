@@ -1,10 +1,12 @@
-﻿﻿using System;
+﻿
+
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Audio;
-using MonoVarmint.Widgets;
 using XnaMediaPlayer = Microsoft.Xna.Framework.Media.MediaPlayer;
+
 
 namespace MonoVarmint.Widgets
 {
@@ -65,7 +67,7 @@ namespace MonoVarmint.Widgets
         private IVarmintAudioInstance PlaySoundEffect(string name)
         {
             var soundEffectInstance = _soundEffectsByName[name].CreateInstance();
-            soundEffectInstance.Volume *= (float)SoundEffectVolume;
+            soundEffectInstance.Volume *= SoundEffectVolume;
             soundEffectInstance.Play();
             return new VarmintSoundEffectInstance(soundEffectInstance, this, name);
         }
@@ -98,7 +100,7 @@ namespace MonoVarmint.Widgets
 
         public float SoundEffectVolume { get; set; } = 1f;
 
-        #region classes
+#region classes
 
         internal abstract class SoundInstanceBase : IVarmintAudioInstance
         {
