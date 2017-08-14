@@ -1,5 +1,5 @@
 ﻿using System;
-using MonoVarmint.Widgets.Animation;
+using MonoVarmint.Widgets;
 
 namespace MonoVarmint.Widgets
 {

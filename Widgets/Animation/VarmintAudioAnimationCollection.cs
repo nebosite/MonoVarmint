@@ -1,4 +1,4 @@
-﻿namespace MonoVarmint.Widgets.Animation
+﻿namespace MonoVarmint.Widgets
 {
     public partial class VarmintAudioAnimation
     {

@@ -1,10 +1,13 @@
-﻿﻿using System;
+﻿#region Using directives
+
+using System;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Audio;
-using MonoVarmint.Widgets.Animation;
 using XnaMediaPlayer = Microsoft.Xna.Framework.Media.MediaPlayer;
+
+#endregion
 
 namespace MonoVarmint.Widgets
 {
@@ -65,7 +68,7 @@ namespace MonoVarmint.Widgets
         private IVarmintAudioInstance PlaySoundEffect(string name)
         {
             var soundEffectInstance = _soundEffectsByName[name].CreateInstance();
-            soundEffectInstance.Volume *= (float)SoundEffectVolume;
+            soundEffectInstance.Volume *= SoundEffectVolume;
             soundEffectInstance.Play();
             return new VarmintSoundEffectInstance(soundEffectInstance, this, name);
         }
@@ -79,8 +82,6 @@ namespace MonoVarmint.Widgets
         //-----------------------------------------------------------------------------------------------
         private IVarmintAudioInstance PlaySong(string name)
         {
-            if (CurrentSong != null)
-                throw new InvalidOperationException("Cannot play a song while another song is currently playing.");
             var instance = new VarmintSongInstance(_songsByName[name], this);
             CurrentSong = instance;
             instance.Play();
@@ -100,7 +101,7 @@ namespace MonoVarmint.Widgets
 
         public float SoundEffectVolume { get; set; } = 1f;
 
-        #region classes
+#region classes
 
         internal abstract class SoundInstanceBase : IVarmintAudioInstance
         {
