@@ -1,4 +1,4 @@
-﻿
+﻿#region Using directives
 
 using System;
 using Microsoft.Xna.Framework;
@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Microsoft.Xna.Framework.Audio;
 using XnaMediaPlayer = Microsoft.Xna.Framework.Media.MediaPlayer;
 
+#endregion
 
 namespace MonoVarmint.Widgets
 {
