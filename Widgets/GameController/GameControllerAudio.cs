@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Media;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Audio;
-using MonoVarmint.Widgets.Animation;
+using MonoVarmint.Widgets;
 using XnaMediaPlayer = Microsoft.Xna.Framework.Media.MediaPlayer;
 
 namespace MonoVarmint.Widgets

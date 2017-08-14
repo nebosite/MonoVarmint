@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
 
-namespace MonoVarmint.Widgets.Animation
+namespace MonoVarmint.Widgets
 {
     public partial class VarmintAudioAnimation : VarmintAnimation
     {
