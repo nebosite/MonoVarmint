@@ -79,8 +79,6 @@ namespace MonoVarmint.Widgets
         //-----------------------------------------------------------------------------------------------
         private IVarmintAudioInstance PlaySong(string name)
         {
-            if (CurrentSong != null)
-                throw new InvalidOperationException("Cannot play a song while another song is currently playing.");
             var instance = new VarmintSongInstance(_songsByName[name], this);
             CurrentSong = instance;
             instance.Play();
