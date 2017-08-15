@@ -57,7 +57,7 @@ namespace MonoVarmint.Widgets
         }
 
         public float DragLengthThreshhold { get; set; } = .05f;
-        public double FlickThreshholdSeconds { get; set; } = 0.15;
+        public double FlickThreshholdSeconds { get; set; } = 0.3;
         public double DoubleTapIntervalSeconds { get; set; } = 0.25;
         public double ContextHoldThreshholdSeconds { get; set; } = 0.4;
         public double TouchOrphanTimeoutSeconds { get; set; } = 1.0;
