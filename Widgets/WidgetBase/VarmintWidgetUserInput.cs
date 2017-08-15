@@ -435,7 +435,7 @@ namespace MonoVarmint.Widgets
 
                 if (touchMemory.UnresolvedCount > 0
                     && touchMemory.TotalDistance > DragLengthThreshhold
-                    && touchMemory.SecondsAfterStart(gameTime) >= FlickThreshholdSeconds)
+                    )//&& touchMemory.SecondsAfterStart(gameTime) >= FlickThreshholdSeconds)
                 {
                     touchMemory.GestureType = GestureType.FreeDrag;
                     hitList = touchMemory.StartWidgets;

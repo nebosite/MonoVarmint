@@ -89,6 +89,14 @@ namespace MonoVarmint.Widgets
                 Bottom = parse(3);
             }
 
+            public WidgetMargin(float? left, float? top, float? right, float? bottom)
+            {
+                Left = left;
+                Top = right;
+                Right = top;
+                Bottom = bottom;
+            }
+
             public override string ToString()
             {
                 return string.Format("{0},{1},{2},{3}", Left, Top, Right, Bottom);
