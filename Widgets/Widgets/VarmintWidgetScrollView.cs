@@ -51,6 +51,7 @@ namespace MonoVarmint.Widgets
 
             _innerContent = new PlainFormatter();
             _innerContent.Renderer = new NullRenderer();
+            _innerContent.Name = "InnerFrame_" + Name;
             base.AddChild(_innerContent);
         }
 
@@ -200,6 +201,8 @@ namespace MonoVarmint.Widgets
                     if (right > ExtremeRight)  ExtremeRight = right;
                     if (bottom > ExtremeBottom) ExtremeBottom = bottom;
                 }
+
+                Size = new Vector2(ExtremeRight - ExtremeLeft, ExtremeBottom - ExtremeTop);
             }
 
             public override void AddChild(VarmintWidget widget, bool suppressChildUpdate = false)
