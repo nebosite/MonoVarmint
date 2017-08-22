@@ -46,11 +46,12 @@ namespace MonoVarmint.Widgets
         public GameController(object bindingContext)
         {
             _graphics = new GraphicsDeviceManager(this);
+            _graphics.IsFullScreen = true;
             _graphics.PreparingDeviceSettings += (sender, settings)=>
             {
                 settings.GraphicsDeviceInformation.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
             };
-            _graphics.IsFullScreen = true;
+            _graphics.ApplyChanges();
             _bindingContext = bindingContext;
         }
 
