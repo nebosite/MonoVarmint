@@ -30,7 +30,10 @@ namespace MonoVarmint.Widgets
             {
                 RootDirectory = "Content"
             };
-            // Set up a back buffer to render to
+
+            // Set up a back buffer to render to      
+            _graphics.GraphicsDevice.PresentationParameters.BackBufferHeight = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
+            _graphics.GraphicsDevice.PresentationParameters.BackBufferWidth = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
             _backBufferWidth = GraphicsDevice.PresentationParameters.BackBufferWidth;
             _backBufferHeight = GraphicsDevice.PresentationParameters.BackBufferHeight;
             if ((float)_backBufferHeight / _backBufferWidth < 1.6)
