@@ -57,7 +57,7 @@ namespace MonoVarmint.Widgets
         }
 
         public float DragLengthThreshhold { get; set; } = .05f;
-        public double FlickThreshholdSeconds { get; set; } = 0.15;
+        public double FlickThreshholdSeconds { get; set; } = 0.5;
         public double DoubleTapIntervalSeconds { get; set; } = 0.25;
         public double ContextHoldThreshholdSeconds { get; set; } = 0.4;
         public double TouchOrphanTimeoutSeconds { get; set; } = 1.0;
@@ -435,7 +435,7 @@ namespace MonoVarmint.Widgets
 
                 if (touchMemory.UnresolvedCount > 0
                     && touchMemory.TotalDistance > DragLengthThreshhold
-                    && touchMemory.SecondsAfterStart(gameTime) >= FlickThreshholdSeconds)
+                    )//&& touchMemory.SecondsAfterStart(gameTime) >= FlickThreshholdSeconds)
                 {
                     touchMemory.GestureType = GestureType.FreeDrag;
                     hitList = touchMemory.StartWidgets;

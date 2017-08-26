@@ -144,7 +144,14 @@ namespace MonoVarmint.Widgets
                 }
             }
 
-            return Content.Load<Texture2D>(name);
+            try
+            {
+                return Content.Load<Texture2D>(name);
+            }
+            catch(Exception e)
+            {
+                throw new InvalidOperationException($"Could not load texture: {name}.  {e.Message}", e);
+            }
         }
 
         //-----------------------------------------------------------------------------------------------

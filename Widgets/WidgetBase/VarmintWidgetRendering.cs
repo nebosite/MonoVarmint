@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input.Touch;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Xml;
@@ -175,8 +176,14 @@ namespace MonoVarmint.Widgets
             foreach (var child in Children)
             {
                 var newSize = child.IntendedSize;
-                if (child.Stretch.Horizontal != null) newSize.X = Size.X - ((child.Margin.Left ?? 0) + (child.Margin.Right ?? 0));
-                if (child.Stretch.Vertical != null) newSize.Y = Size.Y - ((child.Margin.Top ?? 0) + (child.Margin.Bottom ?? 0));
+                if (child.Stretch.Horizontal != null)
+                {
+                    newSize.X = Size.X - ((child.Margin.Left ?? 0) + (child.Margin.Right ?? 0));
+                }
+                if (child.Stretch.Vertical != null)
+                {
+                    newSize.Y = Size.Y - ((child.Margin.Top ?? 0) + (child.Margin.Bottom ?? 0));
+                }
                 var newOffset = Vector2.Zero;
                 var availableSize = Size - newSize;
                 availableSize.X -= ((child.Margin.Left ?? 0) + (child.Margin.Right ?? 0));
