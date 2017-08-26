@@ -32,7 +32,7 @@ namespace MonoVarmint.Widgets
         }
 
         PlainFormatter _innerContent;
-
+        
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// ctor
@@ -51,6 +51,7 @@ namespace MonoVarmint.Widgets
 
             _innerContent = new PlainFormatter();
             _innerContent.Renderer = new NullRenderer();
+            _innerContent.Name = "InnerFrame_" + this.Name;
             base.AddChild(_innerContent);
         }
 
