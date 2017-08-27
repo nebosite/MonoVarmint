@@ -8,12 +8,41 @@ using System.Xml;
 
 namespace MonoVarmint.Widgets
 {
+
+    public enum FlickDirection { W, SW, S, SE, E, NE, N, NW }
+
+    public struct VarmintFlickData
+    {
+        public VarmintWidget SourceWidget;
+        public Vector2 Location;
+        public Vector2 Delta;
+        public double Angle =>  Math.Atan2(-Delta.Y, Delta.X);
+
+        public FlickDirection Direction
+        {
+            get
+            {
+                var angle = Angle;
+                var theta = -Math.PI;
+                angle -= Math.PI / 16; if (angle < theta) return FlickDirection.W;
+                angle -= Math.PI / 8; if (angle < theta) return FlickDirection.SW;
+                angle -= Math.PI / 8; if (angle < theta) return FlickDirection.S;
+                angle -= Math.PI / 8; if (angle < theta) return FlickDirection.SE;
+                angle -= Math.PI / 8; if (angle < theta) return FlickDirection.E;
+                angle -= Math.PI / 8; if (angle < theta) return FlickDirection.NE;
+                angle -= Math.PI / 8; if (angle < theta) return FlickDirection.N;
+                angle -= Math.PI / 8; if (angle < theta) return FlickDirection.NW;
+                return FlickDirection.W;
+            }
+        }       
+    }
+
     public partial class VarmintWidget
     {
         public event Func<VarmintWidget, Vector2, EventHandledState> OnTap;
         public event Func<VarmintWidget, Vector2, EventHandledState> OnDoubleTap;
         public event Func<VarmintWidget, Vector2, EventHandledState> OnContextTap;
-        public event Func<VarmintWidget, Vector2, Vector2, EventHandledState> OnFlick;
+        public event Func<VarmintFlickData, EventHandledState> OnFlick; 
         public event Func<VarmintWidget, Vector2, Vector2, EventHandledState> OnDrag; // location, delta
         public event Func<EventHandledState> OnDragComplete;
         public event Func<EventHandledState> OnDragCancel;

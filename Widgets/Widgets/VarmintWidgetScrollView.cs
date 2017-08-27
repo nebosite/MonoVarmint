@@ -59,9 +59,9 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         //
         //--------------------------------------------------------------------------------------
-        private EventHandledState VarmintWidgetScrollView_OnFlick(VarmintWidget widget, Vector2 location, Vector2 delta)
+        private EventHandledState VarmintWidgetScrollView_OnFlick(VarmintFlickData flick)
         {
-            _momentum = delta * .2f;
+            _momentum = flick.Delta * .2f;
             return EventHandledState.Handled;
         }
 

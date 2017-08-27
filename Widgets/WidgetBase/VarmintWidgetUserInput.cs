@@ -145,7 +145,7 @@ namespace MonoVarmint.Widgets
             if (AllowInput && OnFlick != null)
             {
                 var relativeStartLocation = absoluteStart - this.AbsoluteOffset;
-                return OnFlick(this, relativeStartLocation, delta);
+                return OnFlick(new VarmintFlickData() { SourceWidget = this, Location = relativeStartLocation, Delta = delta });
             }
             return AllowInput ? EventHandledState.NotHandled : EventHandledState.Handled;
         }

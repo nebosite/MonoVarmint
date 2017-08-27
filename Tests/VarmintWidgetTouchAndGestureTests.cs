@@ -27,7 +27,7 @@ namespace MonoVarmint.Tools.Tests
                 // Gestures
                 OnTap += (w, pos) => Report("OnTap(" + pos + ")");
                 OnDoubleTap += (w, p) => Report("OnDoubleTap(" + p + ")");
-                OnFlick += (w, p1, p2) => Report("OnFlick(" + p1 + " , " + p2 + ")");
+                OnFlick += (fd) => Report("OnFlick(" + fd.Location + " , " + fd.Delta + ")");
                 OnDrag += (w, p1, p2) => Report("OnDrag(" + p1 + " , " + p2 + ")");
                 OnDragComplete += () => Report("OnDragComplete");
                 OnDragCancel += () => Report("OnDragCancel");
