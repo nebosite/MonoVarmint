@@ -83,18 +83,10 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         protected override void Initialize()
         {
-            // Monotouch doesn't handle flick and drag gestures well, so we are going
-            // to ignore them and just process touches
-            //TouchPanel.EnabledGestures = GestureType.DoubleTap
-            //    | GestureType.Tap
-            //    | GestureType.FreeDrag
-            //    | GestureType.DragComplete
-            //    | GestureType.Flick
-            //    | GestureType.Hold;
-
+#if WINDOWS
             TouchPanel.EnableMouseTouchPoint = true;
             TouchPanel.EnableMouseGestures = true;
-
+#endif
             base.Initialize();
         }
 

@@ -87,38 +87,6 @@ namespace MonoVarmint.Widgets
             }
         }
 
-
-        //--------------------------------------------------------------------------------------
-        /// <summary>
-        /// Start a spritebatch session if not already started
-        /// </summary>
-        //--------------------------------------------------------------------------------------
-        void EnsureSpriteBatch(RasterizerState rasterizerState = null)
-        {
-           // Debug.WriteLine("AAA// Draw Something");
-
-            //if (!_inSpriteBatch)
-            //{
-            //    _spriteBatch.Begin(rasterizerState: rasterizerState);
-            //    _inSpriteBatch = true;
-            //}
-
-        }
-
-        //--------------------------------------------------------------------------------------
-        /// <summary>
-        /// End a spritebatch session if there is one
-        /// </summary>
-        //--------------------------------------------------------------------------------------
-        void EndSpriteBatch()
-        {
-            //if (_inSpriteBatch)
-            //{
-            //    _spriteBatch.End();
-            //    _inSpriteBatch = false;
-            //}
-        }
-
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// SetDefaultFont - Sets the default font to fontName
@@ -184,7 +152,6 @@ namespace MonoVarmint.Widgets
         {
             offset -= DrawOffset; 
             Vector2 scale = size * _backBufferWidth / new Vector2(_utilityBlockTexture.Width, _utilityBlockTexture.Height);
-            EnsureSpriteBatch();
 
             _spriteBatch.Draw(
                 texture: _utilityBlockTexture,
@@ -207,7 +174,6 @@ namespace MonoVarmint.Widgets
         {
             offset -= DrawOffset;
             Vector2 scale = size * _backBufferWidth / new Vector2(_circleTexture.Width, _circleTexture.Height);
-            EnsureSpriteBatch();
 
             _spriteBatch.Draw(
               texture: _circleTexture,
@@ -285,7 +251,6 @@ namespace MonoVarmint.Widgets
                     layerDepth: 0);
             };
 
-            EnsureSpriteBatch();
             if (wrapWidth == 0)
             {
                 drawTextSegment(text);
@@ -370,7 +335,6 @@ namespace MonoVarmint.Widgets
         {
             start -= DrawOffset;
             end -= DrawOffset;
-            EnsureSpriteBatch();
             Vector2 rotationOrigin = new Vector2(0, _utilityBlockTexture.Height / 2);
 
             start = start * _backBufferWidth;
@@ -417,8 +381,6 @@ namespace MonoVarmint.Widgets
             origin.X *= texture.Width;
             origin.Y *= texture.Height;
 
-            EnsureSpriteBatch();
-
             _spriteBatch.Draw(
                 texture: texture,
                 position: offset * _backBufferWidth,
@@ -452,8 +414,6 @@ namespace MonoVarmint.Widgets
             Vector2 scale = size * _backBufferWidth / new Vector2(sprite.Width, sprite.Height);
             origin.X *= sprite.Width;
             origin.Y *= sprite.Height;
-
-            EnsureSpriteBatch();
 
             _spriteBatch.Draw(
                   texture: texture,
@@ -609,16 +569,5 @@ namespace MonoVarmint.Widgets
             ReturnRenderTarget(drawBuffer.RenderBuffer);
             DrawOffset = drawBuffer.PreviousDrawOffset;
         }
-
-        //--------------------------------------------------------------------------------------
-        /// <summary>
-        /// allow drawing on the entire area
-        /// </summary>
-        //--------------------------------------------------------------------------------------
-        public void EndClippingOLD()
-        {
-            EndSpriteBatch();
-        }
-
     }
 }
