@@ -329,7 +329,6 @@ namespace MonoVarmint.Widgets
                     }
                     else
                     {
-                        Debug.WriteLine("+TR");
                         _tapInReserve = touchMemory;
                     }
 
@@ -418,7 +417,6 @@ namespace MonoVarmint.Widgets
 
             if (_tapInReserve != null)
             {
-                Debug.WriteLine("TR:" + _tapInReserve.SecondsAfterStart(gameTime));
                 if ( _tapInReserve.SecondsAfterStart(gameTime) >= DoubleTapIntervalSeconds)
                 {
                     var tapLocation = _tapInReserve.CurrentTouch.Position;

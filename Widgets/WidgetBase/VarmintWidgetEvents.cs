@@ -24,14 +24,15 @@ namespace MonoVarmint.Widgets
             {
                 var angle = Angle;
                 var theta = -Math.PI;
-                angle -= Math.PI / 16; if (angle < theta) return FlickDirection.W;
-                angle -= Math.PI / 8; if (angle < theta) return FlickDirection.SW;
-                angle -= Math.PI / 8; if (angle < theta) return FlickDirection.S;
-                angle -= Math.PI / 8; if (angle < theta) return FlickDirection.SE;
-                angle -= Math.PI / 8; if (angle < theta) return FlickDirection.E;
-                angle -= Math.PI / 8; if (angle < theta) return FlickDirection.NE;
-                angle -= Math.PI / 8; if (angle < theta) return FlickDirection.N;
-                angle -= Math.PI / 8; if (angle < theta) return FlickDirection.NW;
+                var step = Math.PI * 2 / 8;
+                theta += step/2; if (angle < theta) return FlickDirection.W;
+                theta += step;   if (angle < theta) return FlickDirection.SW;
+                theta += step;   if (angle < theta) return FlickDirection.S;
+                theta += step;   if (angle < theta) return FlickDirection.SE;
+                theta += step;   if (angle < theta) return FlickDirection.E;
+                theta += step;   if (angle < theta) return FlickDirection.NE;
+                theta += step;   if (angle < theta) return FlickDirection.N;
+                theta += step;   if (angle < theta) return FlickDirection.NW;
                 return FlickDirection.W;
             }
         }       
