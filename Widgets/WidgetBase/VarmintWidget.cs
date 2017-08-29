@@ -1,10 +1,6 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input.Touch;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Reflection;
-using System.Xml;
+using Microsoft.Xna.Framework;
 
 namespace MonoVarmint.Widgets
 {
@@ -33,51 +29,34 @@ namespace MonoVarmint.Widgets
             get
             {
                 if (_foregroundColor != null) return _foregroundColor.Value;
-                if (Parent == null) return Color.Black;
-                return Parent.ForegroundColor;
+                return Parent?.ForegroundColor ?? Color.Black;
             }
-            set { _foregroundColor = value; }
+            set => _foregroundColor = value;
         }
 
         public float Opacity { get; set; } = 1.0f;
 
-        private Vector2 _offset;
-        public virtual Vector2 Offset
-        {
-            get
-            {
-                return _offset;
-            }
-            set
-            {
-                _offset = value;
-            }
-        }
+        public virtual Vector2 Offset { get; set; }
 
         public float Rotate { get; set; }
         public bool FlipVertical { get; set; }
         public bool FlipHorizontal { get; set; }
 
-        private Vector2? _size = null;
-        internal Vector2? _originalSize = null;
+        private Vector2? _size;
+        internal Vector2? OriginalSize;
         public Vector2 Size
         {
-            get
-            {
-                return _size ?? Vector2.Zero;
-            }
+            get => _size ?? Vector2.Zero;
             set
             {
-                if (_size == null || _size != value)
+                if (_size != null && _size == value) return;
+                if (OriginalSize == null || _applyingStyles)
                 {
-                    if (_originalSize == null || _applyingStyles)
-                    {
-                        _originalSize = value;
-                    }
-                    _size = value;
-                    UpdateChildFormatting(_size);
-                    OnSizeChanged?.Invoke(this);
+                    OriginalSize = value;
                 }
+                _size = value;
+                UpdateChildFormatting(_size);
+                OnSizeChanged?.Invoke(this);
             }
         }
 
@@ -86,7 +65,7 @@ namespace MonoVarmint.Widgets
             get
             {
                 if (_bindingTemplates.ContainsKey("Size")) return Size;
-                return _originalSize ?? Vector2.Zero;
+                return OriginalSize ?? Vector2.Zero;
             }
         }
 
@@ -103,7 +82,7 @@ namespace MonoVarmint.Widgets
                 if (Parent == null) return HorizontalContentAlignment.Left;
                 return Parent.HorizontalContentAlignment;
             }
-            set { _horizontalContentAlignment = value; }
+            set => _horizontalContentAlignment = value;
         }
 
         private VerticalContentAlignment? _verticalContentAlignment;
@@ -115,10 +94,10 @@ namespace MonoVarmint.Widgets
                 if (Parent == null) return VerticalContentAlignment.Top;
                 return Parent.VerticalContentAlignment;
             }
-            set { _verticalContentAlignment = value; }
+            set => _verticalContentAlignment = value;
         }
 
-        float? _fontSize;
+        private float? _fontSize;
         public float FontSize
         {
             get
@@ -127,20 +106,15 @@ namespace MonoVarmint.Widgets
                 if (Parent == null) return 0.1f;
                 return Parent.FontSize;
             }
-            set { _fontSize = value; }
+            set => _fontSize = value;
         }
 
 
-        string _fontName;
+        private string _fontName;
         public string FontName
         {
-            get
-            {
-                if (_fontName != null) return _fontName;
-                if (Parent == null) return null;
-                return Parent.FontName;
-            }
-            set { _fontName = value; }
+            get => _fontName ?? Parent?.FontName;
+            set => _fontName = value;
         }
 
 
@@ -154,10 +128,8 @@ namespace MonoVarmint.Widgets
             get => _content;
             set
             {
-                if(value is VarmintWidget)
-                {
-                    var widget = value as VarmintWidget;
-                    widget.Parent = this;
+                if (value is VarmintWidget varmintWidget) {
+                    varmintWidget.Parent = this;
                 }
                 _content = value;
             }
@@ -168,15 +140,7 @@ namespace MonoVarmint.Widgets
         private object _xbindingContext;
         public object BindingContext
         {
-            get
-            {
-                if(_xbindingContext == null)
-                {
-                    if (Parent == null) return null;
-                    return Parent.BindingContext;
-                }
-                return _xbindingContext;
-            }
+            get => _xbindingContext ?? Parent?.BindingContext;
             set
             {
                 _xbindingContext = value;
@@ -190,18 +154,14 @@ namespace MonoVarmint.Widgets
             get
             {
                 if (_eventBindingContext != null) return _eventBindingContext;
-                if (Parent != null)
-                {
-                    var parentContext = Parent.EventBindingContext;
-                    if (parentContext == null) return BindingContext;
-                    else return parentContext;
-                }
-                return BindingContext;
+                if (Parent == null) return BindingContext;
+                var parentContext = Parent.EventBindingContext;
+                return parentContext ?? BindingContext;
             }
-            set { _eventBindingContext = value; }
+            set => _eventBindingContext = value;
         }
 
-        List<VarmintWidgetAnimation> _animations = new List<VarmintWidgetAnimation>();
+        private readonly List<VarmintWidgetAnimation> _animations = new List<VarmintWidgetAnimation>();
 
         /// <summary>
         /// AbsoluteOffset
@@ -211,7 +171,7 @@ namespace MonoVarmint.Widgets
             get
             {
                 if (Parent == null) return Offset;
-                else return Parent.AbsoluteOffset + Offset;
+                return Parent.AbsoluteOffset + Offset;
             }
         }
 
@@ -219,17 +179,11 @@ namespace MonoVarmint.Widgets
         /// <summary>
         /// Center of this widget in absolute coordinates
         /// </summary>
-        public Vector2 AbsoluteCenter
-        {
-            get
-            {
-                return AbsoluteOffset + Size / 2;
-            }
-        }
+        public Vector2 AbsoluteCenter => AbsoluteOffset + Size / 2;
 
         public Dictionary<string, string> Parameters { get; set; }
 
-        static int _globalWidgetCount = 0;
+        private static int _globalWidgetCount;
 
 
         /// <summary>
@@ -240,24 +194,15 @@ namespace MonoVarmint.Widgets
             get
             {
                 if (Parent == null) return Opacity;
-                else return Parent.AbsoluteOpacity * Opacity;
+                return Parent.AbsoluteOpacity * Opacity;
             }
         }
 
-        public virtual Color RenderBackgroundColor
-        {
-            get { return BackgroundColor * AbsoluteOpacity;  }
-        }
+        public virtual Color RenderBackgroundColor => BackgroundColor * AbsoluteOpacity;
 
-        public virtual Color RenderForegroundColor
-        {
-            get { return ForegroundColor * AbsoluteOpacity; }
-        }
+        public virtual Color RenderForegroundColor => ForegroundColor * AbsoluteOpacity;
 
-        public virtual Color RenderGraphicColor
-        {
-            get { return Color.White * AbsoluteOpacity; }
-        }
+        public virtual Color RenderGraphicColor => Color.White * AbsoluteOpacity;
 
         //--------------------------------------------------------------------------------------
         /// <summary>
@@ -266,7 +211,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         static VarmintWidget()
         {
-            _knownAssemblies.Add(typeof(VarmintWidget).GetTypeInfo().Assembly);
+            KnownAssemblies.Add(typeof(VarmintWidget).GetTypeInfo().Assembly);
         }
 
         //--------------------------------------------------------------------------------------
@@ -296,9 +241,9 @@ namespace MonoVarmint.Widgets
             Size = size;
         }
 
-        bool _prepared = false;
-        bool _updating = false;
-        bool initCalled = false;
+        private bool _prepared;
+        private bool _updating;
+        private bool _initCalled;
 
         //--------------------------------------------------------------------------------------
         /// <summary>
@@ -307,25 +252,23 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void Prepare(Dictionary<string, VarmintWidgetStyle> styleLibrary)
         {
-            if(!_prepared)
+            if (_prepared) return;
+            ApplyStyles(styleLibrary);
+            UpdateBindings(BindingContext);
+            ReadBindings();
+
+            foreach(var child in Children)
             {
-                ApplyStyles(styleLibrary);
-                UpdateBindings(BindingContext);
-                ReadBindings();
-
-                foreach(var child in Children)
-                {
-                    child.Prepare(styleLibrary);
-                }
-
-                if(!initCalled)
-                {
-                    initCalled = true;
-                    OnInit?.Invoke(this);
-                }
-                _prepared = true;
-                UpdateChildFormatting();
+                child.Prepare(styleLibrary);
             }
+
+            if(!_initCalled)
+            {
+                _initCalled = true;
+                OnInit?.Invoke(this);
+            }
+            _prepared = true;
+            UpdateChildFormatting();
         }
 
         //--------------------------------------------------------------------------------------

@@ -1,10 +1,6 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input.Touch;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Xml;
 
 namespace MonoVarmint.Widgets
 {

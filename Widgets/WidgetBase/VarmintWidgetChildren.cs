@@ -1,17 +1,10 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input.Touch;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Xml;
-using System.Linq;
 
 namespace MonoVarmint.Widgets
 {
     public partial class VarmintWidget
     {
-        private IList<VarmintWidget> children = new List<VarmintWidget>();
+        private readonly IList<VarmintWidget> _children = new List<VarmintWidget>();
 
         //--------------------------------------------------------------------------------------
         /// <summary>
@@ -21,15 +14,15 @@ namespace MonoVarmint.Widgets
         public List<T> FindWidgetsByType<T>() where T : VarmintWidget
         {
             var output = new List<T>();
-            FindWidgetsByType<T>(output);
+            FindWidgetsByType(output);
             return output;
         }
-        private void FindWidgetsByType<T>(List<T> output) where T : VarmintWidget
+        private void FindWidgetsByType<T>(ICollection<T> output) where T : VarmintWidget
         {
             if (this is T) output.Add(this as T);
             foreach(var child in Children)
             {
-                child.FindWidgetsByType<T>(output);
+                child.FindWidgetsByType(output);
             }
         }
 
@@ -57,23 +50,18 @@ namespace MonoVarmint.Widgets
         {
             get
             {
-                if (Content is VarmintWidget) yield return Content as VarmintWidget;
-                foreach (var child in children)
+                if (Content is VarmintWidget widget)
+                    yield return widget;
+                foreach (var child in _children)
                 {
                     yield return child;
                 }
             }
         }
 
-        public List<VarmintWidget> ChildrenCopy { get { return new List<VarmintWidget>(Children); } }
+        public List<VarmintWidget> ChildrenCopy => new List<VarmintWidget>(Children);
 
-        public bool HasChildren
-        {
-            get
-            {
-                return Children.GetEnumerator().MoveNext();
-            }
-        }
+        public bool HasChildren => Children.GetEnumerator().MoveNext();
 
         //--------------------------------------------------------------------------------------
         /// <summary>
@@ -82,7 +70,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public virtual void AddChild(VarmintWidget widget, bool suppressChildUpdate = false)
         {
-            children.Add(widget);
+            _children.Add(widget);
             widget.Parent = this;
             if (ChildrenAffectFormatting && !suppressChildUpdate)
             {
@@ -97,7 +85,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public virtual void InsertChild(VarmintWidget widget, bool suppressChildUpdate = false)
         {
-            children.Insert(0, widget);
+            _children.Insert(0, widget);
             widget.Parent = this;
             if (ChildrenAffectFormatting && !suppressChildUpdate)
             {
@@ -112,7 +100,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public virtual void RemoveChild(VarmintWidget childToRemove, bool suppressChildUpdate = false)
         {
-            children.Remove(childToRemove);
+            _children.Remove(childToRemove);
             if (ChildrenAffectFormatting && !suppressChildUpdate)
             {
                 UpdateChildFormatting();
@@ -126,7 +114,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public virtual void ClearChildren()
         {
-            children.Clear();
+            _children.Clear();
             if (ChildrenAffectFormatting)
             {
                 UpdateChildFormatting();

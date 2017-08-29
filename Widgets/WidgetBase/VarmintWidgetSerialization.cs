@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -18,8 +17,8 @@ namespace MonoVarmint.Widgets
     {
         private readonly Dictionary<string, string> _declaredSettings = new Dictionary<string, string>();
 
-        private static Dictionary<string, Type> _cachedWidgetTypes = new Dictionary<string, Type>();
-        private static List<Assembly> _knownAssemblies = new List<Assembly>();
+        private static readonly Dictionary<string, Type> CachedWidgetTypes = new Dictionary<string, Type>();
+        private static readonly List<Assembly> KnownAssemblies = new List<Assembly>();
 
         //--------------------------------------------------------------------------------------
         /// <summary>
@@ -29,9 +28,9 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public static void DeclareAssembly(Assembly assembly)
         {
-            if (!_knownAssemblies.Contains(assembly))
+            if (!KnownAssemblies.Contains(assembly))
             {
-                _knownAssemblies.Add(assembly);
+                KnownAssemblies.Add(assembly);
             }
         }
 
@@ -42,10 +41,10 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         private static Type GetWidgetType(string typeName)
         {
-            if (_cachedWidgetTypes.ContainsKey(typeName)) return _cachedWidgetTypes[typeName];
+            if (CachedWidgetTypes.ContainsKey(typeName)) return CachedWidgetTypes[typeName];
 
             Type probableMatch = null;
-            foreach (var assembly in _knownAssemblies)
+            foreach (var assembly in KnownAssemblies)
             {
                 foreach (var type in assembly.GetTypes())
                 {
@@ -63,16 +62,13 @@ namespace MonoVarmint.Widgets
                         break;
                     }
 
-                    if (foundName.EndsWith(typeName)
-                        && (foundName[foundName.Length - typeName.Length - 1] == '.')
-                            || typeName.StartsWith("."))
+                    if ((!foundName.EndsWith(typeName) || foundName[foundName.Length - typeName.Length - 1] != '.') &&
+                        !typeName.StartsWith(".")) continue;
+                    if (probableMatch != null)
                     {
-                        if (probableMatch != null)
-                        {
-                            throw new ApplicationException("Ambiguous Widget Type: " + typeName);
-                        }
-                        probableMatch = type;
+                        throw new ApplicationException("Ambiguous Widget Type: " + typeName);
                     }
+                    probableMatch = type;
                 }
             }
 
@@ -82,7 +78,7 @@ namespace MonoVarmint.Widgets
                 {
                     throw new ApplicationException("Widget node '" + typeName + "' is not a VarmintWidget. (Make sure your shortcut attribute does not match a real type.");
                 }
-                _cachedWidgetTypes[typeName] = probableMatch;
+                CachedWidgetTypes[typeName] = probableMatch;
                 return probableMatch;
             }
             else
@@ -91,8 +87,8 @@ namespace MonoVarmint.Widgets
             }
         }
 
-        Dictionary<string, string> _bindingTemplates = new Dictionary<string, string>();
-        BindingFlags _publicInstance = BindingFlags.Public | BindingFlags.Instance;
+        private readonly Dictionary<string, string> _bindingTemplates = new Dictionary<string, string>();
+        private readonly BindingFlags _publicInstance = BindingFlags.Public | BindingFlags.Instance;
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// AddBinding
@@ -103,7 +99,7 @@ namespace MonoVarmint.Widgets
             var propertyType = GetType().GetProperty(propertyName, _publicInstance);
             var eventType = GetType().GetEvent(propertyName, _publicInstance);
             if (propertyType == null && eventType == null)
-                throw new ApplicationException("Property or event name '" + propertyName + "' is not part of type " + propertyType.Name);
+                throw new ApplicationException($"Property or event name '{propertyName}' is not part of {GetType().Name}");
 
             _bindingTemplates.Add(propertyName, bindingSpecifier);
         }
@@ -111,7 +107,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         //
         //--------------------------------------------------------------------------------------
-        void ThrowIfPropertyNotValid(string propertyName)
+        private void ThrowIfPropertyNotValid(string propertyName)
         {
             var eventInfo = GetType().GetTypeInfo().GetEvent(propertyName, _publicInstance);
             var propertyInfo = GetType().GetTypeInfo().GetProperty(propertyName);
@@ -149,7 +145,7 @@ namespace MonoVarmint.Widgets
                 foreach(var keyValuePair in keyValuePairs)
                 {
                     // Break up name=value into actual key and value objects
-                    var valueParts = keyValuePair.Split(new char[] { '=' }, 2);
+                    var valueParts = keyValuePair.Split(new[] { '=' }, 2);
                     if (valueParts.Length != 2) throw new ApplicationException("Expected format of Name=Value");
                     var types = propertyInfo.PropertyType.GenericTypeArguments;
                     var key = UIHelpers.GetValueFromText(types[0], valueParts[0]);
@@ -165,7 +161,7 @@ namespace MonoVarmint.Widgets
 
                     // Add to the dictionary
                     var add = propertyInfo.PropertyType.GetMethod("Add", types);
-                    add.Invoke(dictionary, new object[] { key, value });
+                    add.Invoke(dictionary, new[] { key, value });
                 }
             }
             else
@@ -182,7 +178,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         private static bool IsBinding(string bindingSpecifier)
         {
-            return (bindingSpecifier.StartsWith("{") && bindingSpecifier.EndsWith("}"));
+            return bindingSpecifier.StartsWith("{") && bindingSpecifier.EndsWith("}");
         }
 
         //--------------------------------------------------------------------------------------
@@ -202,9 +198,9 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public static VarmintWidget HydrateLayout(IVarmintWidgetInjector injector, LayoutItem widgetLayout, Dictionary<string, LayoutItem> controlLibrary)
         {
-            VarmintWidget output = null;
+            VarmintWidget output;
 
-            Action<LayoutItem> applyLayout = (layout) =>
+            void ApplyLayout(LayoutItem layout)
             {
                 foreach (var name in layout.Settings.Keys)
                 {
@@ -221,7 +217,7 @@ namespace MonoVarmint.Widgets
                 }
                 foreach (var childItem in layout.Children)
                 {
-                    if(childItem.VwmlTag.Contains("."))
+                    if (childItem.VwmlTag.Contains("."))
                     {
                         var parts = childItem.VwmlTag.Split('.');
                         if (parts.Length > 2)
@@ -233,20 +229,20 @@ namespace MonoVarmint.Widgets
                         if (childItem.Children.Count == 1) // Only add items with content
                         {
                             var hydratedLayout = HydrateLayout(injector, childItem.Children[0], controlLibrary);
-                            if (!propertyType.PropertyType.IsAssignableFrom(hydratedLayout.GetType()))
+                            if (propertyType != null && !propertyType.PropertyType.IsInstanceOfType(hydratedLayout))
                             {
                                 throw new ApplicationException("Property " + childItem.VwmlTag + " cannot be assigned Type " + hydratedLayout.GetType().Name);
                             }
-                            propertyType.SetValue(output, hydratedLayout);
+                            propertyType?.SetValue(output, hydratedLayout);
                         }
-                        else if(childItem.Children.Count > 1)
+                        else if (childItem.Children.Count > 1)
                         {
                             throw new ApplicationException("Too many child nodes on a property setter.  You only get one! (" + childItem.VwmlTag + ")");
                         }
                     }
                     else output.AddChild(HydrateLayout(injector, childItem, controlLibrary), true);
                 }
-            };
+            }
 
 
             if(controlLibrary.ContainsKey(widgetLayout.VwmlTag))
@@ -270,7 +266,7 @@ namespace MonoVarmint.Widgets
 
                 // Controls will get properties from the control layout, but these can 
                 // be overridden later by the local instace of the control
-                applyLayout(controlLayout);
+                ApplyLayout(controlLayout);
             }
             else
             {
@@ -289,7 +285,7 @@ namespace MonoVarmint.Widgets
                 }
             }
 
-            applyLayout(widgetLayout);
+            ApplyLayout(widgetLayout);
 
             return output;
         }
@@ -363,7 +359,7 @@ namespace MonoVarmint.Widgets
                         var lineInfo = (IXmlLineInfo)reader;
                         output.LocationText = entityName + ", Line: " + lineInfo.LineNumber;
 
-                        bool hasAttribute = reader.MoveToFirstAttribute();
+                        var hasAttribute = reader.MoveToFirstAttribute();
                         while (hasAttribute)
                         {
                             // Some properties are special, and need to be set now.  The rest we set
@@ -402,7 +398,7 @@ namespace MonoVarmint.Widgets
                 if (output == null) continue;
             } while (reader.Read());
 
-            if (output.Name == null) output.Name = defaultName;
+            if (output != null && output.Name == null) output.Name = defaultName;
             return output;
         }
 
