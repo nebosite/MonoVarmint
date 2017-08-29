@@ -27,7 +27,7 @@ namespace MonoVarmint.Tools.Tests
                 // Gestures
                 OnTap += (w, pos) => Report("OnTap(" + pos + ")");
                 OnDoubleTap += (w, p) => Report("OnDoubleTap(" + p + ")");
-                OnFlick += (w, p1, p2) => Report("OnFlick(" + p1 + " , " + p2 + ")");
+                OnFlick += (fd) => Report("OnFlick(" + fd.Location + " , " + fd.Delta + ")");
                 OnDrag += (w, p1, p2) => Report("OnDrag(" + p1 + " , " + p2 + ")");
                 OnDragComplete += () => Report("OnDragComplete");
                 OnDragCancel += () => Report("OnDragCancel");
@@ -72,7 +72,8 @@ namespace MonoVarmint.Tools.Tests
             target.ResolveGestures(t);
             target.ReportTouch(new TouchLocation(4, TouchLocationState.Released, new Vector2(6f, 4.5f)), t);
             target.ResolveGestures(t);
-            child1.AssertLast(3, "OnFlick({X:3 Y:3} , {X:2 Y:0.5})");
+            Assert.AreEqual("OnDrag({X:5 Y:3} , {X:2 Y:0})", child1.Calls[2]); // Should also have a drag
+            child1.AssertLast(4, "OnFlick({X:3 Y:3} , {X:2 Y:0.5})");
         }
 
 

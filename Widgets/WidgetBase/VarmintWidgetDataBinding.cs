@@ -1,17 +1,12 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input.Touch;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Xml;
 
 namespace MonoVarmint.Widgets
 {
     public partial class VarmintWidget
     {
-        List<Action> _bindingReadActions = new List<Action>();
-        Dictionary<string, Action> _bindingPostActions = new Dictionary<string, Action>();
+        private List<Action> _bindingReadActions = new List<Action>();
+        private readonly Dictionary<string, Action> _bindingPostActions = new Dictionary<string, Action>();
 
         protected void PostBackProperty(string propertyName)
         {
@@ -61,7 +56,7 @@ namespace MonoVarmint.Widgets
                             + "' on type " + EventBindingContext.GetType());
                     }
 
-                    Delegate handler =
+                    var handler =
                          Delegate.CreateDelegate(targetEventInfo.EventHandlerType,
                                                  EventBindingContext,
                                                  sourceMethodInfo);
@@ -81,13 +76,13 @@ namespace MonoVarmint.Widgets
                             + targetPropertyName + "' on " + GetType());
                         _bindingReadActions.Add(() =>
                         {
-                            object newValue = sourcePropertyInfo.GetValue(BindingContext);
+                            var newValue = sourcePropertyInfo.GetValue(BindingContext);
                             targetPropertyInfo.SetValue(this, newValue);
                         });
 
                         _bindingPostActions.Add(targetPropertyName, () =>
                         {
-                            object newValue = targetPropertyInfo.GetValue(this);
+                            var newValue = targetPropertyInfo.GetValue(this);
                             sourcePropertyInfo.SetValue(BindingContext, newValue);
                         });
                     }

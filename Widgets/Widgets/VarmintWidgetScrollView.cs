@@ -32,7 +32,7 @@ namespace MonoVarmint.Widgets
         }
 
         PlainFormatter _innerContent;
-
+        
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// ctor
@@ -51,7 +51,7 @@ namespace MonoVarmint.Widgets
 
             _innerContent = new PlainFormatter();
             _innerContent.Renderer = new NullRenderer();
-            _innerContent.Name = "InnerFrame_" + Name;
+            _innerContent.Name = "InnerFrame_" + this.Name;
             base.AddChild(_innerContent);
         }
 
@@ -59,9 +59,9 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         //
         //--------------------------------------------------------------------------------------
-        private EventHandledState VarmintWidgetScrollView_OnFlick(VarmintWidget widget, Vector2 location, Vector2 delta)
+        private EventHandledState VarmintWidgetScrollView_OnFlick(VarmintFlickData flick)
         {
-            _momentum = delta * .2f;
+            _momentum = flick.Delta * .2f;
             return EventHandledState.Handled;
         }
 

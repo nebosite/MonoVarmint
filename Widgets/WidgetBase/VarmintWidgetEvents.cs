@@ -1,19 +1,45 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input.Touch;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Xml;
 
 namespace MonoVarmint.Widgets
 {
+
+    public enum FlickDirection { W, SW, S, SE, E, NE, N, NW }
+
+    public struct VarmintFlickData
+    {
+        public VarmintWidget SourceWidget;
+        public Vector2 Location;
+        public Vector2 Delta;
+        public double Angle =>  Math.Atan2(-Delta.Y, Delta.X);
+
+        public FlickDirection Direction
+        {
+            get
+            {
+                var angle = Angle;
+                var theta = -Math.PI;
+                var step = Math.PI * 2 / 8;
+                theta += step/2; if (angle < theta) return FlickDirection.W;
+                theta += step;   if (angle < theta) return FlickDirection.SW;
+                theta += step;   if (angle < theta) return FlickDirection.S;
+                theta += step;   if (angle < theta) return FlickDirection.SE;
+                theta += step;   if (angle < theta) return FlickDirection.E;
+                theta += step;   if (angle < theta) return FlickDirection.NE;
+                theta += step;   if (angle < theta) return FlickDirection.N;
+                theta += step;   if (angle < theta) return FlickDirection.NW;
+                return FlickDirection.W;
+            }
+        }       
+    }
+
     public partial class VarmintWidget
     {
         public event Func<VarmintWidget, Vector2, EventHandledState> OnTap;
         public event Func<VarmintWidget, Vector2, EventHandledState> OnDoubleTap;
         public event Func<VarmintWidget, Vector2, EventHandledState> OnContextTap;
-        public event Func<VarmintWidget, Vector2, Vector2, EventHandledState> OnFlick;
+        public event Func<VarmintFlickData, EventHandledState> OnFlick; 
         public event Func<VarmintWidget, Vector2, Vector2, EventHandledState> OnDrag; // location, delta
         public event Func<EventHandledState> OnDragComplete;
         public event Func<EventHandledState> OnDragCancel;

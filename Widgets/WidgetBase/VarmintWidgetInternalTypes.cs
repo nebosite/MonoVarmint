@@ -1,11 +1,3 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input.Touch;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Xml;
-
 namespace MonoVarmint.Widgets
 {
     public enum HorizontalContentAlignment
@@ -31,7 +23,7 @@ namespace MonoVarmint.Widgets
 
     public partial class VarmintWidget
     {
-        const string BindingContextPropertyName = "BindingContext";
+        private const string BindingContextPropertyName = "BindingContext";
 
         //--------------------------------------------------------------------------------------
         /// <summary>
@@ -44,4 +36,4 @@ namespace MonoVarmint.Widgets
             Handled
         }
     }
-    }
+}
