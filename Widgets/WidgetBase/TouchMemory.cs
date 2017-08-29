@@ -10,40 +10,41 @@ namespace MonoVarmint.Widgets
     /// Helper for remembering touch details
     /// </summary>
     //--------------------------------------------------------------------------------------
-    class TouchMemory : IDisposable
+    internal class TouchMemory : IDisposable
     {
-        List<TouchLocation> _touches = GetTouchBuffer();
-        List<VarmintWidget> _previousWidgets = new List<VarmintWidget>();
-        List<VarmintWidget> _startWidgets = new List<VarmintWidget>();
-        int _lastUnresolvedTouchIndex = 0;
+        private List<TouchLocation> _touches = GetTouchBuffer();
+        private readonly List<VarmintWidget> _previousWidgets = new List<VarmintWidget>();
+        private readonly List<VarmintWidget> _startWidgets = new List<VarmintWidget>();
+        private int _lastUnresolvedTouchIndex;
 
         /// <summary>
         /// Array of the controls this touch saw last update
         /// </summary>
-        public VarmintWidget[] PreviousWidgets { get { return _previousWidgets.ToArray(); } }
+        public VarmintWidget[] PreviousWidgets => _previousWidgets.ToArray();
 
         /// <summary>
         /// Array of the controls this touch started with
         /// </summary>
-        public VarmintWidget[] StartWidgets { get { return _startWidgets.ToArray(); } }
+        public VarmintWidget[] StartWidgets => _startWidgets.ToArray();
 
         /// <summary>
         /// LastUpdateTime
         /// </summary>
-        GameTime _touchStartTime = new GameTime();
+        private readonly GameTime _touchStartTime = new GameTime();
         public GameTime TouchStartTime
         {
-            get { return _touchStartTime; }
+            get => _touchStartTime;
             set
             {
                 _touchStartTime.TotalGameTime = value.TotalGameTime;
                 _touchStartTime.ElapsedGameTime = value.ElapsedGameTime;
             }
         }
-        GameTime _lastUpdateTime = new GameTime();
+
+        private readonly GameTime _lastUpdateTime = new GameTime();
         public GameTime LastUpdateTime
         {
-            get { return _lastUpdateTime; }
+            get => _lastUpdateTime;
             set
             {
                 _lastUpdateTime.TotalGameTime = value.TotalGameTime;
@@ -66,48 +67,24 @@ namespace MonoVarmint.Widgets
                 return _touches[_touches.Count - 2];
             }
         }
-        public TouchLocation LastUnresolvedTouch
-        {
-            get
-            {
-                return _touches[_lastUnresolvedTouchIndex];
-            }
-        }
+        public TouchLocation LastUnresolvedTouch => _touches[_lastUnresolvedTouchIndex];
 
-        public int UnresolvedCount { get { return _touches.Count - 1 - _lastUnresolvedTouchIndex; } }
+        public int UnresolvedCount => _touches.Count - 1 - _lastUnresolvedTouchIndex;
 
         /// <summary>
         /// The last touch in the list
         /// </summary>
-        public TouchLocation CurrentTouch
-        {
-            get
-            {
-                return _touches[_touches.Count - 1];
-            }
-        }
+        public TouchLocation CurrentTouch => _touches[_touches.Count - 1];
 
         /// <summary>
         /// The first touch in the list
         /// </summary>
-        public TouchLocation FirstTouch
-        {
-            get
-            {
-                return _touches[0];
-            }
-        }
+        public TouchLocation FirstTouch => _touches[0];
 
         /// <summary>
         /// number of touches in the list
         /// </summary>
-        public int TouchCount
-        {
-            get
-            {
-                return _touches.Count;
-            }
-        }
+        public int TouchCount => _touches.Count;
 
         /// <summary>
         /// the total length of the path traced by all the touches
@@ -117,7 +94,7 @@ namespace MonoVarmint.Widgets
             get
             {
                 var totalLength = 0f;
-                for(int i = 1; i < _touches.Count; i++)
+                for(var i = 1; i < _touches.Count; i++)
                 {
                     totalLength += (_touches[i].Position - _touches[i - 1].Position).Length();
                 }
@@ -125,22 +102,15 @@ namespace MonoVarmint.Widgets
             }
         }
 
-        static Stack<List<TouchLocation>> _touchBuffers = new Stack<List<TouchLocation>>();
+        private static readonly Stack<List<TouchLocation>> TouchBuffers = new Stack<List<TouchLocation>>();
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// GetTouchBuffer - To relax pressure on the GC, we will try to recycle touch buffers 
         /// </summary>
         //--------------------------------------------------------------------------------------
-        static List<TouchLocation> GetTouchBuffer()
+        private static List<TouchLocation> GetTouchBuffer()
         {
-            if (_touchBuffers.Count > 0)
-            {
-                return _touchBuffers.Pop();
-            }
-            else
-            {
-                return new List<TouchLocation>();
-            }
+            return TouchBuffers.Count > 0 ? TouchBuffers.Pop() : new List<TouchLocation>();
         }
 
         //--------------------------------------------------------------------------------------
@@ -204,7 +174,7 @@ namespace MonoVarmint.Widgets
             return "T:" + _touches.Count + " P:" + _previousWidgets.Count;
         }
 
-        bool isDisposed = false;
+        private bool _isDisposed;
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// ToString
@@ -212,10 +182,10 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void Dispose()
         {
-            if (isDisposed) return;
-            isDisposed = true;
+            if (_isDisposed) return;
+            _isDisposed = true;
             _touches.Clear();
-            _touchBuffers.Push(_touches);
+            TouchBuffers.Push(_touches);
             _touches = null;
         }
 

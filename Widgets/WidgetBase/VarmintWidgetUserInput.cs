@@ -3,9 +3,6 @@ using Microsoft.Xna.Framework.Input.Touch;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Reflection;
-using System.Xml;
 
 namespace MonoVarmint.Widgets
 {
@@ -15,9 +12,11 @@ namespace MonoVarmint.Widgets
     //--------------------------------------------------------------------------------------
     public partial class VarmintWidget
     {
-        DateTime _dragStartTime = DateTime.MaxValue;
+/*
+        private DateTime _dragStartTime = DateTime.MaxValue;
         List<VarmintWidget> _recentDragWidgets = new List<VarmintWidget>();
-        static VarmintWidget _focusedContol = null;
+*/
+        private static VarmintWidget _focusedContol;
 
         //--------------------------------------------------------------------------------------
         /// <summary>
@@ -38,10 +37,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void HandleInputCharacter(char c)
         {
-            if (_focusedContol != null)
-            {
-                _focusedContol.OnInputCharacter(c);
-            }
+            _focusedContol?.OnInputCharacter(c);
         }
 
         //--------------------------------------------------------------------------------------
@@ -102,12 +98,10 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public EventHandledState HandleTap(Vector2 absoluteLocation)
         {
-            if (AllowInput && OnTap != null)
-            {
-                var relativeLocation = absoluteLocation - this.AbsoluteOffset;
-                return OnTap(this, relativeLocation);
-            }
-            return AllowInput ? EventHandledState.NotHandled : EventHandledState.Handled;
+            if (!AllowInput || OnTap == null)
+                return AllowInput ? EventHandledState.NotHandled : EventHandledState.Handled;
+            var relativeLocation = absoluteLocation - AbsoluteOffset;
+            return OnTap(this, relativeLocation);
         }
 
         //--------------------------------------------------------------------------------------
@@ -117,22 +111,18 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         private EventHandledState HandleDoubleTap(Vector2 absoluteLocation)
         {
-            if (AllowInput && OnDoubleTap != null)
-            {
-                var relativeLocation = absoluteLocation - this.AbsoluteOffset;
-                return OnDoubleTap(this, relativeLocation);
-            }
-            return AllowInput ? EventHandledState.NotHandled : EventHandledState.Handled;
+            if (!AllowInput || OnDoubleTap == null)
+                return AllowInput ? EventHandledState.NotHandled : EventHandledState.Handled;
+            var relativeLocation = absoluteLocation - AbsoluteOffset;
+            return OnDoubleTap(this, relativeLocation);
         }
 
         private EventHandledState HandleContextTap(Vector2 absoluteLocation)
         {
-            if (AllowInput && OnContextTap != null)
-            {
-                var relativeLocation = absoluteLocation - this.AbsoluteOffset;
-                return OnContextTap(this, relativeLocation);
-            }
-            return AllowInput ? EventHandledState.NotHandled : EventHandledState.Handled;
+            if (!AllowInput || OnContextTap == null)
+                return AllowInput ? EventHandledState.NotHandled : EventHandledState.Handled;
+            var relativeLocation = absoluteLocation - AbsoluteOffset;
+            return OnContextTap(this, relativeLocation);
         }
 
         //--------------------------------------------------------------------------------------
@@ -142,12 +132,10 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         private EventHandledState HandleFlick(Vector2 absoluteStart, Vector2 delta)
         {
-            if (AllowInput && OnFlick != null)
-            {
-                var relativeStartLocation = absoluteStart - this.AbsoluteOffset;
-                return OnFlick(this, relativeStartLocation, delta);
-            }
-            return AllowInput ? EventHandledState.NotHandled : EventHandledState.Handled;
+            if (!AllowInput || OnFlick == null)
+                return AllowInput ? EventHandledState.NotHandled : EventHandledState.Handled;
+            var relativeStartLocation = absoluteStart - AbsoluteOffset;
+            return OnFlick(this, relativeStartLocation, delta);
         }
 
         //--------------------------------------------------------------------------------------
@@ -157,12 +145,10 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         private EventHandledState HandleDrag(Vector2 absoluteLocation, Vector2 delta)
         {
-            if (AllowInput && OnDrag != null)
-            {
-                var relativeLocation = absoluteLocation - this.AbsoluteOffset;
-                return OnDrag(this, relativeLocation, delta);
-            }
-            return AllowInput ? EventHandledState.NotHandled : EventHandledState.Handled;
+            if (!AllowInput || OnDrag == null)
+                return AllowInput ? EventHandledState.NotHandled : EventHandledState.Handled;
+            var relativeLocation = absoluteLocation - AbsoluteOffset;
+            return OnDrag(this, relativeLocation, delta);
         }
 
         //--------------------------------------------------------------------------------------
@@ -194,12 +180,10 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         private EventHandledState HandleTouchUp(TouchLocation absoluteTouch)
         {
-            if (AllowInput && OnTouchUp != null)
-            {
-                var relativeTouch = new TouchLocation(absoluteTouch.Id, absoluteTouch.State, absoluteTouch.Position - AbsoluteOffset);
-                return OnTouchUp(this, relativeTouch);
-            }
-            return AllowInput ? EventHandledState.NotHandled : EventHandledState.Handled;
+            if (!AllowInput || OnTouchUp == null)
+                return AllowInput ? EventHandledState.NotHandled : EventHandledState.Handled;
+            var relativeTouch = new TouchLocation(absoluteTouch.Id, absoluteTouch.State, absoluteTouch.Position - AbsoluteOffset);
+            return OnTouchUp(this, relativeTouch);
         }
 
         //--------------------------------------------------------------------------------------
@@ -209,12 +193,10 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         private EventHandledState HandleTouchDown(TouchLocation absoluteTouch)
         {
-            if (AllowInput && OnTouchDown != null)
-            {
-                var relativeTouch = new TouchLocation(absoluteTouch.Id, absoluteTouch.State, absoluteTouch.Position - AbsoluteOffset);
-                return OnTouchDown(this, relativeTouch);
-            }
-            return AllowInput ? EventHandledState.NotHandled : EventHandledState.Handled;
+            if (!AllowInput || OnTouchDown == null)
+                return AllowInput ? EventHandledState.NotHandled : EventHandledState.Handled;
+            var relativeTouch = new TouchLocation(absoluteTouch.Id, absoluteTouch.State, absoluteTouch.Position - AbsoluteOffset);
+            return OnTouchDown(this, relativeTouch);
         }
 
         //--------------------------------------------------------------------------------------
@@ -227,16 +209,14 @@ namespace MonoVarmint.Widgets
             TouchLocation thisTouch,
             TouchLocation previousTouch)
         {
-            if (AllowInput && OnTouchMove != null)
-            {
-                var relativeTouch = new TouchLocation(thisTouch.Id, thisTouch.State, thisTouch.Position - AbsoluteOffset);
-                var relativePreviousTouch = new TouchLocation(previousTouch.Id, previousTouch.State, previousTouch.Position - AbsoluteOffset);
-                return OnTouchMove(this, moveType, relativeTouch, relativePreviousTouch);
-            }
-            return AllowInput ? EventHandledState.NotHandled : EventHandledState.Handled;
+            if (!AllowInput || OnTouchMove == null)
+                return AllowInput ? EventHandledState.NotHandled : EventHandledState.Handled;
+            var relativeTouch = new TouchLocation(thisTouch.Id, thisTouch.State, thisTouch.Position - AbsoluteOffset);
+            var relativePreviousTouch = new TouchLocation(previousTouch.Id, previousTouch.State, previousTouch.Position - AbsoluteOffset);
+            return OnTouchMove(this, moveType, relativeTouch, relativePreviousTouch);
         }
 
-        List<TouchMemory> _currentTouches = new List<TouchMemory>();
+        private readonly List<TouchMemory> _currentTouches = new List<TouchMemory>();
 
         //--------------------------------------------------------------------------------------
         /// <summary>
@@ -246,22 +226,19 @@ namespace MonoVarmint.Widgets
         public void ReportTouch(TouchLocation touch, GameTime gameTime)
         {
             TouchMemory touchMemory = null;
-            int touchIndex = -1;
-            for(int i = 0; i < _currentTouches.Count; i++)
+            var touchIndex = -1;
+            for(var i = 0; i < _currentTouches.Count; i++)
             {
                 var trackedTouch = _currentTouches[i];
-                if (trackedTouch.FirstTouch.Id == touch.Id)
-                {
-                    touchMemory = trackedTouch;
-                    touchIndex = i;
-                    break;
-                }
+                if (trackedTouch.FirstTouch.Id != touch.Id) continue;
+                touchMemory = trackedTouch;
+                touchIndex = i;
+                break;
             }
 
             if(touchMemory == null)
             {
-                touchMemory = new TouchMemory();
-                touchMemory.TouchStartTime = gameTime;
+                touchMemory = new TouchMemory {TouchStartTime = gameTime};
                 touchIndex = _currentTouches.Count;
                 _currentTouches.Add(touchMemory);
             }
@@ -279,19 +256,20 @@ namespace MonoVarmint.Widgets
 
             touchMemory.AddTouch(touch);
             var hitList = HitTest(touch.Position);
-            Action<Func<VarmintWidget, EventHandledState>> processHit = (tryEvent) =>
+
+            void ProcessHit(Func<VarmintWidget, EventHandledState> tryEvent)
             {
-                for (int i = hitList.Count - 1; i >= 0; i--)
+                for (var i = hitList.Count - 1; i >= 0; i--)
                 {
                     if (tryEvent(hitList[i]) == EventHandledState.Handled) break;
                 }
-            };
+            }
 
             switch (touch.State)
             {
                 case TouchLocationState.Invalid:
                 case TouchLocationState.Released:
-                    processHit(w => w.HandleTouchUp(touch));
+                    ProcessHit(w => w.HandleTouchUp(touch));
 
                     foreach (var widget in touchMemory.PreviousWidgets)
                     {
@@ -305,12 +283,12 @@ namespace MonoVarmint.Widgets
                         {
                             var location = touchMemory.FirstTouch.Position;
                             hitList = HitTest(location);
-                            processHit(w => w.HandleFlick(location, touchMemory.CurrentTouch.Position - location));
+                            ProcessHit(w => w.HandleFlick(location, touchMemory.CurrentTouch.Position - location));
                         }
                         else
                         {
                             hitList = touchMemory.StartWidgets;
-                            processHit(w => w.HandleDragComplete());
+                            ProcessHit(w => w.HandleDragComplete());
                         }
                     }
                     else if(_tapInReserve != null)
@@ -318,12 +296,12 @@ namespace MonoVarmint.Widgets
                         var oldLocation = _tapInReserve.CurrentTouch.Position;
                         if((touch.Position - oldLocation).Length() < DoubleTapRadius)
                         {
-                            processHit(w => w.HandleDoubleTap(oldLocation));
+                            ProcessHit(w => w.HandleDoubleTap(oldLocation));
                         }
                         else
                         {
-                            processHit(w => w.HandleTap(oldLocation));
-                            processHit(w => w.HandleTap(touch.Position));
+                            ProcessHit(w => w.HandleTap(oldLocation));
+                            ProcessHit(w => w.HandleTap(touch.Position));
                         }
                         _tapInReserve = null;
                     }
@@ -337,7 +315,7 @@ namespace MonoVarmint.Widgets
 
                     break;
                 case TouchLocationState.Pressed:
-                    processHit(w =>
+                    ProcessHit(w =>
                     {
                         // Remember this widget was touched so we can process a leave correctly later.
                         touchMemory.AddTouchedWidget(w);
@@ -346,26 +324,25 @@ namespace MonoVarmint.Widgets
                         return returnValue;
                     });
 
-                    for(int i = 0; i < hitList.Count; i++)
+                    foreach (var i in hitList)
                     {
-                        touchMemory.AddStartWidget(hitList[i]);
+                        touchMemory.AddStartWidget(i);
                     }
 
                     break;
                 case TouchLocationState.Moved:
                     var previousControls = new List<VarmintWidget>(touchMemory.PreviousWidgets);
                     touchMemory.ClearPreviousWidgets();
-                    processHit(w =>
+                    ProcessHit(w =>
                     {
                         // If the old hitlist contains this widget, it's a move,  otherwise
                         // it's an enter
                         touchMemory.AddTouchedWidget(w);
                         var moveType = TouchMoveType.Enter;
-                        if (previousControls.Contains(w))
-                        {
-                            previousControls.Remove(w);
-                            moveType = TouchMoveType.Move;
-                        }
+                        if (!previousControls.Contains(w))
+                            return w.HandleTouchMove(moveType, touch, touchMemory.PreviousTouch);
+                        previousControls.Remove(w);
+                        moveType = TouchMoveType.Move;
                         return w.HandleTouchMove(moveType, touch, touchMemory.PreviousTouch);
                     });
 
@@ -379,7 +356,7 @@ namespace MonoVarmint.Widgets
             }
         }
 
-        TouchMemory _tapInReserve = null;
+        private TouchMemory _tapInReserve;
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// ResolveGestures - Touch events have to coordinated with other touches over time to
@@ -389,17 +366,18 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void ResolveGestures(GameTime gameTime)
         {
-            IList<VarmintWidget> hitList = null;
-            Action<Func<VarmintWidget, EventHandledState>> processHit = (tryEvent) =>
+            IList<VarmintWidget> hitList;
+
+            void ProcessHit(Func<VarmintWidget, EventHandledState> tryEvent)
             {
-                for (int i = hitList.Count - 1; i >= 0; i--)
+                for (var i = hitList.Count - 1; i >= 0; i--)
                 {
                     if (tryEvent(hitList[i]) == EventHandledState.Handled) break;
                 }
-            };
+            }
 
             // Handle orphaned touches
-            for(int i = 0; i < _currentTouches.Count; )
+            for(var i = 0; i < _currentTouches.Count; )
             {
                 var touchMemory = _currentTouches[i];
                 if ((gameTime.TotalGameTime - touchMemory.LastUpdateTime.TotalGameTime).TotalSeconds > TouchOrphanTimeoutSeconds)
@@ -407,7 +385,7 @@ namespace MonoVarmint.Widgets
                     if(touchMemory.GestureType == GestureType.FreeDrag)
                     {
                         hitList = touchMemory.StartWidgets;
-                        processHit(w => w.HandleDragCancel());
+                        ProcessHit(w => w.HandleDragCancel());
                     }
                     Debug.WriteLine("BYE");
                     _currentTouches.RemoveAt(i);
@@ -423,38 +401,36 @@ namespace MonoVarmint.Widgets
                 {
                     var tapLocation = _tapInReserve.CurrentTouch.Position;
                     hitList = HitTest(tapLocation);
-                    processHit(w => w.HandleTap(tapLocation));
+                    ProcessHit(w => w.HandleTap(tapLocation));
                     _tapInReserve = null;
                 }
             }
 
             // One touch could be dragging or holding
-            if(_currentTouches.Count == 1)
+            if (_currentTouches.Count != 1) return;
             {
                 var touchMemory = _currentTouches[0];
 
                 if (touchMemory.UnresolvedCount > 0
                     && touchMemory.TotalDistance > DragLengthThreshhold
-                    )//&& touchMemory.SecondsAfterStart(gameTime) >= FlickThreshholdSeconds)
+                )//&& touchMemory.SecondsAfterStart(gameTime) >= FlickThreshholdSeconds)
                 {
                     touchMemory.GestureType = GestureType.FreeDrag;
                     hitList = touchMemory.StartWidgets;
-                    processHit(w => w.HandleDrag(touchMemory.CurrentTouch.Position,
-                            touchMemory.CurrentTouch.Position - touchMemory.LastUnresolvedTouch.Position));
+                    ProcessHit(w => w.HandleDrag(touchMemory.CurrentTouch.Position,
+                        touchMemory.CurrentTouch.Position - touchMemory.LastUnresolvedTouch.Position));
                     touchMemory.MarkResolved();
                 }
                 else if (touchMemory.TotalDistance < DragLengthThreshhold
-                    && touchMemory.SecondsAfterStart(gameTime) >= ContextHoldThreshholdSeconds)
+                         && touchMemory.SecondsAfterStart(gameTime) >= ContextHoldThreshholdSeconds)
                 {
                     hitList = touchMemory.StartWidgets;
                     // if we haven't started reporting as a hold, report as a hold
                     // and do a context tap
-                    if (touchMemory.GestureType != GestureType.Hold)
-                    {
-                        processHit(w => w.HandleContextTap(touchMemory.CurrentTouch.Position));
-                        touchMemory.GestureType = GestureType.Hold;
-                        // TODO: Do a haptic vibrate here, using a native method in the game runner
-                    }
+                    if (touchMemory.GestureType == GestureType.Hold) return;
+                    ProcessHit(w => w.HandleContextTap(touchMemory.CurrentTouch.Position));
+                    touchMemory.GestureType = GestureType.Hold;
+                    // TODO: Do a haptic vibrate here, using a native method in the game runner
                     // TODO: Process extended hold events here when needed
                 }
             }

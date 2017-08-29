@@ -1,10 +1,4 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input.Touch;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Xml;
 
 namespace MonoVarmint.Widgets
 {
@@ -34,23 +28,21 @@ namespace MonoVarmint.Widgets
                 var parts = valueText.Split(',');
                 if (parts.Length > 2) throw new ApplicationException("Too many values in stretch parameter specification.");
 
-                Func<int, float?> parse = (index) =>
+                float? Parse(int index)
                 {
-                    if (index < parts.Length)
-                    {
-                        float output;
-                        if (float.TryParse(parts[index], out output)) return output;
-                    }
+                    if (index >= parts.Length) return null;
+                    if (float.TryParse(parts[index], out var output))
+                        return output;
                     return null;
-                };
+                }
 
-                Horizontal = parse(0);
-                Vertical = parse(1);
+                Horizontal = Parse(0);
+                Vertical = Parse(1);
             }
 
             public override string ToString()
             {
-                return string.Format("{0},{1}", Horizontal, Vertical);
+                return $"{Horizontal},{Vertical}";
             }
         }
 
@@ -73,20 +65,17 @@ namespace MonoVarmint.Widgets
                 var parts = marginText.Split(',');
                 if (parts.Length > 4) throw new ApplicationException("Too many values in margin specification.");
 
-                Func<int, float?> parse = (index) =>
+                float? Parse(int index)
                 {
-                    if (index < parts.Length)
-                    {
-                        float output;
-                        if (float.TryParse(parts[index], out output)) return output;
-                    }
+                    if (index >= parts.Length) return null;
+                    if (float.TryParse(parts[index], out var output)) return output;
                     return null;
-                };
+                }
 
-                Left = parse(0);
-                Top = parse(1);
-                Right = parse(2);
-                Bottom = parse(3);
+                Left = Parse(0);
+                Top = Parse(1);
+                Right = Parse(2);
+                Bottom = Parse(3);
             }
 
             public WidgetMargin(float? left, float? top, float? right, float? bottom)
@@ -99,7 +88,7 @@ namespace MonoVarmint.Widgets
 
             public override string ToString()
             {
-                return string.Format("{0},{1},{2},{3}", Left, Top, Right, Bottom);
+                return $"{Left},{Top},{Right},{Bottom}";
             }
         }
 

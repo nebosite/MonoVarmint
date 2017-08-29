@@ -1,17 +1,12 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input.Touch;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Reflection;
-using System.Xml;
 
 namespace MonoVarmint.Widgets
 {
     public partial class VarmintWidget
     {
-        bool _applyingStyles = false;
+        private bool _applyingStyles;
 
         //--------------------------------------------------------------------------------------
         /// <summary>
@@ -36,29 +31,26 @@ namespace MonoVarmint.Widgets
         {
             if(Renderer == null)
             {
-                throw new InvalidOperationException("The Renderer property is null on " + this.GetType().Name + " with Name=" + Name);
+                throw new InvalidOperationException("The Renderer property is null on " + GetType().Name + " with Name=" + Name);
             }
 
             Update();
             if (!IsVisible) return;
 
-            bool shouldClip = ClipToBounds
+            var shouldClip = ClipToBounds
                 || Rotate != 0 || FlipHorizontal || FlipVertical;
             if (shouldClip) Renderer.BeginClipping(AbsoluteOffset, Size);
             OnRender?.Invoke(gameTime, this);
 
             RenderChildren(gameTime);
 
-            if (shouldClip)
-            {
-                float rotation = 0;
-                Renderer.EndClipping(
-                    (float)(Rotate / 180.0 * Math.PI), 
-                    new Vector2(.5f),
-                    new Vector2(1),
-                    FlipHorizontal,
-                    FlipVertical);
-            }
+            if (!shouldClip) return;
+            Renderer.EndClipping(
+                (float)(Rotate / 180.0 * Math.PI), 
+                new Vector2(.5f),
+                new Vector2(1),
+                FlipHorizontal,
+                FlipVertical);
         }
 
         //--------------------------------------------------------------------------------------
@@ -68,16 +60,14 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public virtual void RenderChildren(GameTime gameTime)
         {
-            if (HasChildren)
+            if (!HasChildren) return;
+            // Make a local copy because children can modify parent/child relationships
+            var localChildren = new List<VarmintWidget>(Children);
+            foreach (var child in localChildren)
             {
-                // Make a local copy because children can modify parent/child relationships
-                var localChildren = new List<VarmintWidget>(Children);
-                foreach (var child in localChildren)
+                if (Renderer.IsInRenderingWindow(child.AbsoluteOffset, child.Size))
                 {
-                    if (Renderer.IsInRenderingWindow(child.AbsoluteOffset, child.Size))
-                    {
-                        child.RenderMe(gameTime);
-                    }
+                    child.RenderMe(gameTime);
                 }
             }
         }
@@ -98,7 +88,7 @@ namespace MonoVarmint.Widgets
 
 
             // Helper to apply a style and it's parent styles
-            Action<VarmintWidgetStyle> applyStyle = (style) =>
+            void ApplyStyle(VarmintWidgetStyle style)
             {
                 while (style != null)
                 {
@@ -109,9 +99,9 @@ namespace MonoVarmint.Widgets
                             finalValues.Add(stylePropertyName, style._declaredSettings[stylePropertyName]);
                         }
                     }
-                    style = (VarmintWidgetStyle)style.Parent;
+                    style = (VarmintWidgetStyle) style.Parent;
                 }
-            };
+            }
 
             if (Style != null)
             {
@@ -120,7 +110,7 @@ namespace MonoVarmint.Widgets
                     throw new ApplicationException("Style not found: " + Style);
                 }
 
-                applyStyle(styleLibrary[Style]);
+                ApplyStyle(styleLibrary[Style]);
             }
 
             if (styleLibrary != null && styleLibrary.Count > 0)
@@ -129,7 +119,7 @@ namespace MonoVarmint.Widgets
                 {
                     if (style.AppliesToMe(this))
                     {
-                        applyStyle(style);
+                        ApplyStyle(style);
                     }
                 }
             }
@@ -186,8 +176,8 @@ namespace MonoVarmint.Widgets
                 }
                 var newOffset = Vector2.Zero;
                 var availableSize = Size - newSize;
-                availableSize.X -= ((child.Margin.Left ?? 0) + (child.Margin.Right ?? 0));
-                availableSize.Y -= ((child.Margin.Top ?? 0) + (child.Margin.Bottom ?? 0));
+                availableSize.X -= (child.Margin.Left ?? 0) + (child.Margin.Right ?? 0);
+                availableSize.Y -= (child.Margin.Top ?? 0) + (child.Margin.Bottom ?? 0);
 
                 switch (HorizontalContentAlignment)
                 {
