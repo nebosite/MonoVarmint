@@ -30,7 +30,8 @@ namespace MonoVarmint.Widgets
             {
                 RootDirectory = "Content"
             };
-            // Set up a back buffer to render to
+
+            // Set up buffer size to be a portrait mode of at least 1x1.6 ratio
             _backBufferWidth = GraphicsDevice.PresentationParameters.BackBufferWidth;
             _backBufferHeight = GraphicsDevice.PresentationParameters.BackBufferHeight;
             if ((float)_backBufferHeight / _backBufferWidth < 1.6)
@@ -38,9 +39,6 @@ namespace MonoVarmint.Widgets
                 _backBufferWidth = (int)(_backBufferHeight / 1.6);
                 _backBufferXOffset = (GraphicsDevice.PresentationParameters.BackBufferWidth - _backBufferWidth) / 2;
             }
-
-            var scaleFactor = _backBufferWidth / 1000.0f;
-            _scaleToNativeResolution = Matrix.CreateScale(new Vector3(scaleFactor, scaleFactor, 1));
 
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
@@ -56,8 +54,6 @@ namespace MonoVarmint.Widgets
 
             _visualTree = _widgetSpace.GetScreen("_default_screen_", null);
             OnLoaded?.Invoke();
-
-            
         }
 
         //-----------------------------------------------------------------------------------------------
@@ -70,6 +66,11 @@ namespace MonoVarmint.Widgets
             overlay.Prepare(_widgetSpace.StyleLibrary);
         }
 
+        //-----------------------------------------------------------------------------------------------
+        /// <summary>
+        /// 
+        /// </summary>
+        //-----------------------------------------------------------------------------------------------
         internal void LoadFonts(params string[] names)
         {
             foreach (var name in names)
@@ -171,6 +172,11 @@ namespace MonoVarmint.Widgets
             }
         }
 
+        //-----------------------------------------------------------------------------------------------
+        /// <summary>
+        /// 
+        /// </summary>
+        //-----------------------------------------------------------------------------------------------
         public void LoadMusic(params string[] names)
         {
             foreach (var name in names)

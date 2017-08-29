@@ -53,7 +53,7 @@ namespace MonoVarmint.Widgets
         /// Ignore_OnFlick - Button should always ignore flicks
         /// </summary>
         //--------------------------------------------------------------------------------------
-        private EventHandledState Ignore_OnFlick(VarmintWidget arg1, Vector2 arg2, Vector2 arg3)
+        private EventHandledState Ignore_OnFlick(VarmintFlickData flick)
         {
             return EventHandledState.Handled;
         }

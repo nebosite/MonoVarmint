@@ -132,10 +132,12 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         private EventHandledState HandleFlick(Vector2 absoluteStart, Vector2 delta)
         {
-            if (!AllowInput || OnFlick == null)
-                return AllowInput ? EventHandledState.NotHandled : EventHandledState.Handled;
-            var relativeStartLocation = absoluteStart - AbsoluteOffset;
-            return OnFlick(this, relativeStartLocation, delta);
+            if (AllowInput && OnFlick != null)
+            {
+                var relativeStartLocation = absoluteStart - this.AbsoluteOffset;
+                return OnFlick(new VarmintFlickData() { SourceWidget = this, Location = relativeStartLocation, Delta = delta });
+            }
+            return AllowInput ? EventHandledState.NotHandled : EventHandledState.Handled;
         }
 
         //--------------------------------------------------------------------------------------
@@ -307,7 +309,6 @@ namespace MonoVarmint.Widgets
                     }
                     else
                     {
-                        Debug.WriteLine("+TR");
                         _tapInReserve = touchMemory;
                     }
 
@@ -396,7 +397,6 @@ namespace MonoVarmint.Widgets
 
             if (_tapInReserve != null)
             {
-                Debug.WriteLine("TR:" + _tapInReserve.SecondsAfterStart(gameTime));
                 if ( _tapInReserve.SecondsAfterStart(gameTime) >= DoubleTapIntervalSeconds)
                 {
                     var tapLocation = _tapInReserve.CurrentTouch.Position;

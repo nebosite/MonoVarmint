@@ -164,13 +164,14 @@ namespace MonoVarmint.Widgets
                 widget.Rotate = startRotation + (endRotation - startRotation) * (float)delta;
             });
         }
+
         //--------------------------------------------------------------------------------------
         /// <summary>
-        /// MoveOffsetNaturalLinear - animate an offset from one value to another in a 
+        /// MoveOffsetNatural - animate an offset from one value to another in a 
         ///                           straight line, with some acceleration and deceleration
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public static VarmintWidgetAnimation MoveOffsetNaturalLinear(
+        public static VarmintWidgetAnimation MoveOffsetNatural(
             double durationSeconds,
             Vector2 startPosition,
             Vector2 endPosition)
@@ -311,7 +312,7 @@ namespace MonoVarmint.Widgets
             var bounceCount = 0;
             var step = 0.02;
 
-            while(bounceCount < bounces)
+            while (bounceCount < bounces)
             {
                 var adjustedDelta = 1 - ((1 - x * x) * extent);
                 output.Add(adjustedDelta);
@@ -323,6 +324,50 @@ namespace MonoVarmint.Widgets
                     bounceCount++;
                     step /= (1 - decay * decay);
                 }
+            }
+
+            output.Add(1.0);
+
+            return output.ToArray();
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// MoveOffsetSnap - animate an offset from one value to another in a 
+        ///                           straight line, with some acceleration and deceleration
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public static VarmintWidgetAnimation MoveOffsetSnap(
+            double durationSeconds,
+            Vector2 startPosition,
+            Vector2 endPosition)
+        {
+            var snapProfile = GenerateSnapProfile(5, .001);
+            return MoveOffsetByProfile(durationSeconds, startPosition, endPosition, snapProfile);
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// Generate a list of numbers to represent an elastic snap motion.  Numbers will range
+        /// from 0.0 to some number greater than 1.0 (indicating and overshoot of the target)
+        /// </summary>
+        /// <param name="passes"></param>
+        /// <param name="decay"></param>
+        /// <returns></returns>
+        //--------------------------------------------------------------------------------------
+        public static double[] GenerateSnapProfile(double passes, double decay)
+        {
+            var output = new List<double>();
+
+            var amplitude = 1.0;
+            var stepsPerPass = 1000;
+            var thetaStep = Math.PI * 2 / stepsPerPass;
+            var stepDecay = Math.Pow(decay, 1.0 / (stepsPerPass/(10*passes)));
+            for (double theta = 0; theta < passes * Math.PI * 2; theta += thetaStep)
+            {
+                output.Add(1.0 - amplitude * Math.Cos(theta));
+                amplitude *= stepDecay;
+                thetaStep /= stepDecay;
             }
 
             output.Add(1.0);
