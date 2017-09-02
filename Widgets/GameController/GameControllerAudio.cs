@@ -13,7 +13,7 @@ namespace MonoVarmint.Widgets
 {
     public partial class GameController
     {
-        
+
         internal readonly List<SoundInstanceBase> AnimatingInstances = new List<SoundInstanceBase>();
 
         //-----------------------------------------------------------------------------------------------
@@ -67,10 +67,13 @@ namespace MonoVarmint.Widgets
         //-----------------------------------------------------------------------------------------------
         private IVarmintAudioInstance PlaySoundEffect(string name)
         {
-            var soundEffectInstance = _soundEffectsByName[name].CreateInstance();
-            soundEffectInstance.Volume *= SoundEffectVolume;
+            var soundEffectInstance = new VarmintSoundEffectInstance( 
+                _soundEffectsByName[name].CreateInstance(),
+                this,
+                name);
+            soundEffectInstance.Volume = SoundEffectVolume;
             soundEffectInstance.Play();
-            return new VarmintSoundEffectInstance(soundEffectInstance, this, name);
+            return soundEffectInstance;
         }
 
         //-----------------------------------------------------------------------------------------------
@@ -205,8 +208,6 @@ namespace MonoVarmint.Widgets
             {
                 _instance.Dispose();
             }
-
-
 
             //-----------------------------------------------------------------------------------------------
             /// <inheritdoc />

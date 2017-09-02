@@ -8,7 +8,7 @@ namespace MonoVarmint.Widgets
         public IVarmintAudioInstance Instance { get; private set; }
         public VarmintAudioAnimation(double durationSeconds, Action<IVarmintAudioInstance, double> animator) : base(durationSeconds)
         {
-            Animate = delta => animator(Instance, delta);
+            Animate = delta => animator?.Invoke(Instance, delta);
         }
 
         internal void Update(IVarmintAudioInstance instance, GameTime gameTime)
