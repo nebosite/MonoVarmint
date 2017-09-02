@@ -168,7 +168,8 @@ namespace MonoVarmint.Widgets
                     return;
                 if(_songsByName.ContainsKey(name))
                     throw new ContentLoadException("Cannot load same file as both a sound effect and song.");
-                _soundEffectsByName.Add(name, Content.Load<SoundEffect>(name));
+                var soundEffect = Content.Load<SoundEffect>(name);
+                _soundEffectsByName.Add(name, soundEffect );
             }
         }
 
