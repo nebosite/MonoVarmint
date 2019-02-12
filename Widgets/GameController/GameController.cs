@@ -41,12 +41,12 @@ namespace MonoVarmint.Widgets
 
 
         //-----------------------------------------------------------------------------------------------
-        // ctor 
+        // ctor - Native device
         //-----------------------------------------------------------------------------------------------
         public GameController(object bindingContext)
         {
             _graphics = new GraphicsDeviceManager(this);
-            _graphics.PreparingDeviceSettings += (sender, settings)=>
+            _graphics.PreparingDeviceSettings += (sender, settings) =>
             {
                 settings.GraphicsDeviceInformation.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
             };
@@ -55,15 +55,7 @@ namespace MonoVarmint.Widgets
         }
 
         //-----------------------------------------------------------------------------------------------
-        // GetScreen - return a screen object by name 
-        //-----------------------------------------------------------------------------------------------
-        internal VarmintWidget GetScreen(string screenName, object bindingContext)
-        {
-            return _widgetSpace.GetScreen(screenName, bindingContext);
-        }
-
-        //-----------------------------------------------------------------------------------------------
-        // Force a windowed, non-native resolution 
+        // ctor - Force a windowed, non-native resolution 
         //-----------------------------------------------------------------------------------------------
         public GameController(object bindingContext, int width, int height) : this(bindingContext)
         {
@@ -74,6 +66,15 @@ namespace MonoVarmint.Widgets
 #if WINDOWS
             this.IsMouseVisible = true;
 #endif
+        }
+
+
+        //-----------------------------------------------------------------------------------------------
+        // GetScreen - return a screen object by name 
+        //-----------------------------------------------------------------------------------------------
+        internal VarmintWidget GetScreen(string screenName, object bindingContext)
+        {
+            return _widgetSpace.GetScreen(screenName, bindingContext);
         }
 
         //--------------------------------------------------------------------------------------
@@ -216,7 +217,7 @@ namespace MonoVarmint.Widgets
             _visualTree.HandleInputCharacter(c);
         }
 
-
+        
         //-----------------------------------------------------------------------------------------------
         // 
         //-----------------------------------------------------------------------------------------------

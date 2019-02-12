@@ -473,9 +473,9 @@ namespace MonoVarmint.Widgets
                 width,
                 height,
                 false,
-                SurfaceFormat.Color,
-                DepthFormat.None,
-                1,
+                GraphicsDevice.PresentationParameters.BackBufferFormat,
+                DepthFormat.Depth24,
+                0,
                 RenderTargetUsage.PreserveContents);
         }
 
