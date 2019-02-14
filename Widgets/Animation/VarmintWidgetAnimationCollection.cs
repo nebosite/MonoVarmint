@@ -241,7 +241,7 @@ namespace MonoVarmint.Widgets
             double rate = 1,
             double offset = 0)
         {
-            if (rate < 0 || rate > 1000) throw new ApplicationException("Rate should be between 0 and 1000");
+            if (rate < 0 || rate > 1000) throw new ArgumentException("Rate should be between 0 and 1000");
             var travelVector = endPosition - startPosition;
             var x = -0.5 + offset;
             var lastDelta = 0.0;
@@ -272,7 +272,7 @@ namespace MonoVarmint.Widgets
             Vector2 endPosition,
             double[] profile)
         {
-            if (durationSeconds <= 0) throw new ApplicationException("Duration must have a value > 0");
+            if (durationSeconds <= 0) throw new ArgumentException("Duration must have a value > 0");
             var travelVector = endPosition - startPosition;
 
             return new VarmintWidgetAnimation(durationSeconds, (widget, delta) =>

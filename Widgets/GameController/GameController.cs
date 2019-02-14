@@ -28,10 +28,13 @@ namespace MonoVarmint.Widgets
         public bool ShowFps { get; set; }
 
         // events
-        public event Action OnLoaded;
-        public event Action<GameTime> OnUpdate;
+        public event Action OnGameLoaded;
+        public event Action<GameTime> OnGameUpdate;
         public event Action<Keys, bool, char> OnTypedCharacter;
         public event Action OnUserBackButtonPress;
+        public event Action OnGameDeactivated;
+        public event Action OnGameActivated;
+        public event Action OnGameExiting;
 
         private readonly object _bindingContext;
         int _frameCount;
@@ -134,7 +137,7 @@ namespace MonoVarmint.Widgets
 #endif
             HandleUserInput(gameTime);
 
-            OnUpdate?.Invoke(gameTime);
+            OnGameUpdate?.Invoke(gameTime);
             base.Update(gameTime);
             UpdateAudio(gameTime);
             
@@ -320,6 +323,7 @@ namespace MonoVarmint.Widgets
         protected override void OnActivated(object sender, EventArgs args)
         {
             Debug.WriteLine("ACTIVATED");
+            OnGameActivated?.Invoke();
             base.OnActivated(sender, args);
         }
 
@@ -331,6 +335,7 @@ namespace MonoVarmint.Widgets
         protected override void OnDeactivated(object sender, EventArgs args)
         {
             Debug.WriteLine("DE-ACTIVATED");
+            OnGameDeactivated?.Invoke();
             base.OnDeactivated(sender, args);
         }
 
@@ -342,6 +347,7 @@ namespace MonoVarmint.Widgets
         protected override void OnExiting(object sender, EventArgs args)
         {
             Debug.WriteLine("EXITING");
+            OnGameExiting?.Invoke();
             base.OnExiting(sender, args);
         }
 

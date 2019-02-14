@@ -38,7 +38,7 @@ namespace Demo.Shared
 #endif
             _controller.OnUserBackButtonPress += NativeHandleUserDeactivate;
 
-            _controller.OnLoaded += () =>
+            _controller.OnGameLoaded += () =>
             {
                 _controller.LoadGlyph("Images/Mountains");
                 _controller.LoadGlyph("Images/Trees");
@@ -49,7 +49,7 @@ namespace Demo.Shared
                 _controller.SetScreen(_controller.GetScreen("MainScreen", this));
             };
 
-            _controller.OnUpdate += (gameTime) =>
+            _controller.OnGameUpdate += (gameTime) =>
             {
                 WowRotate += 1;
                 _currentGame?.Update(gameTime);

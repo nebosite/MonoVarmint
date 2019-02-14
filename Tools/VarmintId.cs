@@ -38,7 +38,7 @@ namespace MonoVarmint.Tools
         //--------------------------------------------------------------------------------------
         static void SaveData(string fileName, string output)
         {
-            IsolatedStorageFile storage = IsolatedStorageFile.GetUserStoreForDomain();
+            var storage = IsolatedStorageFile.GetUserStoreForApplication();
 
             // Open the file using the established file stream.
             if (storage.FileExists(fileName))

@@ -53,7 +53,7 @@ namespace MonoVarmint.Widgets
             _widgetSpace = new VarmintWidgetSpace(this, _bindingContext);
 
             _visualTree = _widgetSpace.GetScreen("_default_screen_", null);
-            OnLoaded?.Invoke();
+            OnGameLoaded?.Invoke();
         }
 
         //-----------------------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ namespace MonoVarmint.Widgets
         {
             foreach (var name in names)
             {
-                _fontsByName.Add(name, Content.Load<SpriteFont>(name));
+                _fontsByName.Add(Path.GetFileNameWithoutExtension(name), Content.Load<SpriteFont>(name));
             }
         }
 
@@ -110,7 +110,7 @@ namespace MonoVarmint.Widgets
                 return;
             }
 
-            _glyphsByName.Add(name, LoadTexture(name));
+            _glyphsByName.Add(Path.GetFileNameWithoutExtension(name), LoadTexture(name));
         }
 
         //-----------------------------------------------------------------------------------------------
@@ -125,7 +125,7 @@ namespace MonoVarmint.Widgets
         {
            
             var spriteTexture = LoadTexture(name);
-            _spritesByName.Add(name, new VarmintSprite(spriteTexture, width, height));
+            _spritesByName.Add(Path.GetFileNameWithoutExtension(name), new VarmintSprite(spriteTexture, width, height));
         }
 
 
@@ -136,6 +136,7 @@ namespace MonoVarmint.Widgets
         //-----------------------------------------------------------------------------------------------
         Texture2D LoadTexture(string name)
         {
+            // MONOTODO: Can you extend this to look for the content with any extension anywhere int he content folder?
             var fileName = Path.Combine(Content.RootDirectory, name) + ".png";
             if(File.Exists(fileName))
             {
@@ -155,6 +156,7 @@ namespace MonoVarmint.Widgets
             }
         }
 
+        string[] _soundExtensions = new[] { ".wav", ".mp3"};
         //-----------------------------------------------------------------------------------------------
         /// <summary>
         /// Load sound effects
@@ -164,12 +166,29 @@ namespace MonoVarmint.Widgets
         {
             foreach (var name in names)
             {
+                var indexName = Path.GetFileNameWithoutExtension(name);
                 if (_soundEffectsByName.ContainsKey(name))
                     return;
                 if(_songsByName.ContainsKey(name))
                     throw new ContentLoadException("Cannot load same file as both a sound effect and song.");
+
+                foreach(var extension in _soundExtensions)
+                {
+                    var fileName = Path.Combine(Content.RootDirectory, name) + extension;
+                    if (File.Exists(fileName))
+                    {
+                        using (var fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+                        {
+                            _soundEffectsByName.Add(indexName, SoundEffect.FromStream(fileStream));
+
+                            return;
+                        }
+                    }
+
+                }
+
                 var soundEffect = Content.Load<SoundEffect>(name);
-                _soundEffectsByName.Add(name, soundEffect );
+                _soundEffectsByName.Add(indexName, soundEffect );
             }
         }
 
@@ -182,11 +201,13 @@ namespace MonoVarmint.Widgets
         {
             foreach (var name in names)
             {
+                var indexName = Path.GetFileNameWithoutExtension(name);
                 if (_songsByName.ContainsKey(name))
                     return;
                 if (_soundEffectsByName.ContainsKey(name))
                     throw new ContentLoadException("Cannot laod same file as both a sound effect and song.");
-                _songsByName.Add(name, Content.Load<Song>(name));
+
+                _songsByName.Add(indexName, Content.Load<Song>(name));
             }
         }
     }

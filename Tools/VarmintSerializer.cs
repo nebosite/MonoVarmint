@@ -87,10 +87,6 @@ namespace MonoVarmint.Tools
                         writer.WriteEndElement();
                     }
                 }
-                else if(type.IsGenericType)
-                {
-                    throw new ApplicationException("Can't do generic types yet");
-                }
                 else
                 {
                     foreach (var propertyInfo in type.GetProperties())
@@ -110,7 +106,7 @@ namespace MonoVarmint.Tools
         private void SerializeValue(XmlWriter writer, Type valueType, object value)
         {
             if (value == null) return;
-            if (valueType.IsValueType || valueType.Name == "String" || valueType.IsEnum)
+            if (!valueType.IsByRef || valueType.Name == "String")
             {
                 writer.WriteAttributeString(_ID.Value, value.ToString());
             }
@@ -213,7 +209,7 @@ namespace MonoVarmint.Tools
 
             if(foundType == null)
             {
-                throw new ApplicationException("Could not find type: " + typeName);
+                throw new ArgumentException("Could not find type: " + typeName);
             }
             if (isArray) foundType = foundType.MakeArrayType();
             _cachedTypes[typeName] = foundType;
@@ -228,10 +224,10 @@ namespace MonoVarmint.Tools
         private object ReadValue(XmlReader reader, Type valueType)
         {
             object output;
-            if (valueType.IsValueType || valueType.Name == "String")
+            if (valueType.IsByRef || valueType.Name == "String")
             {
                 var text = reader.GetAttribute(_ID.Value);
-                if (valueType.IsEnum)
+                if (valueType.GetTypeInfo().IsEnum)
                 {
                     output = Enum.Parse(valueType, text);
                 }
@@ -252,7 +248,7 @@ namespace MonoVarmint.Tools
                         case "Boolean": output = Boolean.Parse(text); break;
                         case "Char": output = text[0]; break;
                         case "Byte": output = Byte.Parse(text); break;
-                        default: throw new ApplicationException("Don't know how to DeSerialize " + valueType.Name);
+                        default: throw new ArgumentException("Don't know how to DeSerialize " + valueType.Name);
                     }
                 }
             }
@@ -278,7 +274,7 @@ namespace MonoVarmint.Tools
         {
             if(reader.NodeType != XmlNodeType.Element || reader.Name != _ID.Property)
             {
-                throw new ApplicationException("Expected reader to be on a Property");
+                throw new ArgumentException("Expected reader to be on a Property");
             }
 
             do
@@ -291,7 +287,7 @@ namespace MonoVarmint.Tools
                     {
                         if (!_bestEffort)
                         {
-                            throw new ApplicationException("Could not find property " + propertyName + " on " + parentType.Name);
+                            throw new ArgumentException("Could not find property " + propertyName + " on " + parentType.Name);
                         }
                     }
                     else
@@ -307,7 +303,7 @@ namespace MonoVarmint.Tools
                 }
                 else if (reader.NodeType == XmlNodeType.EndElement)
                 {
-                    if (reader.Name != _ID.Property) throw new ApplicationException("Expected end of Property but got end of '" + reader.Name + "'");
+                    if (reader.Name != _ID.Property) throw new ArgumentException("Expected end of Property but got end of '" + reader.Name + "'");
                     break;
                 }
             } while (reader.Read());
@@ -323,7 +319,7 @@ namespace MonoVarmint.Tools
             object output = null;
             if (reader.NodeType != XmlNodeType.Element || reader.Name != _ID.ArrayElement)
             {
-                throw new ApplicationException("Expected reader to be on an array element");
+                throw new ArgumentException("Expected reader to be on an array element");
             }
 
             do
@@ -336,7 +332,7 @@ namespace MonoVarmint.Tools
                 }
                 else if (reader.NodeType == XmlNodeType.EndElement)
                 {
-                    if (reader.Name != _ID.ArrayElement) throw new ApplicationException("Expected end of ArrayElement but got end of '" + reader.Name + "'");
+                    if (reader.Name != _ID.ArrayElement) throw new ArgumentException("Expected end of ArrayElement but got end of '" + reader.Name + "'");
                     break;
                 }
             } while (reader.Read());
@@ -362,14 +358,14 @@ namespace MonoVarmint.Tools
                     switch(reader.Name)
                     {
                         case _ID.Object:
-                            if(output != null) throw new ApplicationException("Object was already constructed");
+                            if(output != null) throw new ArgumentException("Object was already constructed");
                             var instanceId = int.Parse(reader.GetAttribute(_ID.InstanceId));
                             var typeName = reader.GetAttribute(_ID.Type);
 
                             // No type means that this has already been read and should be cached
                             if (typeName == null) 
                             {
-                                if (!_objectCache.ContainsKey(instanceId)) throw new ApplicationException("Could not find cached object with id: " + instanceId);
+                                if (!_objectCache.ContainsKey(instanceId)) throw new ArgumentException("Could not find cached object with id: " + instanceId);
                                 reader.Read(); 
                                 return _objectCache[instanceId];
                             }
@@ -390,16 +386,16 @@ namespace MonoVarmint.Tools
                             }
                             break;
                         case _ID.Property:
-                            if (output == null) throw new ApplicationException("Got a field, but no object was constructed");
+                            if (output == null) throw new ArgumentException("Got a field, but no object was constructed");
                             ReadProperty(reader, nodeType, output);
                             break;
                         default:
-                            throw new ApplicationException("Did not expect serial note type: " + reader.Name);
+                            throw new ArgumentException("Did not expect serial note type: " + reader.Name);
                     }
                 }
                 else if (reader.NodeType == XmlNodeType.EndElement)
                 {
-                    if (reader.Name != _ID.Object)  throw new ApplicationException("Expected end of Object but got end of '" + reader.Name + "'");
+                    if (reader.Name != _ID.Object)  throw new ArgumentException("Expected end of Object but got end of '" + reader.Name + "'");
                     break;
                 }
             } while (reader.Read());
@@ -414,7 +410,7 @@ namespace MonoVarmint.Tools
         //--------------------------------------------------------------------------------------
         private object ReadArray(XmlReader reader, Type arrayType)
         {
-            if (reader.Name != _ID.Object) throw new ApplicationException("Expected object node.");
+            if (reader.Name != _ID.Object) throw new ArgumentException("Expected object node.");
             var collectedObjects = new List<object>();
             var elementType = arrayType.GetElementType();
 
@@ -429,12 +425,12 @@ namespace MonoVarmint.Tools
             {
                 if (reader.NodeType == XmlNodeType.Element)
                 {
-                    if (reader.Name != _ID.ArrayElement) throw new ApplicationException("Expected an array element, but got " + reader.Name);
+                    if (reader.Name != _ID.ArrayElement) throw new ArgumentException("Expected an array element, but got " + reader.Name);
                     collectedObjects.Add(ReadArrayElement(reader, elementType));
                 }
                 else if (reader.NodeType == XmlNodeType.EndElement)
                 {
-                    if (reader.Name != _ID.Object) throw new ApplicationException("Expected end of Object but got end of '" + reader.Name + "'");
+                    if (reader.Name != _ID.Object) throw new ArgumentException("Expected end of Object but got end of '" + reader.Name + "'");
                     break;
                 }
             } while (reader.Read());
@@ -472,7 +468,7 @@ namespace MonoVarmint.Tools
                 }
                 catch (Exception e)
                 {
-                    throw new ApplicationException("Serializer parse error on line " + lineInfo.LineNumber
+                    throw new ArgumentException("Serializer parse error on line " + lineInfo.LineNumber
                         + ": " + e.Message, e);
                 }
             }

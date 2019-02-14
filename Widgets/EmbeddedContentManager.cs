@@ -9,7 +9,7 @@ using System.Text;
 namespace MonoVarmint.Widgets
 {
     //-----------------------------------------------------------------------------------------------
-    // EmbeddedContentManager- A version of content manager that can tries to load content from 
+    // EmbeddedContentManager- A version of content manager that tries to load content from 
     // embedded resources first.
     //
     // The resources can be located anywhere in the assembly.  The search algorithm is case insensitive
@@ -35,7 +35,7 @@ namespace MonoVarmint.Widgets
                     return _localAssembly.GetManifestResourceStream(resourceName);
                 }
             }
-
+            
             return base.OpenStream(assetName);
         }
     }
