@@ -246,7 +246,7 @@ namespace MonoVarmint.Widgets
             EndClipping(0, Vector2.Zero, new Vector2(1), false, false);
             if (_drawBuffers.Count > 0)
             {
-                throw new ApplicationException("There was an unmatch BeginClipping call.");
+                throw new ApplicationException("There was an unmatched BeginClipping call.");
             }
 
             //Debug.WriteLine("AAA_spriteBatch.End();");

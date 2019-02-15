@@ -201,7 +201,8 @@ namespace MonoVarmint.Widgets
             VarmintWidget output;
 
             void ApplyLayout(LayoutItem layout)
-            {
+            {  
+                // Get the settings explicitly specified in the layout
                 foreach (var name in layout.Settings.Keys)
                 {
                     switch (name)
@@ -215,6 +216,7 @@ namespace MonoVarmint.Widgets
                             break;
                     }
                 }
+
                 foreach (var childItem in layout.Children)
                 {
                     if (childItem.VwmlTag.Contains("."))
@@ -275,6 +277,7 @@ namespace MonoVarmint.Widgets
             }
             if (widgetLayout.Name != null) output.Name = widgetLayout.Name;
 
+            // Automatically inject property values if they are injectable
             foreach (var propertyType in output.GetType().GetProperties())
             {
                 var injectAttribute = (VarmintWidgetInjectAttribute)propertyType.GetCustomAttribute(typeof(VarmintWidgetInjectAttribute));
@@ -329,7 +332,7 @@ namespace MonoVarmint.Widgets
                 }
                 catch (Exception e)
                 {
-                    throw new ApplicationException("VWML parse error on line " + lineInfo.LineNumber
+                    throw new ApplicationException($"VWML parse error in '{defaultName}' on line " + lineInfo.LineNumber
                         + ": " + e.Message, e);
                 }
             }

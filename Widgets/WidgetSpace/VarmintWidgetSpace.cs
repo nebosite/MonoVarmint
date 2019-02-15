@@ -35,7 +35,7 @@ namespace MonoVarmint.Widgets
             var assembly = injector.GetType().GetTypeInfo().Assembly;
             VarmintWidget.DeclareAssembly(assembly);
 
-            // automatically add embedded resources
+            // automatically add embedded layout by preloading the raw layout without hydrating it
             foreach (var resourceName in assembly.GetManifestResourceNames())
             {
                 if (resourceName.ToLower().EndsWith(".vwml"))
@@ -51,7 +51,7 @@ namespace MonoVarmint.Widgets
 
         //-----------------------------------------------------------------------------------------------
         /// <summary>
-        /// GetScreen 
+        /// GetScreen - return the named screen hydrated with bound data 
         /// </summary>
         //-----------------------------------------------------------------------------------------------
         internal VarmintWidget GetScreen(string screenName, object bindingContext)
@@ -76,6 +76,18 @@ namespace MonoVarmint.Widgets
             var returnMe = _screensByName[screenName];
             returnMe.Prepare(_styleLibrary);
             return returnMe;
+        }
+
+        //-----------------------------------------------------------------------------------------------
+        /// <summary>
+        /// Find any widget by name
+        /// </summary>
+        //-----------------------------------------------------------------------------------------------
+        internal VarmintWidget FindWidgetByName(string widgetName)
+        {
+            // Hydrate all the screens on startup and build a widget library
+            // Creating/Disposing widgets should update a global widget list
+            // GetScreen should not set bindings or call prepare with the style library
         }
 
         //-----------------------------------------------------------------------------------------------

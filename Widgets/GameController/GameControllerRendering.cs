@@ -36,6 +36,11 @@ namespace MonoVarmint.Widgets
             return _visualTree.FindWidgetByName(widgetName);
         }
 
+        internal VarmintWidget GetWidgetByName(string widgetName)
+        {
+            return _widgetSpace.FindWidgetByName(widgetName);
+        }
+
         bool _inSpriteBatch = false;
 
         //--------------------------------------------------------------------------------------
