@@ -251,6 +251,7 @@ namespace MonoVarmint.Widgets
             {
                 var controlLayout = controlLibrary[widgetLayout.VwmlTag];
 
+                // If there is a class that is bound to this control then we bind events to that class
                 if(controlLayout.Settings.ContainsKey("Class"))
                 {
                     var controlType = GetWidgetType(controlLayout.Settings["Class"]);
@@ -259,7 +260,7 @@ namespace MonoVarmint.Widgets
                         throw new ApplicationException("The Class attribute must point to a VarmintWidgetControl");
                     }
                     output = (VarmintWidget)Activator.CreateInstance(controlType);
-                    output.EventBindingContext = output;
+                    output.ControlHandler = output;
                 }
                 else
                 {

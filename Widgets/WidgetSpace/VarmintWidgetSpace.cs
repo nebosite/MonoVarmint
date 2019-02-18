@@ -15,12 +15,12 @@ namespace MonoVarmint.Widgets
     //-----------------------------------------------------------------------------------------------
     public class VarmintWidgetSpace
     {
-        public Dictionary<string, VarmintWidgetStyle> StyleLibrary { get { return _styleLibrary; } }
+        public Dictionary<string, VarmintWidgetStyle> StyleLibrary => _styleLibrary;
 
         private Dictionary<string, VarmintWidgetStyle> _styleLibrary = new Dictionary<string, VarmintWidgetStyle>();
         private Dictionary<string, VarmintWidget.LayoutItem> _controlLibrary = new Dictionary<string, VarmintWidget.LayoutItem>();
-        private Dictionary<string, VarmintWidget.LayoutItem> _screenLibrary = new Dictionary<string, VarmintWidget.LayoutItem>();
         private Dictionary<string, VarmintWidget> _screensByName = new Dictionary<string, VarmintWidget>();
+        private Dictionary<string, VarmintWidget> _widgetsByName = new Dictionary<string, VarmintWidget>();
         private IVarmintWidgetInjector _injector;
 
 
@@ -29,7 +29,7 @@ namespace MonoVarmint.Widgets
         /// ctor
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public VarmintWidgetSpace(IVarmintWidgetInjector injector, object bindingContext = null)
+        public VarmintWidgetSpace(IVarmintWidgetInjector injector)
         {
             _injector = injector;
             var assembly = injector.GetType().GetTypeInfo().Assembly;
@@ -44,38 +44,9 @@ namespace MonoVarmint.Widgets
 
                     var nameParts = resourceName.Split('.');
                     var defaultName = nameParts[nameParts.Length - 2];
-                    AddContent(defaultName, assembly.GetManifestResourceStream(resourceName), bindingContext);
+                    AddContent(defaultName, assembly.GetManifestResourceStream(resourceName));
                 }
             }
-        }
-
-        //-----------------------------------------------------------------------------------------------
-        /// <summary>
-        /// GetScreen - return the named screen hydrated with bound data 
-        /// </summary>
-        //-----------------------------------------------------------------------------------------------
-        internal VarmintWidget GetScreen(string screenName, object bindingContext)
-        {
-            if (!_screensByName.ContainsKey(screenName))
-            {
-                if(_screenLibrary.ContainsKey(screenName))
-                {
-                    var screen = VarmintWidget.HydrateLayout(_injector, _screenLibrary[screenName], _controlLibrary);
-                    if (bindingContext != null)
-                    {
-                        screen.BindingContext = bindingContext;
-                    }
-                    _screensByName[screen.Name] = screen;
-                }
-                else
-                {
-                    throw new ApplicationException("Unknown screen: " + screenName);
-                }
-            }
-
-            var returnMe = _screensByName[screenName];
-            returnMe.Prepare(_styleLibrary);
-            return returnMe;
         }
 
         //-----------------------------------------------------------------------------------------------
@@ -83,11 +54,26 @@ namespace MonoVarmint.Widgets
         /// Find any widget by name
         /// </summary>
         //-----------------------------------------------------------------------------------------------
-        internal VarmintWidget FindWidgetByName(string widgetName)
+        public VarmintWidget FindWidgetByName(string widgetName)
         {
-            // Hydrate all the screens on startup and build a widget library
-            // Creating/Disposing widgets should update a global widget list
-            // GetScreen should not set bindings or call prepare with the style library
+            if(!_widgetsByName.TryGetValue(widgetName, out var widget))
+            {
+                foreach(var screen in _screensByName.Values)
+                {
+                    widget = screen.FindWidgetByName(widgetName);
+                    if(widget != null)
+                    {
+                        break;
+                    }
+                }
+
+                if(widget != null)
+                {
+                    _widgetsByName[widgetName] = widget;
+                }
+            }
+
+            return widget;
         }
 
         //-----------------------------------------------------------------------------------------------
@@ -96,7 +82,7 @@ namespace MonoVarmint.Widgets
         ///              content you might want to change dynamically
         /// </summary>
         //-----------------------------------------------------------------------------------------------
-        public void AddContent(string name, Stream vwmlStream, object bindingContext)
+        public void AddContent(string name, Stream vwmlStream)
         {
             var layout = VarmintWidget.PreloadFromVwml(vwmlStream, name);
 
@@ -118,7 +104,8 @@ namespace MonoVarmint.Widgets
             }
             else
             {
-                _screenLibrary.Add(layout.Name, layout);
+                var screen = VarmintWidget.HydrateLayout(_injector, layout, _controlLibrary);
+                _screensByName[screen.Name] = screen;
             }
         }
 

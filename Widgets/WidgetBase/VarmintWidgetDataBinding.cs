@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace MonoVarmint.Widgets
 {
@@ -45,23 +46,32 @@ namespace MonoVarmint.Widgets
                 if (bindingPair.Key == BindingContextPropertyName) continue;
                 var bindingName = bindingPair.Value.Trim('{', '}', ' ');
 
-                // Events are handled differently from value bindings
+
+
                 var targetEventInfo = GetType().GetEvent(bindingPair.Key, _publicInstance);
-                if (targetEventInfo != null)
+                if (targetEventInfo != null) // Is the type of this binding an event?
                 {
-                    var sourceMethodInfo = EventBindingContext.GetType().GetMethod(bindingName, _publicInstance);
+                    // Events are handled differently from value bindings.  
+                    // Try to get the method from the binding context, then from the bound class (if any)
+                    MethodInfo sourceMethodInfo = null;
+                    object sourceMethodTarget = null;
+                    if (BindingContext != null)
+                    {
+                        sourceMethodInfo = BindingContext.GetType().GetMethod(bindingName, _publicInstance);
+                        sourceMethodTarget = BindingContext;
+                    }
+                    if(sourceMethodInfo == null)
+                    {
+                        sourceMethodInfo = ControlHandler.GetType().GetMethod(bindingName, _publicInstance);
+                        sourceMethodTarget = ControlHandler;
+                    }
                     if (sourceMethodInfo == null)
                     {
-                        throw new ApplicationException("Could not find method '" + bindingName
-                            + "' on type " + EventBindingContext.GetType());
+                        throw new ApplicationException($"Could not find method '{bindingName}' on types {BindingContext?.GetType()} or {ControlHandler?.GetType()}");
                     }
 
-                    var handler =
-                         Delegate.CreateDelegate(targetEventInfo.EventHandlerType,
-                                                 EventBindingContext,
-                                                 sourceMethodInfo);
+                    var handler = Delegate.CreateDelegate(targetEventInfo.EventHandlerType, sourceMethodTarget, sourceMethodInfo);
                     targetEventInfo.AddEventHandler(this, handler);
-
                 }
                 else // This is a value binding
                 {

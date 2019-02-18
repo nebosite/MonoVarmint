@@ -50,9 +50,9 @@ namespace MonoVarmint.Widgets
             SelectFont();
 
             // Widgets
-            _widgetSpace = new VarmintWidgetSpace(this, _bindingContext);
+            _widgetSpace = new VarmintWidgetSpace(this);
 
-            _visualTree = _widgetSpace.GetScreen("_default_screen_", null);
+            SetScreen("_default_screen_", null);
             OnGameLoaded?.Invoke();
         }
 
@@ -92,7 +92,7 @@ namespace MonoVarmint.Widgets
             _spritesByName.Clear();
             _songsByName.Clear();
             _soundEffectsByName.Clear();
-            _widgetSpace = new VarmintWidgetSpace(this, _bindingContext);
+            _widgetSpace = new VarmintWidgetSpace(this);
         }
 
         //-----------------------------------------------------------------------------------------------

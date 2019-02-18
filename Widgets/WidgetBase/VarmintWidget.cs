@@ -149,15 +149,9 @@ namespace MonoVarmint.Widgets
         }
 
         private object _eventBindingContext;
-        public object EventBindingContext
+        public object ControlHandler
         {
-            get
-            {
-                if (_eventBindingContext != null) return _eventBindingContext;
-                if (Parent == null) return BindingContext;
-                var parentContext = Parent.EventBindingContext;
-                return parentContext ?? BindingContext;
-            }
+            get => _eventBindingContext ?? Parent?.ControlHandler;
             set => _eventBindingContext = value;
         }
 

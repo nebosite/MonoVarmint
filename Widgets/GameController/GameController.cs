@@ -71,15 +71,6 @@ namespace MonoVarmint.Widgets
 #endif
         }
 
-
-        //-----------------------------------------------------------------------------------------------
-        // GetScreen - return a screen object by name 
-        //-----------------------------------------------------------------------------------------------
-        internal VarmintWidget GetScreen(string screenName, object bindingContext)
-        {
-            return _widgetSpace.GetScreen(screenName, bindingContext);
-        }
-
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// Initialize
@@ -284,18 +275,9 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         // 
         //--------------------------------------------------------------------------------------
-        public void AddVwmlContent(string replaceName, Stream vwmlStream, object bindingContext = null)
+        public void AddVwmlContent(string replaceName, Stream vwmlStream)
         {
-            _widgetSpace.AddContent(replaceName, vwmlStream, bindingContext);
-        }
-
-        //--------------------------------------------------------------------------------------
-        // 
-        //--------------------------------------------------------------------------------------
-        public void SetScreen(VarmintWidget screen)
-        {
-            _visualTree = screen;
-            screen.Prepare(_widgetSpace.StyleLibrary);
+            _widgetSpace.AddContent(replaceName, vwmlStream);
         }
 
         //--------------------------------------------------------------------------------------
@@ -304,7 +286,9 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void SetScreen(string screenName, object bindingContext)
         {
-            _visualTree = _widgetSpace.GetScreen(screenName, bindingContext);
+            _visualTree = _widgetSpace.FindWidgetByName(screenName);
+            _visualTree.BindingContext = bindingContext;
+            _visualTree.Prepare(_widgetSpace.StyleLibrary);
         }
 
         //--------------------------------------------------------------------------------------
