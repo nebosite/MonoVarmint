@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Grid
+  Size="{ScreenSize}"
+  ForegroundColor="Black"
+  BackgroundColor="White">
+  <Grid Name="_debug_contentslot_" Margin="0,0,0,0" BackgroundColor="Transparent" />
+  <Grid Margin=",,0,0" Size=".3,.2" FontSize=".02" BackgroundColor="#80FF0000">
+    <StackPanel >
+      <Label Content="{Counter}" Name="Forbius"/>
+      <Label Content="More Text"/>
+    </StackPanel>  
+  </Grid>
+</Grid>

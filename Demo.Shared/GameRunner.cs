@@ -46,7 +46,7 @@ namespace Demo.Shared
                 _controller.LoadSprite("Images/Bunny", 100, 100);
                 _controller.LoadSprite("Images/Monster", 100, 100);
                 _controller.LoadSoundEffects("Sounds/Cowbell", "Sounds/Jump", "Sounds/Thump");
-                _controller.SetScreen(_controller.GetScreen("MainScreen", this));
+                _controller.SetScreen("MainScreen", this);
             };
 
             _controller.OnGameUpdate += (gameTime) =>

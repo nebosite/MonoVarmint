@@ -68,7 +68,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         //
         //--------------------------------------------------------------------------------------
-        protected override void UpdateChildFormatting_Internal(Vector2? updatedSize)
+        protected override void UpdateFormatting_Internal(Vector2 updatedSize)
         {
             // child formatting is static - the scrollview does not update it
             _innerContent.RecalculateExtremes();
@@ -217,7 +217,7 @@ namespace MonoVarmint.Widgets
                 RecalculateExtremes();
             }
 
-            protected override void UpdateChildFormatting_Internal(Vector2? updatedSize) { }
+            protected override void UpdateFormatting_Internal(Vector2 updatedSize) { }
         }
     }
 }

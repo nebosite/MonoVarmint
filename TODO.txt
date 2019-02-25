@@ -1,6 +1,41 @@
+
+
+
+	[ ] Formatting update:
+		[x] Refactor widget to have alignment tuple
+		[ ] Get the label to adjust it size to content
+		[ ] Fix the stackpanel
+		[ ] Try to get debugging screen to work
+	[ ] Formatting for label:
+		- We need to know the original specified values for each control. Store these in a dictionary as we set up the control from the layout.
+		- If there was no size specified, the we need to pull the size from the text
 	[ ] Varmint Widgets demo should user VarmintWidgetSpace, styles, and controls
 	[ ] More tests
 	[ ] Monovarmint: THis does not work.  Scroll view has 0 width
 	    <Grid Name="SkinCollectionFrame" Margin=".05,.05,.05,.15" BackgroundColor="Green">
 			  <ScrollView Stretch="1,1"/>
 		</Grid>
+
+
+
+
+Formatting rules:
+	Margins		Size specified		Align		New Size Behavior
+		0				na			Stretch		Fill to max
+		0				na			*			Fill to children, limited by max and position accordingly
+		0				y			Stretch		Error - cannot specify both Size and Align==Stretch
+		0				y			*			Fill to Size, limited by max and position accordingly
+		1				na			Stretch		Fill to max - margin, position by margin
+		1				na			*			Fill to children, limited by max - margin and position accordingly
+		1				y			Stretch		Error - cannot specify both Size and Align==Stretch
+		1				y			*			Fill to Size, limited by max - margin, positioned as if size = size + margin
+		2				na			Stretch		Fill to max - margin, position by margin
+		2				na			*			Fill to children, limited by max - margin and position accordingly
+		2				y			Stretch		Error - cannot specify both Size and Align==Stretch
+		2				y			*			Fill to Size, limited by max - margin, positioned as if size = size + margin
+			
+	Align is specified as one or two values.  E.g.:   Left |  Left,Stretch | ,Center			
+	Size is specified as one or two values:  x,y			
+	With no parent, max is screen size			
+	With scroll viewer, max is arbitrary, but there must be a clipping stage when rendering			
+	Labels adjust their size to the text in them.  If they wrap, they wrap to the max size width			

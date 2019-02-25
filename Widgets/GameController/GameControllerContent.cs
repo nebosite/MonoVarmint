@@ -52,18 +52,12 @@ namespace MonoVarmint.Widgets
             // Widgets
             _widgetSpace = new VarmintWidgetSpace(this);
 
+            _debugContext.ScreenSize = ScreenSize;
+            _debugScreen = _widgetSpace.FindWidgetByName("_debug_screen_");
+            _debugScreen.BindingContext = _debugContext;
+            _debugContentHolder = _debugScreen.FindWidgetByName("_debug_contentslot_");
             SetScreen("_default_screen_", null);
             OnGameLoaded?.Invoke();
-        }
-
-        //-----------------------------------------------------------------------------------------------
-        /// <summary>
-        /// Prepare - prepare the visual elements in this widget according to sytles
-        /// </summary>
-        //-----------------------------------------------------------------------------------------------
-        internal void Prepare(VarmintWidget overlay)
-        {
-            overlay.Prepare(_widgetSpace.StyleLibrary);
         }
 
         //-----------------------------------------------------------------------------------------------

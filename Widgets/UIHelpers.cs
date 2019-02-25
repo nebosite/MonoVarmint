@@ -39,6 +39,11 @@ namespace MonoVarmint.Widgets
                     else if (type.Name.StartsWith("Tuple")) return ParseTuple(type, valueText);
                     else if (type.IsEnum) return Enum.Parse(type, valueText);
                     else if (type.IsClass) return Activator.CreateInstance(type, valueText);
+                    if (Nullable.GetUnderlyingType(type) != null)
+                    {
+                        if (string.IsNullOrEmpty(valueText)) return null;
+                        else return GetValueFromText(Nullable.GetUnderlyingType(type), valueText);
+                    }
                     else throw new ApplicationException("Don't know create a " + type);
             }
 
@@ -72,9 +77,9 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public static object ParseTuple(Type type, string valueText)
         {
-            var splitValues = valueText.Split(':');
-            var firstTupleValue = GetValueFromText(type.GenericTypeArguments[0], splitValues[0].TrimStart('('));
-            var secondTupleValue = GetValueFromText(type.GenericTypeArguments[1], splitValues[1].TrimEnd(')'));
+            var splitValues = valueText.Trim('(',')').Split(':',',');
+            var firstTupleValue = GetValueFromText(type.GenericTypeArguments[0], splitValues[0]);
+            var secondTupleValue = GetValueFromText(type.GenericTypeArguments[1], splitValues[1]);
 
             return Activator.CreateInstance(type, firstTupleValue, secondTupleValue);
         }

@@ -54,6 +54,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Widgets\VarmintWidgetTextInput.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)EmbeddedContent\_debug_screen_.vwml" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)EmbeddedContent\_utility_circle.xnb" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)EmbeddedContent\_default_screen_.vwml" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)EmbeddedContent\_utility_SegoeUI.xnb" />

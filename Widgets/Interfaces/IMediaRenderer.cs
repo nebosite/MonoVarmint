@@ -10,7 +10,9 @@ namespace MonoVarmint.Widgets
     //--------------------------------------------------------------------------------------
     public interface IMediaRenderer
     {
+        Vector2 ScreenSize { get; }
         void DrawBox(Vector2 offset, Vector2 size, Color fillColor);
+        void DrawRectangle(Vector2 offset, Vector2 size, float lineWidth, Color color);
         void DrawEllipse(Vector2 offset, Vector2 size, Color fillColor);
         void DrawText(string text, string fontName, float fontSize, Vector2 offset, Color color, float wrapWidth = 0);
         Vector2 MeasureText(string text, string fontName, float fontSize, float wrapWidth = 0);

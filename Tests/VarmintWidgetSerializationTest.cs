@@ -129,8 +129,8 @@ namespace MonoVarmint.Tools.Tests
             Assert.AreEqual("223", target.Parameters["Blech"]);
             Assert.AreEqual(0.1f, target.Offset.X);
             Assert.AreEqual(0.2f, target.Offset.Y);
-            Assert.AreEqual(10, target.Size.X);
-            Assert.AreEqual(11, target.Size.Y);
+            Assert.AreEqual(10, target.SpecifiedSize.Item1);
+            Assert.AreEqual(11, target.SpecifiedSize.Item2);
             target.HandleTap(new Vector2(1, 1));
             Assert.AreEqual(1, bindToMe.FooCalls);
         }

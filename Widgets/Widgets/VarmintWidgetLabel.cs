@@ -26,27 +26,46 @@ namespace MonoVarmint.Widgets
         /// Render
         /// </summary>
         //--------------------------------------------------------------------------------------
+        protected override void UpdateFormatting_Internal(Vector2 updatedSize)
+        {
+            //if(!HasSpecified("Size"))
+            //{
+                
+            //}
+            base.UpdateFormatting_Internal(updatedSize);
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// Render
+        /// </summary>
+        //--------------------------------------------------------------------------------------
         void Render(GameTime gameTime, VarmintWidget widget)
         {
             var textToDisplay = (Content == null) ? "" : Content.ToString();
+            var adjustedSize = Size;
+            if(!HasSize)
+            {
+                adjustedSize = Renderer.MeasureText(textToDisplay, FontName, FontSize, WrapContent ? Parent.Size.X : 0 );
+            }
 
-            Renderer.DrawBox(AbsoluteOffset, Size, RenderBackgroundColor);
+            Renderer.DrawBox(AbsoluteOffset, adjustedSize, RenderBackgroundColor);
             Vector2 alignedOffset = AbsoluteOffset;
             var margin = 0f;
-            if (WrapContent) margin = Size.X;
+            if (WrapContent) margin = adjustedSize.X;
             Vector2 textSize = Renderer.MeasureText(textToDisplay, FontName, FontSize, margin);
             switch (HorizontalContentAlignment)
             {
                 case HorizontalContentAlignment.Left: break;
-                case HorizontalContentAlignment.Center: alignedOffset.X += (Size.X - textSize.X) / 2; break;
-                case HorizontalContentAlignment.Right: alignedOffset.X += (Size.X - textSize.X); break;
+                case HorizontalContentAlignment.Center: alignedOffset.X += (adjustedSize.X - textSize.X) / 2; break;
+                case HorizontalContentAlignment.Right: alignedOffset.X += (adjustedSize.X - textSize.X); break;
             }
 
             switch(VerticalContentAlignment)
             {
                 case VerticalContentAlignment.Top: break;
-                case VerticalContentAlignment.Center: alignedOffset.Y += (Size.Y - textSize.Y) / 2; break;
-                case VerticalContentAlignment.Bottom: alignedOffset.Y += (Size.Y - textSize.Y);  break;
+                case VerticalContentAlignment.Center: alignedOffset.Y += (adjustedSize.Y - textSize.Y) / 2; break;
+                case VerticalContentAlignment.Bottom: alignedOffset.Y += (adjustedSize.Y - textSize.Y);  break;
             }
 
             Renderer.DrawText(textToDisplay, FontName, FontSize, alignedOffset, RenderForegroundColor, margin);

@@ -13,41 +13,6 @@ namespace MonoVarmint.Widgets
     {
         //--------------------------------------------------------------------------------------
         /// <summary>
-        /// StretchParameter
-        /// </summary>
-        //--------------------------------------------------------------------------------------
-        public class StretchParameter
-        {
-            public float? Horizontal { get; set; }
-            public float? Vertical { get; set; }
-
-            public StretchParameter() { }
-
-            public StretchParameter(string valueText)
-            {
-                var parts = valueText.Split(',');
-                if (parts.Length > 2) throw new ApplicationException("Too many values in stretch parameter specification.");
-
-                float? Parse(int index)
-                {
-                    if (index >= parts.Length) return null;
-                    if (float.TryParse(parts[index], out var output))
-                        return output;
-                    return null;
-                }
-
-                Horizontal = Parse(0);
-                Vertical = Parse(1);
-            }
-
-            public override string ToString()
-            {
-                return $"{Horizontal},{Vertical}";
-            }
-        }
-
-        //--------------------------------------------------------------------------------------
-        /// <summary>
         /// WidgetMargin
         /// </summary>
         //--------------------------------------------------------------------------------------
@@ -73,9 +38,24 @@ namespace MonoVarmint.Widgets
                 }
 
                 Left = Parse(0);
-                Top = Parse(1);
-                Right = Parse(2);
-                Bottom = Parse(3);
+                if(parts.Length == 1)
+                {
+                    Top = Right = Bottom = Left;
+                }
+                else
+                {
+                    Top = Parse(1);
+                    if(parts.Length == 2)
+                    {
+                        Right = Left;
+                        Bottom = Top;
+                    }
+                    else
+                    {
+                        Right = Parse(2);
+                        Bottom = Parse(3);
+                    }
+                }
             }
 
             public WidgetMargin(float? left, float? top, float? right, float? bottom)

@@ -42,7 +42,15 @@ namespace MonoVarmint.Widgets
         VarmintWidgetSpace _widgetSpace;
 
 
+        VarmintWidget _debugContentHolder;
+        VarmintWidget _debugScreen;
+        class DebuggingInfo
+        {
+            public Vector2 ScreenSize { get; set; }
+            public int Counter { get; internal set; }
+        }
 
+        DebuggingInfo _debugContext;
         //-----------------------------------------------------------------------------------------------
         // ctor - Native device
         //-----------------------------------------------------------------------------------------------
@@ -55,6 +63,9 @@ namespace MonoVarmint.Widgets
             };
             _graphics.IsFullScreen = true;
             _bindingContext = bindingContext;
+
+            _debugContext = new DebuggingInfo();
+
         }
 
         //-----------------------------------------------------------------------------------------------
@@ -227,7 +238,19 @@ namespace MonoVarmint.Widgets
             GraphicsDevice.Clear(GlobalBackgroundColor);
             BeginClipping(DrawOffset, ScreenSize);
             _visualTree.Prepare(_widgetSpace.StyleLibrary);
-            _visualTree.RenderMe(gameTime);
+            _visualTree.UpdateFormatting(ScreenSize);
+            if (VarmintWidget.VisualDebuggingEnabled)
+            {
+                _debugContext.Counter++;
+                _debugContentHolder.ClearChildren();
+                _debugScreen.ReadBindings(true);
+                //_debugContentHolder.AddChild(_visualTree);
+                _debugScreen.RenderMe(gameTime);
+            }
+            else
+            {
+                _visualTree.RenderMe(gameTime);
+            }
 
             if (ShowFps)
             {
@@ -240,6 +263,16 @@ namespace MonoVarmint.Widgets
                 throw new ApplicationException("There was an unmatched BeginClipping call.");
             }
 
+#if WINDOWS
+            if(VarmintWidget.VisualDebuggingEnabled)
+            {
+                //var mouseState = Mouse.GetState();
+                //var debugSize = new Vector2(.2, .1);
+                //DrawBox(new Vector2())
+
+                //_visualTree.HitTest();
+            }
+#endif
             //Debug.WriteLine("AAA_spriteBatch.End();");
             _spriteBatch.End();
             //Debug.WriteLine("AAA---------------------- END ------------------------");
@@ -288,7 +321,6 @@ namespace MonoVarmint.Widgets
         {
             _visualTree = _widgetSpace.FindWidgetByName(screenName);
             _visualTree.BindingContext = bindingContext;
-            _visualTree.Prepare(_widgetSpace.StyleLibrary);
         }
 
         //--------------------------------------------------------------------------------------

@@ -30,7 +30,7 @@ namespace Demo.Shared
         //-----------------------------------------------------------------------------------------------
         public void StartGame()
         {
-            _controller.SetScreen(_controller.GetScreen("GameScreen", this));
+            _controller.SetScreen("GameScreen", this);
             var holder = _controller.GetVisibleWidgetByName("GameContainer");
             var gameWindow = new VarmintWidgetGrid();
             gameWindow.Renderer = _controller;
@@ -98,7 +98,7 @@ namespace Demo.Shared
         public VarmintWidget.EventHandledState GameQuitButtonOnTap(VarmintWidget tappedObject, Vector2 tapPosition)
         {
             _controller.GetVisibleWidgetByName("GameContainer").ClearChildren();
-            _controller.SetScreen(_controller.GetScreen("MainScreen", this));
+            _controller.SetScreen("MainScreen", this);
             _currentGame = null;
 
             return VarmintWidget.EventHandledState.Handled;

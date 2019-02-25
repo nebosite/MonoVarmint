@@ -106,7 +106,7 @@ namespace MonoVarmint.Tools
         private void SerializeValue(XmlWriter writer, Type valueType, object value)
         {
             if (value == null) return;
-            if (!valueType.IsByRef || valueType.Name == "String")
+            if ((!valueType.IsByRef && valueType.IsValueType && !valueType.IsArray) || valueType.Name == "String")
             {
                 writer.WriteAttributeString(_ID.Value, value.ToString());
             }
@@ -224,7 +224,7 @@ namespace MonoVarmint.Tools
         private object ReadValue(XmlReader reader, Type valueType)
         {
             object output;
-            if (valueType.IsByRef || valueType.Name == "String")
+            if ((!valueType.IsByRef && valueType.IsValueType && !valueType.IsArray) || valueType.Name == "String")
             {
                 var text = reader.GetAttribute(_ID.Value);
                 if (valueType.GetTypeInfo().IsEnum)

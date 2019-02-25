@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -166,7 +167,16 @@ namespace MonoVarmint.Widgets
             }
             else
             {
-                propertyInfo.SetValue(this, UIHelpers.GetValueFromText(propertyInfo.PropertyType, valueText));
+                if(propertyName == "Size")
+                {
+                    var value = UIHelpers.GetValueFromText(typeof(Tuple<float?,float?>), valueText);
+                    SpecifiedSize = (Tuple<float?, float?>)value;
+                }
+                else
+                {
+                    var value = UIHelpers.GetValueFromText(propertyInfo.PropertyType, valueText);
+                    propertyInfo.SetValue(this, value);
+                }
             }
         }
 

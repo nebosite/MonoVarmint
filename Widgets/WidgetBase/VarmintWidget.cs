@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Xna.Framework;
@@ -42,6 +43,8 @@ namespace MonoVarmint.Widgets
         public bool FlipVertical { get; set; }
         public bool FlipHorizontal { get; set; }
 
+        public Tuple<float?, float?> SpecifiedSize { get; set; } 
+
         private Vector2? _size;
         internal Vector2? OriginalSize;
         public Vector2 Size
@@ -49,16 +52,22 @@ namespace MonoVarmint.Widgets
             get => _size ?? Vector2.Zero;
             set
             {
+                if(SpecifiedSize == null)
+                {
+                    SpecifiedSize = new Tuple<float?, float?>(value.X, value.Y);
+                }
                 if (_size != null && _size == value) return;
                 if (OriginalSize == null || _applyingStyles)
                 {
                     OriginalSize = value;
                 }
                 _size = value;
-                UpdateChildFormatting(_size);
+                //UpdateFormatting(_size);
                 OnSizeChanged?.Invoke(this);
             }
         }
+
+        public bool HasSize => _size.HasValue;
 
         public Vector2 IntendedSize
         {
@@ -72,6 +81,34 @@ namespace MonoVarmint.Widgets
         public bool AllowInput { get; set; }
         public bool IsVisible { get; set; }
         public bool ClipToBounds { get; set; }
+
+        private AlignmentTuple _widgetAlignment;
+        public AlignmentTuple WidgetAlignment
+        {
+            get
+            {
+                var output = new AlignmentTuple(
+                    _widgetAlignment?.X ?? Parent?.WidgetAlignment.X,
+                    _widgetAlignment?.Y ?? Parent?.WidgetAlignment.Y
+                    );
+                return output;
+            }
+            set => _widgetAlignment = value;
+        }
+
+        private AlignmentTuple _contentAlignment;
+        public AlignmentTuple ContentAlignment
+        {
+            get
+            {
+                var output = new AlignmentTuple(
+                    _contentAlignment?.X ?? Parent?.ContentAlignment.X,
+                    _contentAlignment?.Y ?? Parent?.ContentAlignment.Y
+                    );
+                return output;
+            }
+            set => _contentAlignment = value;
+        }
 
         private HorizontalContentAlignment? _horizontalContentAlignment;
         public HorizontalContentAlignment HorizontalContentAlignment
@@ -120,7 +157,6 @@ namespace MonoVarmint.Widgets
 
 
         public virtual WidgetMargin Margin { get; set; }
-        public virtual StretchParameter Stretch { get; set; }
 
         private object _content;
         public virtual object Content
@@ -222,7 +258,6 @@ namespace MonoVarmint.Widgets
             Name = "W" + _globalWidgetCount.ToString("000000");
             AllowInput = true;
             Margin = new WidgetMargin();
-            Stretch = new StretchParameter();
        }
 
         //--------------------------------------------------------------------------------------
@@ -241,7 +276,7 @@ namespace MonoVarmint.Widgets
 
         //--------------------------------------------------------------------------------------
         /// <summary>
-        /// Prepare 
+        /// Prepare - apply bindings and styles
         /// </summary>
         //--------------------------------------------------------------------------------------
         public void Prepare(Dictionary<string, VarmintWidgetStyle> styleLibrary)
@@ -250,20 +285,19 @@ namespace MonoVarmint.Widgets
             ApplyStyles(styleLibrary);
             UpdateBindings(BindingContext);
             ReadBindings();
+            if (!_initCalled)
+            {
+                _initCalled = true;
+                OnInit?.Invoke(this);
+            }
 
             foreach(var child in Children)
             {
                 child.Prepare(styleLibrary);
             }
-
-            if(!_initCalled)
-            {
-                _initCalled = true;
-                OnInit?.Invoke(this);
-            }
             _prepared = true;
-            UpdateChildFormatting();
         }
+
 
         //--------------------------------------------------------------------------------------
         /// <summary>

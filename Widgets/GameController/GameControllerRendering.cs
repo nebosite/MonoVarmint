@@ -155,7 +155,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public void DrawBox(Vector2 offset, Vector2 size, Color color)
         {
-            offset -= DrawOffset; 
+            offset -= DrawOffset;
             Vector2 scale = size * _backBufferWidth / new Vector2(_utilityBlockTexture.Width, _utilityBlockTexture.Height);
 
             _spriteBatch.Draw(
@@ -168,6 +168,19 @@ namespace MonoVarmint.Widgets
                 scale: scale,
                 effects: SpriteEffects.None,
                 layerDepth: 0);
+        }
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// DrawRectangle
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        public void DrawRectangle(Vector2 offset, Vector2 size, float lineWidth, Color color)
+        {
+            DrawLine(offset, offset + new Vector2(size.X, 0), lineWidth, color);
+            DrawLine(offset, offset + new Vector2(0, size.Y), lineWidth, color);
+            DrawLine(offset + new Vector2(size.X, 0), offset + new Vector2(size.X, size.Y), lineWidth, color);
+            DrawLine(offset + new Vector2(0, size.Y), offset + new Vector2(size.X, size.Y), lineWidth, color);
         }
 
         //--------------------------------------------------------------------------------------

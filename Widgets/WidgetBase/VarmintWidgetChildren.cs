@@ -72,10 +72,10 @@ namespace MonoVarmint.Widgets
         {
             _children.Add(widget);
             widget.Parent = this;
-            if (ChildrenAffectFormatting && !suppressChildUpdate)
-            {
-                UpdateChildFormatting();
-            }
+            //if (ChildrenAffectFormatting && !suppressChildUpdate)
+            //{
+            //    UpdateFormatting(Parent?.Size ?? Size);
+            //}
         }
 
         //--------------------------------------------------------------------------------------
@@ -87,10 +87,10 @@ namespace MonoVarmint.Widgets
         {
             _children.Insert(0, widget);
             widget.Parent = this;
-            if (ChildrenAffectFormatting && !suppressChildUpdate)
-            {
-                UpdateChildFormatting();
-            }
+            //if (ChildrenAffectFormatting && !suppressChildUpdate)
+            //{
+            //    UpdateFormatting(Parent?.Size ?? Size);
+            //}
         }
 
         //--------------------------------------------------------------------------------------
@@ -101,10 +101,10 @@ namespace MonoVarmint.Widgets
         public virtual void RemoveChild(VarmintWidget childToRemove, bool suppressChildUpdate = false)
         {
             _children.Remove(childToRemove);
-            if (ChildrenAffectFormatting && !suppressChildUpdate)
-            {
-                UpdateChildFormatting();
-            }
+            //if (ChildrenAffectFormatting && !suppressChildUpdate)
+            //{
+            //    UpdateFormatting(Parent?.Size ?? Size);
+            //}
         }
 
         //--------------------------------------------------------------------------------------
@@ -115,10 +115,10 @@ namespace MonoVarmint.Widgets
         public virtual void ClearChildren()
         {
             _children.Clear();
-            if (ChildrenAffectFormatting)
-            {
-                UpdateChildFormatting();
-            }
+        //    if (ChildrenAffectFormatting)
+        //    {
+        //        UpdateFormatting(Parent?.Size ?? Size);
+        //    }
         }
 
     }

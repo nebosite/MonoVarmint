@@ -60,7 +60,7 @@ namespace MonoVarmint.Widgets
         /// UpdateChildFormatting
         /// </summary>
         //--------------------------------------------------------------------------------------
-        protected override void UpdateChildFormatting_Internal(Vector2? updatedSize)
+        protected override void UpdateFormatting_Internal(Vector2 updatedSize)
         {
             if (Orientation == Orientation.Horizontal) UpdateHorizontal(updatedSize);
             else UpdateVertical(updatedSize);
@@ -94,7 +94,7 @@ namespace MonoVarmint.Widgets
                 var childSize = child.IntendedSize;
                 childSize.X += (child.Margin.Left ?? 0) + (child.Margin.Right ?? 0);
                 childSize.Y += (child.Margin.Top ?? 0) + (child.Margin.Bottom ?? 0);
-                stretchBudget += child.Stretch.Vertical ?? 0;
+                //stretchBudget += child.Stretch.Vertical ?? 0;
 
                 newStackSize.Y += childSize.Y;
                 if (childSize.X > maxWidth) maxWidth = childSize.X;
@@ -107,11 +107,11 @@ namespace MonoVarmint.Widgets
             foreach (var child in Children)
             {
                 var newSize = child.IntendedSize;
-                if (child.Stretch.Horizontal != null)
+                if (child.WidgetAlignment.X == Alignment.Stretch)
                 {
                     newSize.X = Size.X - ((child.Margin.Left ?? 0) + (child.Margin.Right ?? 0));
                 }
-                if (child.Stretch.Vertical != null)
+                if (child.WidgetAlignment.Y == Alignment.Stretch)
                 {
                     spaceFromStretchables += newSize.Y;
                 }
@@ -154,9 +154,9 @@ namespace MonoVarmint.Widgets
                     var newSize = child.Size;
                     nextY += child.Margin.Top ?? 0;
                     child.Offset = new Vector2(child.Offset.X, nextY);
-                    if(child.Stretch.Vertical != null)
+                    if(child.WidgetAlignment.Y == Alignment.Stretch)
                     {
-                        float newHeight = (child.Stretch.Vertical.Value / stretchBudget) * remainingSpace;
+                        float newHeight = (1 / stretchBudget) * remainingSpace;
                         newSize = new Vector2(child.Size.X, newHeight);
                     }
                     nextY += newSize.Y + (child.Margin.Bottom ?? 0);
@@ -192,7 +192,7 @@ namespace MonoVarmint.Widgets
                 var childSize = child.IntendedSize;
                 childSize.X += (child.Margin.Left ?? 0) + (child.Margin.Right ?? 0);
                 childSize.Y += (child.Margin.Top ?? 0) + (child.Margin.Bottom ?? 0);
-                stretchBudget += child.Stretch.Horizontal ?? 0;
+                //stretchBudget += child.Stretch.Horizontal ?? 0;
 
                 newStackSize.X += childSize.X;
                 if (childSize.Y > maxHeight) maxHeight = childSize.Y;
@@ -205,11 +205,11 @@ namespace MonoVarmint.Widgets
             foreach (var child in Children)
             {
                 var newSize = child.IntendedSize;
-                if (child.Stretch.Horizontal != null)
+                if (child.WidgetAlignment.X == Alignment.Stretch)
                 {
                     spaceFromStretchables += newSize.X;
                 }
-                if (child.Stretch.Vertical != null)
+                if (child.WidgetAlignment.Y == Alignment.Stretch)
                 {
                      newSize.Y = Size.Y - ((child.Margin.Top ?? 0) + (child.Margin.Bottom ?? 0));
                 }
@@ -252,9 +252,9 @@ namespace MonoVarmint.Widgets
                     var newSize = child.Size;
                     nextX += child.Margin.Left ?? 0;
                     child.Offset = new Vector2(nextX, child.Offset.Y);
-                    if (child.Stretch.Horizontal != null)
+                    if (child.WidgetAlignment.X == Alignment.Stretch)
                     {
-                        float newWidth = (child.Stretch.Horizontal.Value / stretchBudget) * remainingSpace;
+                        float newWidth = (1 / stretchBudget) * remainingSpace;
                         newSize = new Vector2(newWidth, child.Size.Y);
                     }
                     nextX += newSize.X + (child.Margin.Right ?? 0);
