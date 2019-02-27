@@ -18,16 +18,42 @@ namespace MonoVarmint.Tools.Tests
 
 
         [TestMethod]
+        public void Format_Label_Autosizes_ToText()
+        {
+            var layoutText = @"
+<TestWidget WidgetAlignment=""Stretch,Stretch"" >
+    <Grid Name=""TheGrid"">
+        <Label Name=""TheLabel"" Content=""Hi"" />
+    </Grid>
+</TestWidget>";
+            var target = (TestWidget)TestUtils.LoadFromText(this, layoutText, "(root)");
+            var label = target.FindWidgetByName("TheLabel");
+
+            var renderer = new MockRenderer(10,10);
+            renderer.MeasureTextReturn = new Vector2(.5f, .2f);
+            target.Renderer = renderer;
+            target.Prepare(null);
+            target.UpdateFormatting(new Vector2(5, 8));
+            Assert.AreEqual(new Vector2(5, 8), label.Size);
+            Assert.AreEqual(new Vector2(0,0), label.Offset);
+
+            label.WidgetAlignment = new AlignmentTuple(Alignment.Center, Alignment.Center);
+            Assert.AreEqual(new Vector2(.5f, .2f), label.Size);
+            Assert.AreEqual(new Vector2(2.25f, 3.9f), label.Offset);
+
+        }
+
+        [TestMethod]
         public void Format_NoMargins_NoSize_Stretch_FillsToMax()
         {
-            var root = new TestWidget() {};
+            var root = new TestWidget() { };
             root.UpdateFormatting(new Vector2(1.1f, 2.2f));
             Assert.AreEqual(new Vector2(1.1f, 2.2f), root.Size);
 
             var grid = new VarmintWidgetGrid() { };
             root.AddChild(grid);
             root.Prepare(null);
-            root.UpdateFormatting(new Vector2(10,20));
+            root.UpdateFormatting(new Vector2(10, 20));
             Assert.AreEqual(new Vector2(10, 20), grid.Size);
         }
 
