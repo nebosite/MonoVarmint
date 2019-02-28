@@ -2,7 +2,7 @@
 <Grid
   Size="{ScreenSize}"
   ForegroundColor="Black"
-  HorizontalContentAlignment="Center"
+  ContentAlignment="Center,"
   BackgroundColor="White">
   <Grid
     Name="GameContainer"
@@ -12,7 +12,7 @@
   <StackPanel Orientation="Horizontal" Margin=",.1">
     <Label
       Size=".2,.1"
-      HorizontalContentAlignment="Right"
+      ContentAlignment="Right,"
       FontSize=".1"
       Content="Score:" />
     <Label

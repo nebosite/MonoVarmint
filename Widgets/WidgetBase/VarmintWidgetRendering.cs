@@ -155,17 +155,6 @@ namespace MonoVarmint.Widgets
         public void UpdateFormatting(Vector2 maxSizeExtent)
         {
             UpdateFormatting_Internal(maxSizeExtent);
-
-            //if (_updating || _applyingStyles || !_prepared) return;
-            //_updating = true;
-            //// recurse first to ensure children that have a size determined by content
-            //// update their size.
-            //foreach (var child in Children)
-            //{
-            //   child.UpdateFormatting();
-            //}
-            //UpdateFormatting_Internal(updatedSize);
-            //_updating = false;
         }
 
         protected virtual void UpdateFormatting_Internal(Vector2 maxSizeExtent)
@@ -292,82 +281,6 @@ namespace MonoVarmint.Widgets
             {
                 child.UpdateFormatting_Internal(this.Size);
             }
-
-            //if (updatedSize != null) Size = updatedSize.Value;
-            //foreach (var child in Children)
-            //{
-            //    var newSize = child.IntendedSize;
-            //    if (child.Stretch.Horizontal != null)
-            //    {
-            //        newSize.X = Size.X - ((child.Margin.Left ?? 0) + (child.Margin.Right ?? 0));
-            //    }
-            //    if (child.Stretch.Vertical != null)
-            //    {
-            //        newSize.Y = Size.Y - ((child.Margin.Top ?? 0) + (child.Margin.Bottom ?? 0));
-            //    }
-            //    var newOffset = Vector2.Zero;
-            //    var availableSize = Size - newSize;
-            //    availableSize.X -= (child.Margin.Left ?? 0) + (child.Margin.Right ?? 0);
-            //    availableSize.Y -= (child.Margin.Top ?? 0) + (child.Margin.Bottom ?? 0);
-
-            //    switch (HorizontalContentAlignment)
-            //    {
-            //        case HorizontalContentAlignment.Left:
-            //            if (child.Margin.Left != null)
-            //            {
-            //                newOffset.X = child.Margin.Left.Value;
-            //                if (child.Margin.Right != null) newSize.X += availableSize.X;
-            //            }
-            //            else
-            //            {
-            //                newOffset.X = child.Margin.Right == null ? 0 : availableSize.X;
-            //            }
-
-            //            break;
-            //        case HorizontalContentAlignment.Center:
-            //            var width = newSize.X + (child.Margin.Left ?? 0) + (child.Margin.Right ?? 0);
-            //            newOffset.X = (Size.X - width) / 2 + (child.Margin.Left ?? 0);
-            //            break;
-            //        case HorizontalContentAlignment.Right:
-            //            if (child.Margin.Left != null) newSize.X += availableSize.X;
-            //            else
-            //            {
-            //                newOffset.X = availableSize.X;
-            //            }
-            //            break;
-            //    }
-
-            //    switch (VerticalContentAlignment)
-            //    {
-            //        case VerticalContentAlignment.Top:
-            //            if (child.Margin.Top != null)
-            //            {
-            //                newOffset.Y = child.Margin.Top.Value;
-            //                if (child.Margin.Bottom != null) newSize.Y += availableSize.Y;
-            //            }
-            //            else
-            //            {
-            //                newOffset.Y = child.Margin.Bottom == null? 0 : availableSize.Y;
-            //            }
-            //            break;
-            //        case VerticalContentAlignment.Center:
-            //            var height = newSize.Y + (child.Margin.Top ?? 0) + (child.Margin.Bottom ?? 0);
-            //            newOffset.Y = (Size.Y - height) / 2 + (child.Margin.Top ?? 0);
-            //            break;
-            //        case VerticalContentAlignment.Bottom:
-            //            if (child.Margin.Top != null) newSize.Y += availableSize.Y;
-            //            else
-            //            {
-            //                newOffset.Y = availableSize.Y;
-            //            }
-            //            break;
-            //    }
-
-            //    child.Offset = newOffset;
-            //    child.Size = newSize;
-
-            //}
         }
-
     }
 }

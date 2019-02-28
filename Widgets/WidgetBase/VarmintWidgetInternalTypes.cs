@@ -43,21 +43,6 @@ namespace MonoVarmint.Widgets
         Bottom = 4,
     };
 
-
-    public enum HorizontalContentAlignment
-    {
-        Left,
-        Center,
-        Right
-    };
-
-    public enum VerticalContentAlignment
-    {
-        Top,
-        Center,
-        Bottom
-    };
-
     public enum TouchMoveType
     {
         Move,

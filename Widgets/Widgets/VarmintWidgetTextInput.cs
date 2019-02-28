@@ -102,18 +102,18 @@ namespace MonoVarmint.Widgets
             if (WrapContent) _margin = Size.X;
             Vector2 textSize = Renderer.MeasureText(GetTextToDisplay(), FontName, FontSize, _margin);
 
-            switch (HorizontalContentAlignment)
+            switch (ContentAlignment?.X)
             {
-                case HorizontalContentAlignment.Left: break;
-                case HorizontalContentAlignment.Center: alignedOffset.X += (Size.X - textSize.X) / 2; break;
-                case HorizontalContentAlignment.Right: alignedOffset.X += (Size.X - textSize.X); break;
+                case Alignment.Left: break;
+                case Alignment.Center: alignedOffset.X += (Size.X - textSize.X) / 2; break;
+                case Alignment.Right: alignedOffset.X += (Size.X - textSize.X); break;
             }
 
-            switch (VerticalContentAlignment)
+            switch (ContentAlignment?.Y)
             {
-                case VerticalContentAlignment.Top: break;
-                case VerticalContentAlignment.Center: alignedOffset.Y += (Size.Y - textSize.Y) / 2; break;
-                case VerticalContentAlignment.Bottom: alignedOffset.Y += (Size.Y - textSize.Y); break;
+                case Alignment.Top: break;
+                case Alignment.Center: alignedOffset.Y += (Size.Y - textSize.Y) / 2; break;
+                case Alignment.Bottom: alignedOffset.Y += (Size.Y - textSize.Y); break;
             }
             return alignedOffset;
         }

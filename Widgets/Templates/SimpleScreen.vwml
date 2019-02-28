@@ -2,7 +2,7 @@
 <Grid
   Size="{ScreenSize}"
   ForegroundColor="Black"
-  HorizontalContentAlignment="Center"
+  ContentAlignment="Center,"
   BackgroundColor="#e0e0e0">
   <StackPanel >
     <Label

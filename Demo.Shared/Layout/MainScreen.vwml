@@ -2,7 +2,7 @@
 <Grid
   Size="{ScreenSize}"
   ForegroundColor="Black"
-  HorizontalContentAlignment="Center"
+  ContentAlignment="Center"
   BackgroundColor="{GlobalBackgroundColor}">
   <StackPanel >
     <Label
@@ -13,14 +13,12 @@
     <Label
       Content="The current time is:"
       FontSize=".04"
-      Size =".4,.07"
-      VerticalContentAlignment="Center" />
+      Size =".4,.07"/>
     <Label
       Content="{TimeText}"
       FontSize=".04"
       Size =".4,.07"
       Margin="0,0.02"
-      VerticalContentAlignment="Center"
       BackgroundColor="LightBlue" />
     <Label
       Size=".5,.3"
@@ -30,7 +28,6 @@
       BackgroundColor="Blue"
       ForegroundColor="Yellow"
       Content="WOW!"
-      VerticalContentAlignment="Center"
       Rotate="{WowRotate}" >
       <Label
         Size=".1,.1"
@@ -38,7 +35,6 @@
         Margin=".01,.01"
         ForegroundColor="White"
         Content="WOW!"
-        VerticalContentAlignment="Center"
         Rotate="{WowRotate}"/>
     </Label>
     <Slider Size=".8,.1" BackgroundColor="Red" Opacity=".2" Value="{MySliderValue}">

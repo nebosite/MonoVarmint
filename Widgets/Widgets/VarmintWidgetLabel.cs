@@ -65,18 +65,18 @@ namespace MonoVarmint.Widgets
             var margin = 0f;
             if (WrapContent) margin = adjustedSize.X;
             Vector2 textSize = Renderer.MeasureText(textToDisplay, FontName, FontSize, margin);
-            switch (HorizontalContentAlignment)
+            switch (ContentAlignment?.X)
             {
-                case HorizontalContentAlignment.Left: break;
-                case HorizontalContentAlignment.Center: alignedOffset.X += (adjustedSize.X - textSize.X) / 2; break;
-                case HorizontalContentAlignment.Right: alignedOffset.X += (adjustedSize.X - textSize.X); break;
+                case Alignment.Left: break;
+                case Alignment.Center: alignedOffset.X += (adjustedSize.X - textSize.X) / 2; break;
+                case Alignment.Right: alignedOffset.X += (adjustedSize.X - textSize.X); break;
             }
 
-            switch(VerticalContentAlignment)
+            switch(ContentAlignment?.Y)
             {
-                case VerticalContentAlignment.Top: break;
-                case VerticalContentAlignment.Center: alignedOffset.Y += (adjustedSize.Y - textSize.Y) / 2; break;
-                case VerticalContentAlignment.Bottom: alignedOffset.Y += (adjustedSize.Y - textSize.Y);  break;
+                case Alignment.Top: break;
+                case Alignment.Center: alignedOffset.Y += (adjustedSize.Y - textSize.Y) / 2; break;
+                case Alignment.Bottom: alignedOffset.Y += (adjustedSize.Y - textSize.Y);  break;
             }
 
             Renderer.DrawText(textToDisplay, FontName, FontSize, alignedOffset, RenderForegroundColor, margin);

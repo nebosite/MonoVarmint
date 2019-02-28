@@ -37,7 +37,7 @@ namespace MonoVarmint.Tools.Tests
         public void StackPanelCenteredOnAGrid_WorksFromSerialized()
         {
             var layoutText =
-                @"<Grid  HorizontalContentAlignment=""Center"" Size=""10,20"">
+                @"<Grid  ContentAlignment=""Center,"" Size=""10,20"">
                     <StackPanel Name=""panel"">
                         <Grid Size=""6,1""  Name=""panelChild"" />
                     </StackPanel>
@@ -63,7 +63,7 @@ namespace MonoVarmint.Tools.Tests
             //   Content = "Images/LogoTile" />
             var container = new VarmintWidgetGrid() {
                 Size = new Vector2(10, 20),
-                HorizontalContentAlignment = HorizontalContentAlignment.Center };
+                ContentAlignment = new AlignmentTuple(Alignment.Center, null)};
             var panel = new VarmintWidgetStackPanel() { };
             var panelChild1 = new VarmintWidgetGrid() { Size = new Vector2(6, 1) };
             panel.AddChild(panelChild1);

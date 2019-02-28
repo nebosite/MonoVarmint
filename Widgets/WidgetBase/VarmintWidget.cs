@@ -106,30 +106,6 @@ namespace MonoVarmint.Widgets
             set => _contentAlignment = value;
         }
 
-        private HorizontalContentAlignment? _horizontalContentAlignment;
-        public HorizontalContentAlignment HorizontalContentAlignment
-        {
-            get
-            {
-                if (_horizontalContentAlignment != null) return _horizontalContentAlignment.Value;
-                if (Parent == null) return HorizontalContentAlignment.Left;
-                return Parent.HorizontalContentAlignment;
-            }
-            set => _horizontalContentAlignment = value;
-        }
-
-        private VerticalContentAlignment? _verticalContentAlignment;
-        public VerticalContentAlignment VerticalContentAlignment
-        {
-            get
-            {
-                if (_verticalContentAlignment != null) return _verticalContentAlignment.Value;
-                if (Parent == null) return VerticalContentAlignment.Top;
-                return Parent.VerticalContentAlignment;
-            }
-            set => _verticalContentAlignment = value;
-        }
-
         private float? _fontSize;
         public float FontSize
         {

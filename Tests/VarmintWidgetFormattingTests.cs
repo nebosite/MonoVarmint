@@ -257,8 +257,6 @@ DONE: 0				na			Stretch		Fill to max
 
             var target = new TestWidget() {  };
             var child = new TestWidget() { Size = new Vector2(2, 2) };
-            target.HorizontalContentAlignment = HorizontalContentAlignment.Left;
-            target.VerticalContentAlignment = VerticalContentAlignment.Top;
             target.AddChild(child);
             target.Prepare(null);
 
@@ -272,12 +270,6 @@ DONE: 0				na			Stretch		Fill to max
             target.UpdateFormatting(size);
             Assert.AreEqual(1, child.Offset.X);
             Assert.AreEqual(2, child.Offset.Y);
-
-            // Setting right/bottom should pin the child to the right/bottom
-            child.Margin = new VarmintWidget.WidgetMargin() { Right=1,Bottom=2 };
-            target.UpdateFormatting(size);
-            Assert.AreEqual(7, child.Offset.X);
-            Assert.AreEqual(16, child.Offset.Y);
         }
     }
 }

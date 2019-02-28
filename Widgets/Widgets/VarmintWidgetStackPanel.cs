@@ -120,17 +120,17 @@ namespace MonoVarmint.Widgets
                 nextY += newSize.Y + (child.Margin.Bottom ?? 0);
                 var availableWidth = Size.X - newSize.X - (child.Margin.Right ?? 0) - (child.Margin.Left ?? 0);
 
-                switch (HorizontalContentAlignment)
+                switch (ContentAlignment?.X)
                 {
-                    case HorizontalContentAlignment.Left:
+                    case Alignment.Left:
                         newOffset.X = (child.Margin.Left ?? 0);
                         if (child.Margin.Right != null) newSize.X += availableWidth;
                         break;
-                    case HorizontalContentAlignment.Center:
+                    case Alignment.Center:
                         var width = newSize.X + (child.Margin.Left ?? 0) + (child.Margin.Right ?? 0);
                         newOffset.X = (Size.X - width) / 2 + (child.Margin.Left ?? 0);
                         break;
-                    case HorizontalContentAlignment.Right:
+                    case Alignment.Right:
                         if (child.Margin.Left != null) newSize.X += availableWidth;
                         else
                         {
@@ -218,17 +218,17 @@ namespace MonoVarmint.Widgets
                 nextX += newSize.X + (child.Margin.Right ?? 0);
                 var availableHeight = Size.Y - newSize.Y - (child.Margin.Top ?? 0) - (child.Margin.Bottom ?? 0);
 
-                switch (VerticalContentAlignment)
+                switch (ContentAlignment?.Y)
                 {
-                    case VerticalContentAlignment.Top:
+                    case Alignment.Top:
                         newOffset.Y = (child.Margin.Top ?? 0);
                         if (child.Margin.Bottom != null) newSize.Y += availableHeight;
                         break;
-                    case VerticalContentAlignment.Center:
+                    case Alignment.Center:
                         var height = newSize.Y + (child.Margin.Top ?? 0) + (child.Margin.Bottom ?? 0);
                         newOffset.Y = (Size.Y - height) / 2 + (child.Margin.Top ?? 0);
                         break;
-                    case VerticalContentAlignment.Bottom:
+                    case Alignment.Bottom:
                         if (child.Margin.Top != null) newSize.Y += availableHeight;
                         else
                         {
