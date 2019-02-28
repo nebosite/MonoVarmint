@@ -171,12 +171,12 @@ namespace MonoVarmint.Widgets
         protected virtual void UpdateFormatting_Internal(Vector2 maxSizeExtent)
         {
             if (SpecifiedSize == null) SpecifiedSize = new Tuple<float?, float?>(null, null);
-            var width = SpecifiedSize.Item1 ?? 0;
+            var width = SpecifiedSize.Item1 ?? Size.X;
             var maxWidth = maxSizeExtent.X - (Margin.Left ?? 0) - (Margin.Right ?? 0);
             if (maxWidth < 0) maxWidth = 0;
             if (width > maxWidth) width = maxWidth;
 
-            var height = SpecifiedSize.Item2 ?? 0;
+            var height = SpecifiedSize.Item2 ?? Size.Y;
             var maxheight = maxSizeExtent.Y - (Margin.Top ?? 0) - (Margin.Bottom ?? 0);
             if (maxheight < 0) maxheight = 0;
             if (height > maxheight) height = maxheight;

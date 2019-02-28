@@ -28,10 +28,21 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         protected override void UpdateFormatting_Internal(Vector2 updatedSize)
         {
-            //if(!HasSpecified("Size"))
-            //{
-                
-            //}
+            var width = updatedSize.X;
+            var height = updatedSize.Y;
+
+            var textSize = Renderer.MeasureText(Content.ToString(), FontName, FontSize, WrapContent ? width : 0);
+            if (SpecifiedSize?.Item1 == null && WidgetAlignment.X != Alignment.Stretch)
+            {
+                width = textSize.X;
+            }
+            if (SpecifiedSize?.Item2 == null && WidgetAlignment.Y != Alignment.Stretch)
+            {
+                height = textSize.Y;
+            }
+
+            Size = new Vector2(width, height);
+
             base.UpdateFormatting_Internal(updatedSize);
         }
 

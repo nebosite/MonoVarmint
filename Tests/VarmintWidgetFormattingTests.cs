@@ -4,6 +4,7 @@ using MonoVarmint.Tools;
 using MonoVarmint.Widgets;
 using Microsoft.Xna.Framework;
 using System.Reflection;
+using System.Collections.Concurrent;
 
 namespace MonoVarmint.Tools.Tests
 {
@@ -15,8 +16,6 @@ namespace MonoVarmint.Tools.Tests
             return null;
         }
 
-
-
         [TestMethod]
         public void Format_Label_Autosizes_ToText()
         {
@@ -27,17 +26,19 @@ namespace MonoVarmint.Tools.Tests
     </Grid>
 </TestWidget>";
             var target = (TestWidget)TestUtils.LoadFromText(this, layoutText, "(root)");
-            var label = target.FindWidgetByName("TheLabel");
+            var label = (VarmintWidgetLabel) target.FindWidgetByName("TheLabel");
 
             var renderer = new MockRenderer(10,10);
             renderer.MeasureTextReturn = new Vector2(.5f, .2f);
-            target.Renderer = renderer;
+            label.Renderer = renderer;
             target.Prepare(null);
             target.UpdateFormatting(new Vector2(5, 8));
             Assert.AreEqual(new Vector2(5, 8), label.Size);
             Assert.AreEqual(new Vector2(0,0), label.Offset);
 
             label.WidgetAlignment = new AlignmentTuple(Alignment.Center, Alignment.Center);
+            target.Prepare(null);
+            target.UpdateFormatting(new Vector2(5, 8));
             Assert.AreEqual(new Vector2(.5f, .2f), label.Size);
             Assert.AreEqual(new Vector2(2.25f, 3.9f), label.Offset);
 

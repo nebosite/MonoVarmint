@@ -52,10 +52,6 @@ namespace MonoVarmint.Widgets
             get => _size ?? Vector2.Zero;
             set
             {
-                if(SpecifiedSize == null)
-                {
-                    SpecifiedSize = new Tuple<float?, float?>(value.X, value.Y);
-                }
                 if (_size != null && _size == value) return;
                 if (OriginalSize == null || _applyingStyles)
                 {
