@@ -45,31 +45,11 @@ namespace MonoVarmint.Tools.Tests
 
             var target = TestUtils.LoadFromText(this, layoutText, "Barney");
             target.Prepare(new Dictionary<string, VarmintWidgetStyle>());
+            target.UpdateFormatting(new Vector2(10,20));
 
             var panel = target.FindWidgetByName("panel");
             var panelChild1 = target.FindWidgetByName("panelChild");
-            Assert.AreEqual(new Vector2(2, 0), panel.Offset);
-            Assert.AreEqual(new Vector2(0, 0), panelChild1.Offset);
-
-        }
-
-        [TestMethod]
-        public void StackPanelCenteredOnAGrid_Works()
-        {
-            //         < Grid Style = "BaseScreenStyle" >
-            //< StackPanel >
-            //  < Image
-            //   Size = ".8,.18"
-            //   Content = "Images/LogoTile" />
-            var container = new VarmintWidgetGrid() {
-                Size = new Vector2(10, 20),
-                ContentAlignment = new AlignmentTuple(Alignment.Center, null)};
-            var panel = new VarmintWidgetStackPanel() { };
-            var panelChild1 = new VarmintWidgetGrid() { Size = new Vector2(6, 1) };
-            panel.AddChild(panelChild1);
-            container.AddChild(panel);
-            container.Prepare(null);
-            container.UpdateFormatting(container.Size);
+            Assert.AreEqual(new Vector2(6, 1), panel.Size);
             Assert.AreEqual(new Vector2(2, 0), panel.Offset);
             Assert.AreEqual(new Vector2(0, 0), panelChild1.Offset);
 

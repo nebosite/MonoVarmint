@@ -54,29 +54,24 @@ namespace MonoVarmint.Widgets
         void Render(GameTime gameTime, VarmintWidget widget)
         {
             var textToDisplay = (Content == null) ? "" : Content.ToString();
-            var adjustedSize = Size;
-            if(!HasSize)
-            {
-                adjustedSize = Renderer.MeasureText(textToDisplay, FontName, FontSize, WrapContent ? Parent.Size.X : 0 );
-            }
 
-            Renderer.DrawBox(AbsoluteOffset, adjustedSize, RenderBackgroundColor);
+            Renderer.DrawBox(base.AbsoluteOffset, Size, base.RenderBackgroundColor);
             Vector2 alignedOffset = AbsoluteOffset;
             var margin = 0f;
-            if (WrapContent) margin = adjustedSize.X;
+            if (WrapContent) margin = Size.X;
             Vector2 textSize = Renderer.MeasureText(textToDisplay, FontName, FontSize, margin);
             switch (ContentAlignment?.X)
             {
                 case Alignment.Left: break;
-                case Alignment.Center: alignedOffset.X += (adjustedSize.X - textSize.X) / 2; break;
-                case Alignment.Right: alignedOffset.X += (adjustedSize.X - textSize.X); break;
+                case Alignment.Center: alignedOffset.X += (Size.X - textSize.X) / 2; break;
+                case Alignment.Right: alignedOffset.X += (Size.X - textSize.X); break;
             }
 
             switch(ContentAlignment?.Y)
             {
                 case Alignment.Top: break;
-                case Alignment.Center: alignedOffset.Y += (adjustedSize.Y - textSize.Y) / 2; break;
-                case Alignment.Bottom: alignedOffset.Y += (adjustedSize.Y - textSize.Y);  break;
+                case Alignment.Center: alignedOffset.Y += (Size.Y - textSize.Y) / 2; break;
+                case Alignment.Bottom: alignedOffset.Y += (Size.Y - textSize.Y);  break;
             }
 
             Renderer.DrawText(textToDisplay, FontName, FontSize, alignedOffset, RenderForegroundColor, margin);

@@ -157,19 +157,25 @@ namespace MonoVarmint.Widgets
             UpdateFormatting_Internal(maxSizeExtent);
         }
 
-        protected virtual void UpdateFormatting_Internal(Vector2 maxSizeExtent)
+        protected Vector2 GetMaxDimentsions(Vector2 maxSizeExtent, out float width, out float height)
         {
             if (SpecifiedSize == null) SpecifiedSize = new Tuple<float?, float?>(null, null);
-            var width = SpecifiedSize.Item1 ?? Size.X;
+            width = SpecifiedSize.Item1 ?? Size.X;
             var maxWidth = maxSizeExtent.X - (Margin.Left ?? 0) - (Margin.Right ?? 0);
             if (maxWidth < 0) maxWidth = 0;
             if (width > maxWidth) width = maxWidth;
 
-            var height = SpecifiedSize.Item2 ?? Size.Y;
+            height = SpecifiedSize.Item2 ?? Size.Y;
             var maxheight = maxSizeExtent.Y - (Margin.Top ?? 0) - (Margin.Bottom ?? 0);
             if (maxheight < 0) maxheight = 0;
             if (height > maxheight) height = maxheight;
+            return new Vector2(maxWidth, maxheight);
+        )
+            }
 
+        protected virtual void UpdateFormatting_Internal(Vector2 maxSizeExtent)
+        {
+            var maxSize = GetMaxDimentsions(maxSizeExtent, out var width, out var height);
             var left = 0f;
             var top = 0f;
 
@@ -233,7 +239,7 @@ namespace MonoVarmint.Widgets
                     {
                         throw new ArgumentException("Cannot specify Size.X with horizontal stretch alignment");
                     }
-                    width = maxWidth;
+                    width = maxSize.X;
                     left = Margin.Left ?? 0;
                     break;
                 case Alignment.Left:
@@ -258,7 +264,7 @@ namespace MonoVarmint.Widgets
                     {
                         throw new ArgumentException("Cannot specify Size.Y with vertical stretch alignment");
                     }
-                    height = maxheight;
+                    height = maxSize.Y;
                     top = Margin.Top ?? 0;
                     break;
                 case Alignment.Top:

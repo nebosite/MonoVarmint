@@ -63,17 +63,6 @@ namespace MonoVarmint.Widgets
             }
         }
 
-        public bool HasSize => _size.HasValue;
-
-        public Vector2 IntendedSize
-        {
-            get
-            {
-                if (_bindingTemplates.ContainsKey("Size")) return Size;
-                return OriginalSize ?? Vector2.Zero;
-            }
-        }
-
         public bool AllowInput { get; set; }
         public bool IsVisible { get; set; }
         public bool ClipToBounds { get; set; }

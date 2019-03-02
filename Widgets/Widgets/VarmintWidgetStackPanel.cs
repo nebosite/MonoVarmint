@@ -60,10 +60,14 @@ namespace MonoVarmint.Widgets
         /// UpdateChildFormatting
         /// </summary>
         //--------------------------------------------------------------------------------------
-        protected override void UpdateFormatting_Internal(Vector2 updatedSize)
+        protected override void UpdateFormatting_Internal(Vector2 maxExtent)
         {
-            if (Orientation == Orientation.Horizontal) UpdateHorizontal(updatedSize);
-            else UpdateVertical(updatedSize);
+            //var maxSize = GetMaxDimentsions(maxExtent, out var width, out var height);
+            //if (Orientation == Orientation.Horizontal) UpdateHorizontal(maxSize);
+            //else UpdateVertical(maxSize);
+
+            base.UpdateFormatting_Internal(maxExtent);
+
         }
 
         //--------------------------------------------------------------------------------------
@@ -71,102 +75,96 @@ namespace MonoVarmint.Widgets
         /// UpdateVertical
         /// </summary>
         //--------------------------------------------------------------------------------------
-        private void UpdateVertical(Vector2? updatedSize)
-        {
-            Vector2 newStackSize = IntendedSize;
-            if(updatedSize != null)
-            {
-                newStackSize = updatedSize.Value;
-            }
-            var intendedSpace = newStackSize.Y;
+        //private void UpdateVertical(Vector2 updatedSize)
+        //{
+        //    Vector2 newStackSize = updatedSize;
 
-            if(!HasChildren)
-            {
-                this.Size = newStackSize;
-                return;
-            }
-            newStackSize.Y = 0;
-            var maxWidth = 0f;
-            var stretchBudget = 0f;
-            float spaceFromStretchables = 0;
-            foreach (var child in Children)
-            {
-                var childSize = child.IntendedSize;
-                childSize.X += (child.Margin.Left ?? 0) + (child.Margin.Right ?? 0);
-                childSize.Y += (child.Margin.Top ?? 0) + (child.Margin.Bottom ?? 0);
-                //stretchBudget += child.Stretch.Vertical ?? 0;
+        //    var intendedSpace = newStackSize.Y;
 
-                newStackSize.Y += childSize.Y;
-                if (childSize.X > maxWidth) maxWidth = childSize.X;
-            }
+        //    if(!HasChildren)
+        //    {
+        //        this.Size = newStackSize;
+        //        return;
+        //    }
+        //    newStackSize.Y = 0;
+        //    var maxWidth = 0f;
+        //    var stretchBudget = 0f;
+        //    float spaceFromStretchables = 0;
+        //    foreach (var child in Children)
+        //    {
+        //        child.UpdateFormatting(newStackSize);
 
-            if (newStackSize.X == 0) newStackSize.X = maxWidth;
-            Size = newStackSize;
-            float nextY = 0;
+        //        newStackSize.Y += childSize.Y;
+        //        if (childSize.X > maxWidth) maxWidth = childSize.X;
+        //    }
 
-            foreach (var child in Children)
-            {
-                var newSize = child.IntendedSize;
-                if (child.WidgetAlignment.X == Alignment.Stretch)
-                {
-                    newSize.X = Size.X - ((child.Margin.Left ?? 0) + (child.Margin.Right ?? 0));
-                }
-                if (child.WidgetAlignment.Y == Alignment.Stretch)
-                {
-                    spaceFromStretchables += newSize.Y;
-                }
-                nextY += child.Margin.Top ?? 0;
-                var newOffset = new Vector2(0, nextY);
-                nextY += newSize.Y + (child.Margin.Bottom ?? 0);
-                var availableWidth = Size.X - newSize.X - (child.Margin.Right ?? 0) - (child.Margin.Left ?? 0);
+        //    if (newStackSize.X == 0) newStackSize.X = maxWidth;
+        //    Size = newStackSize;
+        //    float nextY = 0;
 
-                switch (ContentAlignment?.X)
-                {
-                    case Alignment.Left:
-                        newOffset.X = (child.Margin.Left ?? 0);
-                        if (child.Margin.Right != null) newSize.X += availableWidth;
-                        break;
-                    case Alignment.Center:
-                        var width = newSize.X + (child.Margin.Left ?? 0) + (child.Margin.Right ?? 0);
-                        newOffset.X = (Size.X - width) / 2 + (child.Margin.Left ?? 0);
-                        break;
-                    case Alignment.Right:
-                        if (child.Margin.Left != null) newSize.X += availableWidth;
-                        else
-                        {
-                            newOffset.X = availableWidth;
-                        }
-                        break;
-                }
+        //    foreach (var child in Children)
+        //    {
+        //        var newSize = child.IntendedSize;
+        //        if (child.WidgetAlignment.X == Alignment.Stretch)
+        //        {
+        //            newSize.X = Size.X - ((child.Margin.Left ?? 0) + (child.Margin.Right ?? 0));
+        //        }
+        //        if (child.WidgetAlignment.Y == Alignment.Stretch)
+        //        {
+        //            spaceFromStretchables += newSize.Y;
+        //        }
+        //        nextY += child.Margin.Top ?? 0;
+        //        var newOffset = new Vector2(0, nextY);
+        //        nextY += newSize.Y + (child.Margin.Bottom ?? 0);
+        //        var availableWidth = Size.X - newSize.X - (child.Margin.Right ?? 0) - (child.Margin.Left ?? 0);
 
-                child.Offset = newOffset;
-                child.Size = newSize;
-            }
+        //        switch (ContentAlignment?.X)
+        //        {
+        //            case Alignment.Left:
+        //                newOffset.X = (child.Margin.Left ?? 0);
+        //                if (child.Margin.Right != null) newSize.X += availableWidth;
+        //                break;
+        //            case Alignment.Center:
+        //                var width = newSize.X + (child.Margin.Left ?? 0) + (child.Margin.Right ?? 0);
+        //                newOffset.X = (Size.X - width) / 2 + (child.Margin.Left ?? 0);
+        //                break;
+        //            case Alignment.Right:
+        //                if (child.Margin.Left != null) newSize.X += availableWidth;
+        //                else
+        //                {
+        //                    newOffset.X = availableWidth;
+        //                }
+        //                break;
+        //        }
 
-            // If there is stretching to do, we need another pass
-            var remainingSpace = intendedSpace - nextY;
-            if(stretchBudget > 0 && remainingSpace > 0)
-            {
-                remainingSpace += spaceFromStretchables;
-                nextY = 0;
-                foreach (var child in Children)
-                {
-                    var newSize = child.Size;
-                    nextY += child.Margin.Top ?? 0;
-                    child.Offset = new Vector2(child.Offset.X, nextY);
-                    if(child.WidgetAlignment.Y == Alignment.Stretch)
-                    {
-                        float newHeight = (1 / stretchBudget) * remainingSpace;
-                        newSize = new Vector2(child.Size.X, newHeight);
-                    }
-                    nextY += newSize.Y + (child.Margin.Bottom ?? 0);
+        //        child.Offset = newOffset;
+        //        child.Size = newSize;
+        //    }
 
-                    child.Size = newSize;
-                }
-                newStackSize.Y = nextY;
-                Size = newStackSize;
-            }
-        }
+        //    // If there is stretching to do, we need another pass
+        //    var remainingSpace = intendedSpace - nextY;
+        //    if(stretchBudget > 0 && remainingSpace > 0)
+        //    {
+        //        remainingSpace += spaceFromStretchables;
+        //        nextY = 0;
+        //        foreach (var child in Children)
+        //        {
+        //            var newSize = child.Size;
+        //            nextY += child.Margin.Top ?? 0;
+        //            child.Offset = new Vector2(child.Offset.X, nextY);
+        //            if(child.WidgetAlignment.Y == Alignment.Stretch)
+        //            {
+        //                float newHeight = (1 / stretchBudget) * remainingSpace;
+        //                newSize = new Vector2(child.Size.X, newHeight);
+        //            }
+        //            nextY += newSize.Y + (child.Margin.Bottom ?? 0);
+
+        //            child.Size = newSize;
+        //        }
+        //        newStackSize.Y = nextY;
+        //        Size = newStackSize;
+        //    }
+        //}
 
 
         //--------------------------------------------------------------------------------------
@@ -174,96 +172,92 @@ namespace MonoVarmint.Widgets
         /// UpdateHorizontal
         /// </summary>
         //--------------------------------------------------------------------------------------
-        private void UpdateHorizontal(Vector2? updatedSize)
-        {
-            Vector2 newStackSize = IntendedSize;
-            if (updatedSize != null)
-            {
-                newStackSize = updatedSize.Value;
-            }
-            var intendedSpace = newStackSize.X;
+        //private void UpdateHorizontal(Vector2 updatedSize)
+        //{
+        //    Vector2 newStackSize = updatedSize;
+        //    var intendedSpace = newStackSize.X;
 
-            newStackSize.X = 0;
-            var maxHeight = 0f;
-            var stretchBudget = 0f;
-            float spaceFromStretchables = 0;
-            foreach (var child in Children)
-            {
-                var childSize = child.IntendedSize;
-                childSize.X += (child.Margin.Left ?? 0) + (child.Margin.Right ?? 0);
-                childSize.Y += (child.Margin.Top ?? 0) + (child.Margin.Bottom ?? 0);
-                //stretchBudget += child.Stretch.Horizontal ?? 0;
+        //    newStackSize.X = 0;
+        //    var maxHeight = 0f;
+        //    var stretchBudget = 0f;
+        //    float spaceFromStretchables = 0;
+        //    foreach (var child in Children)
+        //    {
+        //        var childSize = child.IntendedSize;
+        //        childSize.X += (child.Margin.Left ?? 0) + (child.Margin.Right ?? 0);
+        //        childSize.Y += (child.Margin.Top ?? 0) + (child.Margin.Bottom ?? 0);
+        //        //stretchBudget += child.Stretch.Horizontal ?? 0;
 
-                newStackSize.X += childSize.X;
-                if (childSize.Y > maxHeight) maxHeight = childSize.Y;
-            }
+        //        newStackSize.X += childSize.X;
+        //        if (childSize.Y > maxHeight) maxHeight = childSize.Y;
+        //    }
 
-            if (newStackSize.Y == 0) newStackSize.Y = maxHeight;
-            Size = newStackSize;
-            float nextX = 0;
+        //    if (newStackSize.Y == 0) newStackSize.Y = maxHeight;
+        //    Size = newStackSize;
+        //    float nextX = 0;
 
-            foreach (var child in Children)
-            {
-                var newSize = child.IntendedSize;
-                if (child.WidgetAlignment.X == Alignment.Stretch)
-                {
-                    spaceFromStretchables += newSize.X;
-                }
-                if (child.WidgetAlignment.Y == Alignment.Stretch)
-                {
-                     newSize.Y = Size.Y - ((child.Margin.Top ?? 0) + (child.Margin.Bottom ?? 0));
-                }
-                nextX += (child.Margin.Left ?? 0);
-                var newOffset = new Vector2(nextX, 0);
-                nextX += newSize.X + (child.Margin.Right ?? 0);
-                var availableHeight = Size.Y - newSize.Y - (child.Margin.Top ?? 0) - (child.Margin.Bottom ?? 0);
+        //    foreach (var child in Children)
+        //    {
+        //        var newSize = child.IntendedSize;
+        //        if (child.WidgetAlignment.X == Alignment.Stretch)
+        //        {
+        //            spaceFromStretchables += newSize.X;
+        //        }
+        //        if (child.WidgetAlignment.Y == Alignment.Stretch)
+        //        {
+        //             newSize.Y = Size.Y - ((child.Margin.Top ?? 0) + (child.Margin.Bottom ?? 0));
+        //        }
+        //        nextX += (child.Margin.Left ?? 0);
+        //        var newOffset = new Vector2(nextX, 0);
+        //        nextX += newSize.X + (child.Margin.Right ?? 0);
+        //        var availableHeight = Size.Y - newSize.Y - (child.Margin.Top ?? 0) - (child.Margin.Bottom ?? 0);
 
-                switch (ContentAlignment?.Y)
-                {
-                    case Alignment.Top:
-                        newOffset.Y = (child.Margin.Top ?? 0);
-                        if (child.Margin.Bottom != null) newSize.Y += availableHeight;
-                        break;
-                    case Alignment.Center:
-                        var height = newSize.Y + (child.Margin.Top ?? 0) + (child.Margin.Bottom ?? 0);
-                        newOffset.Y = (Size.Y - height) / 2 + (child.Margin.Top ?? 0);
-                        break;
-                    case Alignment.Bottom:
-                        if (child.Margin.Top != null) newSize.Y += availableHeight;
-                        else
-                        {
-                            newOffset.Y = availableHeight;
-                        }
-                        break;
-                }
+        //        switch (ContentAlignment?.Y)
+        //        {
+        //            case Alignment.Top:
+        //                newOffset.Y = (child.Margin.Top ?? 0);
+        //                if (child.Margin.Bottom != null) newSize.Y += availableHeight;
+        //                break;
+        //            case Alignment.Center:
+        //                var height = newSize.Y + (child.Margin.Top ?? 0) + (child.Margin.Bottom ?? 0);
+        //                newOffset.Y = (Size.Y - height) / 2 + (child.Margin.Top ?? 0);
+        //                break;
+        //            case Alignment.Bottom:
+        //                if (child.Margin.Top != null) newSize.Y += availableHeight;
+        //                else
+        //                {
+        //                    newOffset.Y = availableHeight;
+        //                }
+        //                break;
+        //        }
 
-                child.Offset = newOffset;
-                child.Size = newSize;
-            }
+        //        child.Offset = newOffset;
+        //        child.Size = newSize;
+        //    }
 
-            // If there is stretching to do, we need another pass
-            var remainingSpace = intendedSpace - nextX;
-            if (stretchBudget > 0 && remainingSpace > 0)
-            {
-                remainingSpace += spaceFromStretchables;
-                nextX = 0;
-                foreach (var child in Children)
-                {
-                    var newSize = child.Size;
-                    nextX += child.Margin.Left ?? 0;
-                    child.Offset = new Vector2(nextX, child.Offset.Y);
-                    if (child.WidgetAlignment.X == Alignment.Stretch)
-                    {
-                        float newWidth = (1 / stretchBudget) * remainingSpace;
-                        newSize = new Vector2(newWidth, child.Size.Y);
-                    }
-                    nextX += newSize.X + (child.Margin.Right ?? 0);
+        //    // If there is stretching to do, we need another pass
+        //    var remainingSpace = intendedSpace - nextX;
+        //    if (stretchBudget > 0 && remainingSpace > 0)
+        //    {
+        //        remainingSpace += spaceFromStretchables;
+        //        nextX = 0;
+        //        foreach (var child in Children)
+        //        {
+        //            var newSize = child.Size;
+        //            nextX += child.Margin.Left ?? 0;
+        //            child.Offset = new Vector2(nextX, child.Offset.Y);
+        //            if (child.WidgetAlignment.X == Alignment.Stretch)
+        //            {
+        //                float newWidth = (1 / stretchBudget) * remainingSpace;
+        //                newSize = new Vector2(newWidth, child.Size.Y);
+        //            }
+        //            nextX += newSize.X + (child.Margin.Right ?? 0);
 
-                    child.Size = newSize;
-                }
-                newStackSize.X = nextX;
-                Size = newStackSize;
-            }
-        }
+        //            child.Size = newSize;
+        //        }
+        //        newStackSize.X = nextX;
+        //        Size = newStackSize;
+        //    }
+        //}
     }
 }
