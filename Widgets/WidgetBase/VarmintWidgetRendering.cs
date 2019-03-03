@@ -30,7 +30,7 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         public virtual void RenderMe(GameTime gameTime)
         {
-            if(Renderer == null)
+            if (Renderer == null)
             {
                 throw new InvalidOperationException("The Renderer property is null on " + GetType().Name + " with Name=" + Name);
             }
@@ -45,14 +45,14 @@ namespace MonoVarmint.Widgets
 
             RenderChildren(gameTime);
 
-            if(VisualDebuggingEnabled)
+            if (VisualDebuggingEnabled)
             {
-                Renderer.DrawRectangle(Offset, Size, .003f, Color.Red);  
+                Renderer.DrawRectangle(Offset, Size, .003f, Color.Red);
             }
 
             if (!shouldClip) return;
             Renderer.EndClipping(
-                (float)(Rotate / 180.0 * Math.PI), 
+                (float)(Rotate / 180.0 * Math.PI),
                 new Vector2(.5f),
                 new Vector2(1),
                 FlipHorizontal,
@@ -105,7 +105,7 @@ namespace MonoVarmint.Widgets
                             finalValues.Add(stylePropertyName, style._declaredSettings[stylePropertyName]);
                         }
                     }
-                    style = (VarmintWidgetStyle) style.Parent;
+                    style = (VarmintWidgetStyle)style.Parent;
                 }
             }
 
@@ -157,23 +157,36 @@ namespace MonoVarmint.Widgets
             UpdateFormatting_Internal(maxSizeExtent);
         }
 
-        protected Vector2 GetMaxDimentsions(Vector2 maxSizeExtent, out float width, out float height)
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// GetMaxDimentsions - figure out the max size dimensions using margin and max
+        /// exterior size.  Also figure out initial values for width and height that are
+        /// cropped my the max size.
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        protected Vector2 GetMaxDimentsions(Vector2 maxSizeExtent, out float croppedWidth, out float croppedHeight)
         {
             if (SpecifiedSize == null) SpecifiedSize = new Tuple<float?, float?>(null, null);
-            width = SpecifiedSize.Item1 ?? Size.X;
+            croppedWidth = SpecifiedSize.Item1 ?? Size.X;
             var maxWidth = maxSizeExtent.X - (Margin.Left ?? 0) - (Margin.Right ?? 0);
             if (maxWidth < 0) maxWidth = 0;
-            if (width > maxWidth) width = maxWidth;
+            if (croppedWidth > maxWidth) croppedWidth = maxWidth;
 
-            height = SpecifiedSize.Item2 ?? Size.Y;
+            croppedHeight = SpecifiedSize.Item2 ?? Size.Y;
             var maxheight = maxSizeExtent.Y - (Margin.Top ?? 0) - (Margin.Bottom ?? 0);
             if (maxheight < 0) maxheight = 0;
-            if (height > maxheight) height = maxheight;
-            return new Vector2(maxWidth, maxheight);
-        )
-            }
+            if (croppedHeight > maxheight) croppedHeight = maxheight;
 
-        protected virtual void UpdateFormatting_Internal(Vector2 maxSizeExtent)
+            return new Vector2(maxWidth, maxheight);
+        }
+
+
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// Standard widget formatting to set size and offset values
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        protected virtual void UpdateFormatting_Internal(Vector2 maxSizeExtent, bool updateChildren = true)
         {
             var maxSize = GetMaxDimentsions(maxSizeExtent, out var width, out var height);
             var left = 0f;
@@ -237,7 +250,7 @@ namespace MonoVarmint.Widgets
                 case Alignment.Stretch:
                     if(SpecifiedSize?.Item1 != null)
                     {
-                        throw new ArgumentException("Cannot specify Size.X with horizontal stretch alignment");
+                        throw new ArgumentException($"Cannot specify Size.X with horizontal stretch alignment.   Widget: {Name}");
                     }
                     width = maxSize.X;
                     left = Margin.Left ?? 0;
@@ -252,7 +265,7 @@ namespace MonoVarmint.Widgets
                     left = maxSizeExtent.X - width - (Margin.Right ?? 0);
                     break;
                 default:
-                    throw new ArgumentException($"Alignment Value {alignment.X} is not valid with Horizontal alignment" );
+                    throw new ArgumentException($"Alignment Value {alignment.X} is not valid with Horizontal alignment.   Widget: {Name}" );
 
             }
 
@@ -262,7 +275,7 @@ namespace MonoVarmint.Widgets
                 case Alignment.Stretch:
                     if (SpecifiedSize?.Item2 != null)
                     {
-                        throw new ArgumentException("Cannot specify Size.Y with vertical stretch alignment");
+                        throw new ArgumentException($"Cannot specify Size.Y with vertical stretch alignment.   Widget: {Name}");
                     }
                     height = maxSize.Y;
                     top = Margin.Top ?? 0;
@@ -277,15 +290,18 @@ namespace MonoVarmint.Widgets
                     top = maxSizeExtent.Y - height - (Margin.Bottom ?? 0);
                     break;
                 default:
-                    throw new ArgumentException($"Alignment Value {alignment.Y} is not valid with Vertical alignment");
+                    throw new ArgumentException($"Alignment Value {alignment.Y} is not valid with Vertical alignment.  Widget: {Name}");
             }
 
             Size = new Vector2(width, height);
             Offset = new Vector2(left, top);
 
-            foreach (var child in Children)
+            if(updateChildren)
             {
-                child.UpdateFormatting_Internal(this.Size);
+                foreach (var child in Children)
+                {
+                    child.UpdateFormatting(this.Size);
+                }
             }
         }
     }

@@ -26,7 +26,7 @@ namespace MonoVarmint.Widgets
         /// Render
         /// </summary>
         //--------------------------------------------------------------------------------------
-        protected override void UpdateFormatting_Internal(Vector2 updatedSize)
+        protected override void UpdateFormatting_Internal(Vector2 updatedSize, bool updateChildren = true)
         {
             var width = updatedSize.X;
             var height = updatedSize.Y;
@@ -43,7 +43,7 @@ namespace MonoVarmint.Widgets
 
             Size = new Vector2(width, height);
 
-            base.UpdateFormatting_Internal(updatedSize);
+            base.UpdateFormatting_Internal(updatedSize, updateChildren);
         }
 
         //--------------------------------------------------------------------------------------

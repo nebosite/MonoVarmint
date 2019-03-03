@@ -28,7 +28,12 @@ namespace MonoVarmint.Widgets
 
         public AlignmentTuple(Alignment? x, Alignment? y)
         {
+            if (x == Alignment.Top) x = Alignment.Left;
+            if (x == Alignment.Bottom) x = Alignment.Right;
             X = x;
+
+            if (y == Alignment.Left) y = Alignment.Top;
+            if (y == Alignment.Right) y = Alignment.Bottom;
             Y = y;
         }
     }

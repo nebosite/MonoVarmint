@@ -3,12 +3,13 @@ using MonoVarmint.Widgets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace MonoVarmint.Tools.Tests
 {
-    class MockRenderer : IMediaRenderer
+    class MockRenderer : IMediaRenderer, IVarmintWidgetInjector
     {
         public Vector2 ScreenSize { get; set; }
         public Vector2 MeasureTextReturn { get; internal set; }
@@ -33,6 +34,12 @@ namespace MonoVarmint.Tools.Tests
         {
             ScreenSize = new Vector2(width, height);
         }
+
+        public object GetInjectedValue(VarmintWidgetInjectAttribute attribute, PropertyInfo property)
+        {
+            return this;
+        }
+
     }
 
 

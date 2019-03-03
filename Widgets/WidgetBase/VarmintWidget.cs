@@ -73,8 +73,8 @@ namespace MonoVarmint.Widgets
             get
             {
                 var output = new AlignmentTuple(
-                    _widgetAlignment?.X ?? Parent?.WidgetAlignment.X,
-                    _widgetAlignment?.Y ?? Parent?.WidgetAlignment.Y
+                    _widgetAlignment?.X ?? Parent?.ContentAlignment.X ?? Parent?.WidgetAlignment.X,
+                    _widgetAlignment?.Y ?? Parent?.ContentAlignment.Y ?? Parent?.WidgetAlignment.Y
                     );
                 return output;
             }
