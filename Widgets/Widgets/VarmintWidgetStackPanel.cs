@@ -63,9 +63,8 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         protected override void UpdateFormatting_Internal(Vector2 maxExtent, bool updateChildren)
         {
-            //if (Orientation == Orientation.Horizontal) UpdateHorizontal(maxExtent);
-            //else
-            UpdateVertical(maxExtent);
+            if (Orientation == Orientation.Horizontal) UpdateHorizontal(maxExtent);
+            else UpdateVertical(maxExtent);
 
             // base.UpdateFormatting_Internal(maxExtent);
 
@@ -109,11 +108,17 @@ namespace MonoVarmint.Widgets
             {
                 if(child.Size.Y == maxExtent.Y)
                 {
-                    child.UpdateFormatting(new Vector2(childWidth, remainingHeight / stretchedChildren));
+                    var childSizeConstraint = new Vector2(
+                       childWidth, 
+                       remainingHeight / stretchedChildren);
+                    child.UpdateFormatting(childSizeConstraint);
                 }
                 else
                 {
-                    child.UpdateFormatting(new Vector2(childWidth, child.Size.Y + (child.Margin?.Top ?? 0) + (child.Margin?.Bottom ?? 0)));
+                    var childSizeConstraint = new Vector2(
+                       childWidth,
+                       child.Size.Y + (child.Margin?.Top ?? 0) + (child.Margin?.Bottom ?? 0));
+                    child.UpdateFormatting(childSizeConstraint);
                 }
 
                 finalHeight += child.Size.Y + (child.Margin?.Top ?? 0) + (child.Margin?.Bottom ?? 0);
@@ -129,20 +134,72 @@ namespace MonoVarmint.Widgets
                 child.Offset = new Vector2(child.Offset.X, verticalOffset + (child.Margin?.Top ?? 0));
                 verticalOffset += child.Size.Y + (child.Margin?.Top ?? 0) + (child.Margin?.Bottom ?? 0);
             }
-
-
-
-
-           
         }
-
 
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// UpdateHorizontal
         /// </summary>
         //--------------------------------------------------------------------------------------
-        //private void UpdateHorizontal(Vector2 updatedSize)
-        //{
+        private void UpdateHorizontal(Vector2 maxExtent)
+        {
+            // Go through all the children and figure out known sizes.  Stretched sizes will be double.MaxVlue
+            float childHeight = 0;
+            float childWidth = 0;
+            int stretchedChildren = 0;
+            foreach (var child in Children)
+            {
+                child.UpdateFormatting(maxExtent);
+                if (child.Size.Y > childHeight)
+                {
+                    childHeight = child.Size.Y;
+                }
+
+                if (child.Size.X == maxExtent.X)
+                {
+                    stretchedChildren++;
+                }
+                else
+                {
+                    childWidth += child.Size.X + (child.Margin?.Left ?? 0) + (child.Margin?.Right ?? 0);
+                }
+            }
+
+            var remainingWidth = maxExtent.X - childWidth;
+            if (remainingWidth < 0) remainingWidth = 0;
+
+            // reformat all the children now that we know the available sizes
+            float finalWidth = 0;
+            foreach (var child in Children)
+            {
+                if (child.Size.X == maxExtent.X)
+                {
+                    var childSizeConstraint = new Vector2(
+                        remainingWidth / stretchedChildren,
+                        childHeight);
+                    child.UpdateFormatting(childSizeConstraint);
+                }
+                else
+                {
+                    var childSizeConstraint = new Vector2(
+                        child.Size.X + (child.Margin?.Left ?? 0) + (child.Margin?.Right ?? 0),
+                        childHeight);
+                    child.UpdateFormatting(childSizeConstraint);
+                }
+
+                finalWidth += child.Size.X + (child.Margin?.Left ?? 0) + (child.Margin?.Right ?? 0);
+            }
+
+
+            this.Size = new Vector2(finalWidth, childHeight);
+            base.UpdateFormatting_Internal(maxExtent, updateChildren: false);
+
+            float horizontalOffset = 0;
+            foreach (var child in Children)
+            {
+                child.Offset = new Vector2(horizontalOffset + (child.Margin?.Left ?? 0), child.Offset.Y);
+                horizontalOffset += child.Size.X + (child.Margin?.Left ?? 0) + (child.Margin?.Right ?? 0);
+            }
+        }
     }
 }
