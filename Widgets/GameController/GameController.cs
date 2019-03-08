@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -44,6 +45,7 @@ namespace MonoVarmint.Widgets
 
         VarmintWidget _debugContentHolder;
         VarmintWidget _debugScreen;
+        VarmintWidget _debugWidget;
         class DebuggingInfo
         {
             public Vector2 ScreenSize { get; set; }
@@ -242,9 +244,12 @@ namespace MonoVarmint.Widgets
             if (VarmintWidget.VisualDebuggingEnabled)
             {
                 _debugContext.Counter++;
-                _debugContentHolder.ClearChildren();
-                _debugScreen.ReadBindings(true);
-                //_debugContentHolder.AddChild(_visualTree);
+                _debugScreen.UpdateFormatting(ScreenSize);
+
+                if(_debugContentHolder.Children.Count() == 0)
+                {
+                    _debugContentHolder.AddChild(_visualTree);
+                }
                 _debugScreen.RenderMe(gameTime);
             }
             else

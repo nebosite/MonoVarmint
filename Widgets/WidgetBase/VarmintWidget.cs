@@ -67,18 +67,18 @@ namespace MonoVarmint.Widgets
         public bool IsVisible { get; set; }
         public bool ClipToBounds { get; set; }
 
-        private AlignmentTuple _widgetAlignment;
-        public AlignmentTuple WidgetAlignment
+        private AlignmentTuple _myAlignment;
+        public AlignmentTuple MyAlignment
         {
             get
             {
                 var output = new AlignmentTuple(
-                    _widgetAlignment?.X ?? Parent?.ContentAlignment.X ?? Parent?.WidgetAlignment.X,
-                    _widgetAlignment?.Y ?? Parent?.ContentAlignment.Y ?? Parent?.WidgetAlignment.Y
+                    _myAlignment?.X ?? Parent?.ContentAlignment.X ?? Parent?.MyAlignment.X,
+                    _myAlignment?.Y ?? Parent?.ContentAlignment.Y ?? Parent?.MyAlignment.Y
                     );
                 return output;
             }
-            set => _widgetAlignment = value;
+            set => _myAlignment = value;
         }
 
         private AlignmentTuple _contentAlignment;

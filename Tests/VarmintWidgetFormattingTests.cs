@@ -20,7 +20,7 @@ namespace MonoVarmint.Tools.Tests
         public void Format_Label_Autosizes_ToText()
         {
             var layoutText = @"
-<TestWidget WidgetAlignment=""Stretch,Stretch"" >
+<TestWidget MyAlignment=""Stretch,Stretch"" >
     <Grid Name=""TheGrid"">
         <Label Name=""TheLabel"" Content=""Hi"" />
     </Grid>
@@ -36,7 +36,7 @@ namespace MonoVarmint.Tools.Tests
             Assert.AreEqual(new Vector2(5, 8), label.Size);
             Assert.AreEqual(new Vector2(0,0), label.Offset);
 
-            label.WidgetAlignment = new AlignmentTuple(Alignment.Center, Alignment.Center);
+            label.MyAlignment = new AlignmentTuple(Alignment.Center, Alignment.Center);
             target.Prepare(null);
             target.UpdateFormatting(new Vector2(5, 8));
             Assert.AreEqual(new Vector2(.5f, .2f), label.Size);
@@ -61,7 +61,7 @@ namespace MonoVarmint.Tools.Tests
         [TestMethod]
         public void Format_Handles_StretchAlignment()
         {
-            var layoutText = @"<TestWidget WidgetAlignment=""Stretch,Stretch"" />";
+            var layoutText = @"<TestWidget MyAlignment=""Stretch,Stretch"" />";
             var target = (TestWidget)TestUtils.LoadFromText(this, layoutText, "(root)");
 
             target.Prepare(null);
@@ -70,21 +70,21 @@ namespace MonoVarmint.Tools.Tests
             Assert.AreEqual(new Vector2(0, 0), target.Offset);
 
             // margins should constrain the stretch
-            layoutText = @"<TestWidget WidgetAlignment=""Stretch,Stretch"" Margin=""1"" />";
+            layoutText = @"<TestWidget MyAlignment=""Stretch,Stretch"" Margin=""1"" />";
             target = (TestWidget)TestUtils.LoadFromText(this, layoutText, "(root)");
             target.Prepare(null);
             target.UpdateFormatting(new Vector2(5, 8));
             Assert.AreEqual(new Vector2(3, 6), target.Size);
             Assert.AreEqual(new Vector2(1, 1), target.Offset);
 
-            layoutText = @"<TestWidget WidgetAlignment=""Stretch,Stretch"" Margin=""1.5,2"" />";
+            layoutText = @"<TestWidget MyAlignment=""Stretch,Stretch"" Margin=""1.5,2"" />";
             target = (TestWidget)TestUtils.LoadFromText(this, layoutText, "(root)");
             target.Prepare(null);
             target.UpdateFormatting(new Vector2(5, 8));
             Assert.AreEqual(new Vector2(2, 4), target.Size);
             Assert.AreEqual(new Vector2(1.5f, 2), target.Offset);
 
-            layoutText = @"<TestWidget WidgetAlignment=""Stretch,Stretch"" Margin="",,.5"" />";
+            layoutText = @"<TestWidget MyAlignment=""Stretch,Stretch"" Margin="",,.5"" />";
             target = (TestWidget)TestUtils.LoadFromText(this, layoutText, "(root)");
             target.Prepare(null);
             target.UpdateFormatting(new Vector2(5, 8));
@@ -92,36 +92,36 @@ namespace MonoVarmint.Tools.Tests
             Assert.AreEqual(new Vector2(0, 0), target.Offset);
 
             // Should throw if Size is specified with stretch
-            layoutText = @"<TestWidget WidgetAlignment=""Stretch,Stretch"" Size=""1,1"" />";
+            layoutText = @"<TestWidget MyAlignment=""Stretch,Stretch"" Size=""1,1"" />";
             target = (TestWidget)TestUtils.LoadFromText(this, layoutText, "(root)");
             target.Prepare(null);           
             Assert.ThrowsException<ArgumentException>(() => target.UpdateFormatting(new Vector2(5, 8)));
 
-            layoutText = @"<TestWidget WidgetAlignment="",Stretch"" Size="",1"" />";
+            layoutText = @"<TestWidget MyAlignment="",Stretch"" Size="",1"" />";
             target = (TestWidget)TestUtils.LoadFromText(this, layoutText, "(root)");
             target.Prepare(null);
             Assert.ThrowsException<ArgumentException>(() => target.UpdateFormatting(new Vector2(5, 8)));
 
-            layoutText = @"<TestWidget WidgetAlignment=""Stretch,"" Size=""1,"" />";
+            layoutText = @"<TestWidget MyAlignment=""Stretch,"" Size=""1,"" />";
             target = (TestWidget)TestUtils.LoadFromText(this, layoutText, "(root)");
             target.Prepare(null);
             Assert.ThrowsException<ArgumentException>(() => target.UpdateFormatting(new Vector2(5, 8)));
 
             // Specifying no alignment and a size should default to Left or Top
-            layoutText = @"<TestWidget WidgetAlignment="",Stretch"" Size=""1,"" />";
+            layoutText = @"<TestWidget MyAlignment="",Stretch"" Size=""1,"" />";
             target = (TestWidget)TestUtils.LoadFromText(this, layoutText, "(root)");
             target.Prepare(null);
             target.UpdateFormatting(new Vector2(5, 8));
-            Assert.AreEqual(null, target.WidgetAlignment.X);
-            Assert.AreEqual(Alignment.Stretch, target.WidgetAlignment.Y);
+            Assert.AreEqual(null, target.MyAlignment.X);
+            Assert.AreEqual(Alignment.Stretch, target.MyAlignment.Y);
             Assert.AreEqual(new Vector2(0, 0), target.Offset);
 
-            layoutText = @"<TestWidget WidgetAlignment=""Stretch,"" Size="",1"" />";
+            layoutText = @"<TestWidget MyAlignment=""Stretch,"" Size="",1"" />";
             target = (TestWidget)TestUtils.LoadFromText(this, layoutText, "(root)");
             target.Prepare(null);
             target.UpdateFormatting(new Vector2(5, 8));
-            Assert.AreEqual(Alignment.Stretch, target.WidgetAlignment.X);
-            Assert.AreEqual(null, target.WidgetAlignment.Y);
+            Assert.AreEqual(Alignment.Stretch, target.MyAlignment.X);
+            Assert.AreEqual(null, target.MyAlignment.Y);
             Assert.AreEqual(new Vector2(0, 0), target.Offset);
         }
 
@@ -129,7 +129,7 @@ namespace MonoVarmint.Tools.Tests
         [TestMethod]
         public void Format_Handles_LowAlignment()
         {
-            var layoutText = @"<TestWidget WidgetAlignment=""Left,Top"" Size=""1,2"" />";
+            var layoutText = @"<TestWidget MyAlignment=""Left,Top"" Size=""1,2"" />";
             var target = (TestWidget)TestUtils.LoadFromText(this, layoutText, "(root)");
 
             target.Prepare(null);
@@ -138,7 +138,7 @@ namespace MonoVarmint.Tools.Tests
             Assert.AreEqual(new Vector2(0, 0), target.Offset);
 
             // Extra size should be truncated
-            layoutText = @"<TestWidget  WidgetAlignment=""Left,Top""  Size=""1000,2000"" Margin=""1"" />";
+            layoutText = @"<TestWidget  MyAlignment=""Left,Top""  Size=""1000,2000"" Margin=""1"" />";
             target = (TestWidget)TestUtils.LoadFromText(this, layoutText, "(root)");
             target.Prepare(null);
             target.UpdateFormatting(new Vector2(5, 8));
@@ -150,7 +150,7 @@ namespace MonoVarmint.Tools.Tests
         [TestMethod]
         public void Format_Handles_CenterAlignment()
         {
-            var layoutText = @"<TestWidget WidgetAlignment=""Center,Center"" Size=""1,2"" Margin=""1,2,.5,1.5"" />";
+            var layoutText = @"<TestWidget MyAlignment=""Center,Center"" Size=""1,2"" Margin=""1,2,.5,1.5"" />";
             var target = (TestWidget)TestUtils.LoadFromText(this, layoutText, "(root)");
 
             target.Prepare(null);
@@ -159,7 +159,7 @@ namespace MonoVarmint.Tools.Tests
             Assert.AreEqual(new Vector2(2.25f, 3.25f), target.Offset);
 
             // Extra size should be truncated
-            layoutText = @"<TestWidget  WidgetAlignment=""Center,Center""  Size=""1000,2000"" Margin="".5"" />";
+            layoutText = @"<TestWidget  MyAlignment=""Center,Center""  Size=""1000,2000"" Margin="".5"" />";
             target = (TestWidget)TestUtils.LoadFromText(this, layoutText, "(root)");
             target.Prepare(null);
             target.UpdateFormatting(new Vector2(5, 8));
@@ -171,7 +171,7 @@ namespace MonoVarmint.Tools.Tests
         [TestMethod]
         public void Format_Handles_HighAlignment()
         {
-            var layoutText = @"<TestWidget WidgetAlignment=""Right,Bottom"" Size=""1,2"" />";
+            var layoutText = @"<TestWidget MyAlignment=""Right,Bottom"" Size=""1,2"" />";
             var target = (TestWidget)TestUtils.LoadFromText(this, layoutText, "(root)");
 
             target.Prepare(null);
@@ -180,7 +180,7 @@ namespace MonoVarmint.Tools.Tests
             Assert.AreEqual(new Vector2(4, 6), target.Offset);
 
             // Extra size should be truncated
-            layoutText = @"<TestWidget  WidgetAlignment=""Left,Top""  Size=""1000,2000"" Margin="".5"" />";
+            layoutText = @"<TestWidget  MyAlignment=""Left,Top""  Size=""1000,2000"" Margin="".5"" />";
             target = (TestWidget)TestUtils.LoadFromText(this, layoutText, "(root)");
             target.Prepare(null);
             target.UpdateFormatting(new Vector2(5, 8));
@@ -188,15 +188,12 @@ namespace MonoVarmint.Tools.Tests
             Assert.AreEqual(new Vector2(.5f, .5f), target.Offset);
         }
 
-
-
-
         [TestMethod]
         public void Format_NoMargins_NoSize_NoStretch_LimitsByMax()
         {
             var layoutText =
                 @"<TestWidget>
-                    <Grid Name=""Bob"" WidgetAlignment=""Center,Top"" Size=""2,3"">
+                    <Grid Name=""Bob"" MyAlignment=""Center,Top"" Size=""2,3"">
                     </Grid>
                 </TestWidget>";
             var target = (TestWidget)TestUtils.LoadFromText(this, layoutText, "(root)");
@@ -211,7 +208,7 @@ namespace MonoVarmint.Tools.Tests
             // if child is bigger than parent, it gets truncated
             layoutText =
                 @"<TestWidget>
-                    <Grid Name=""Bob"" WidgetAlignment=""Center,Top"" Size=""200,3000"">
+                    <Grid Name=""Bob"" MyAlignment=""Center,Top"" Size=""200,3000"">
                     </Grid>
                 </TestWidget>";
             target = (TestWidget)TestUtils.LoadFromText(this, layoutText, "(root)");
@@ -223,6 +220,50 @@ namespace MonoVarmint.Tools.Tests
             Assert.AreEqual(new Vector2(10, 20), grid.Size);
             Assert.AreEqual(new Vector2(0, 0), grid.Offset);
         }
+
+        [TestMethod]
+        public void Format_ExtremeMargins_AffectsAlignment()
+        {
+            var layoutText =
+                @"<Grid>
+                      <Grid Name=""BigGrid"" Margin=""0,0,0,0""  />
+                      <Grid Name=""SmallGrid"" Margin="",,0,0"" Size=""12,3"" >
+                        <StackPanel Name=""StackPanel""  >
+                          <Grid Size=""4,1""/>
+                        </StackPanel>  
+                      </Grid>
+                    </Grid>";
+            var target = (VarmintWidgetGrid)TestUtils.LoadFromText(this, layoutText, "(root)");
+            var bigGrid = target.FindWidgetByName("BigGrid");
+            var smallGrid = target.FindWidgetByName("SmallGrid");
+            var stackPanel = target.FindWidgetByName("StackPanel");
+
+            target.Prepare(null);
+            target.UpdateFormatting(new Vector2(20, 40));
+            Assert.AreEqual(new Vector2(20, 40), target.Size);
+            Assert.AreEqual(new Vector2(20, 40), bigGrid.Size);
+            Assert.AreEqual(new Vector2(0, 0), bigGrid.Offset);
+            Assert.AreEqual(new Vector2(12, 3), smallGrid.Size);
+            Assert.AreEqual(new Vector2(8, 37), smallGrid.Offset);
+            Assert.AreEqual(new Vector2(12, 3), stackPanel.Size);
+            Assert.AreEqual(new Vector2(0, 0), stackPanel.Offset);
+
+        }
+
+
+        [TestMethod]
+        public void Format_ContentIsPreserved()
+        {
+            var mockRenderer = new MockRenderer(10, 20);
+            mockRenderer.MeasureTextReturn = new Vector2(1, 1);
+            var layoutText =@"<Label Content=""Free Balloons"" />";
+            var target = (VarmintWidgetLabel)TestUtils.LoadFromText(mockRenderer, layoutText, "(root)");
+            target.Prepare(null);
+            target.UpdateFormatting(new Vector2(20, 40));
+            Assert.AreEqual("Free Balloons", target.Content);
+        }
+
+
 
         /*
          * 

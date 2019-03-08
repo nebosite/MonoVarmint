@@ -292,6 +292,10 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         string FixText(string text)
         {
+            if (text == null)
+            {
+                return "*null*";
+            }
             if (_fixedStrings.ContainsKey(text)) return _fixedStrings[text];
 
             var output = new StringBuilder();

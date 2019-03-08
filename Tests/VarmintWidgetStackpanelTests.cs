@@ -246,9 +246,9 @@ namespace MonoVarmint.Tools.Tests
                     <StackPanel Name=""FirstPanel"">
                         <StackPanel Name=""panel1"" Orientation=""Vertical"" ContentAlignment=""Center"">
                             <Grid Size=""6,1""  Name=""grid1"" />
-                            <Grid  Name=""gridStretched1"" WidgetAlignment=""Stretch"" />
+                            <Grid  Name=""gridStretched1"" MyAlignment=""Stretch"" />
                             <Label Content=""Hi"" Name=""labelChild1"" Margin=""1""/>
-                            <Grid  Name=""gridStretched2"" WidgetAlignment=""Stretch"" />
+                            <Grid  Name=""gridStretched2"" MyAlignment=""Stretch"" />
                        </StackPanel>
                     </StackPanel>
                    </Grid>";
@@ -290,9 +290,9 @@ namespace MonoVarmint.Tools.Tests
                     <StackPanel Name=""FirstPanel"">
                         <StackPanel Name=""panel1"" Orientation=""Horizontal"" ContentAlignment=""Center"">
                             <Grid Size=""2,5""  Name=""grid1"" />
-                            <Grid  Name=""gridStretched1"" WidgetAlignment=""Stretch"" />
+                            <Grid  Name=""gridStretched1"" MyAlignment=""Stretch"" />
                             <Label Content=""Hi"" Name=""labelChild1"" Margin=""1""/>
-                            <Grid  Name=""gridStretched2"" WidgetAlignment=""Stretch"" />
+                            <Grid  Name=""gridStretched2"" MyAlignment=""Stretch"" />
                        </StackPanel>
                     </StackPanel>
                    </Grid>";

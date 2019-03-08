@@ -37,6 +37,7 @@ namespace Demo.Shared
             _controller = new GameController(this);
 #endif
             _controller.OnUserBackButtonPress += NativeHandleUserDeactivate;
+            VarmintWidget.VisualDebuggingEnabled = true;
 
             _controller.OnGameLoaded += () =>
             {

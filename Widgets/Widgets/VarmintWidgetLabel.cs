@@ -31,12 +31,12 @@ namespace MonoVarmint.Widgets
             var width = updatedSize.X;
             var height = updatedSize.Y;
 
-            var textSize = Renderer.MeasureText(Content.ToString(), FontName, FontSize, WrapContent ? width : 0);
-            if (SpecifiedSize?.Item1 == null && WidgetAlignment.X != Alignment.Stretch)
+            var textSize = Renderer.MeasureText(Content?.ToString(), FontName, FontSize, WrapContent ? width : 0);
+            if (SpecifiedSize?.Item1 == null && MyAlignment.X != Alignment.Stretch)
             {
                 width = textSize.X;
             }
-            if (SpecifiedSize?.Item2 == null && WidgetAlignment.Y != Alignment.Stretch)
+            if (SpecifiedSize?.Item2 == null && MyAlignment.Y != Alignment.Stretch)
             {
                 height = textSize.Y;
             }

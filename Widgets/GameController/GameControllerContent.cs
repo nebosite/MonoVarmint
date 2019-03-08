@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using Microsoft.Xna.Framework.Content;
+using System.Linq;
 
 namespace MonoVarmint.Widgets
 {
@@ -55,6 +56,8 @@ namespace MonoVarmint.Widgets
             _debugContext.ScreenSize = ScreenSize;
             _debugScreen = _widgetSpace.FindWidgetByName("_debug_screen_");
             _debugScreen.BindingContext = _debugContext;
+            _debugScreen.Prepare(null);
+            _debugWidget = _debugScreen.Children.First();
             _debugContentHolder = _debugScreen.FindWidgetByName("_debug_contentslot_");
             SetScreen("_default_screen_", null);
             OnGameLoaded?.Invoke();

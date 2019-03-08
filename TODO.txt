@@ -1,5 +1,7 @@
 
-
+	[ ] Demo game screen crashes trying to load sound
+	[ ] Demo main screeen should just have a list of things to see
+	[ ] Domo should have a button to turn debugging mode on and off
 
 	[ ] Formatting update:
 		[x] Refactor widget to have alignment tuple
@@ -8,6 +10,7 @@
 			[x] Vertical
 			[ ] Horizontal
 		[ ] Try to get debugging screen to work
+	[ ] Allow this:  Content="My \{own\} text: {Property}"
 	[ ] Varmint Widgets demo should use VarmintWidgetSpace, styles, and controls
 	[ ] More tests
 	[ ] Monovarmint: THis does not work.  Scroll view has 0 width

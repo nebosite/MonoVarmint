@@ -47,7 +47,7 @@ namespace MonoVarmint.Widgets
 
             if (VisualDebuggingEnabled)
             {
-                Renderer.DrawRectangle(Offset, Size, .003f, Color.Red);
+                Renderer.DrawRectangle(AbsoluteOffset, Size, .003f, Color.Red);
             }
 
             if (!shouldClip) return;
@@ -192,7 +192,7 @@ namespace MonoVarmint.Widgets
             var left = 0f;
             var top = 0f;
 
-            var alignment = WidgetAlignment;
+            var alignment = MyAlignment;
 
             // If alignment is not specified, use the margins and specified size as hints
             if (alignment.X == null)

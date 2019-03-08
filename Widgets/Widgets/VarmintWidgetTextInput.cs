@@ -10,8 +10,6 @@ namespace MonoVarmint.Widgets
     [VarmintWidgetShortName("TextInput")]
     public class VarmintWidgetTextInput : VarmintWidget
     {
-        public float FontSize { get; set; }
-        public string FontName { get; set; }
         public int CursorSpot { get; set; }
 
         float _margin;
