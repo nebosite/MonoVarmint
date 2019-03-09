@@ -227,7 +227,6 @@ namespace MonoVarmint.Widgets
             }
 
             ApplyLayout(widgetLayout);
-            newWidget.WidgetSpace = this;
             return newWidget;
         }
 

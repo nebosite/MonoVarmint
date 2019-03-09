@@ -28,5 +28,14 @@ namespace MonoVarmint.Tools.Tests
             Assert.AreEqual(Color.Yellow, target.ForegroundColor);
         }
 
+        [TestMethod]
+        public void AlignmentConstructorParsingWorks()
+        {
+            var target = new AlignmentTuple("Left,Top");
+            Assert.AreEqual(Alignment.Left, target.X);
+            Assert.AreEqual(Alignment.Top, target.Y);
+            Assert.AreEqual("Left,Top", target.ToString());
+        }
+
     }
 }

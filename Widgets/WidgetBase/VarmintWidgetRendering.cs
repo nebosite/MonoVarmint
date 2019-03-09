@@ -174,15 +174,15 @@ namespace MonoVarmint.Widgets
         protected Vector2 GetMaxDimentsions(Vector2 maxSizeExtent, out float croppedWidth, out float croppedHeight)
         {
             if (SpecifiedSize == null) SpecifiedSize = new Tuple<float?, float?>(null, null);
-            croppedWidth = SpecifiedSize.Item1 ?? Size.X;
             var maxWidth = maxSizeExtent.X - (Margin.Left ?? 0) - (Margin.Right ?? 0);
             if (maxWidth < 0) maxWidth = 0;
-            if (croppedWidth > maxWidth) croppedWidth = maxWidth;
+            croppedWidth = SpecifiedSize.Item1 ?? Size.X;
+            if (croppedWidth > maxWidth || croppedWidth == 0) croppedWidth = maxWidth;
 
-            croppedHeight = SpecifiedSize.Item2 ?? Size.Y;
             var maxheight = maxSizeExtent.Y - (Margin.Top ?? 0) - (Margin.Bottom ?? 0);
             if (maxheight < 0) maxheight = 0;
-            if (croppedHeight > maxheight) croppedHeight = maxheight;
+            croppedHeight = SpecifiedSize.Item2 ?? Size.Y;
+            if (croppedHeight > maxheight || croppedHeight == 0) croppedHeight = maxheight;
 
             return new Vector2(maxWidth, maxheight);
         }
@@ -251,6 +251,23 @@ namespace MonoVarmint.Widgets
                 }
             }
 
+            var childLow = new Vector2(float.MaxValue);
+            var childHigh = new Vector2(float.MinValue);
+            bool calculatedChildSize = false;
+            if (updateChildren)
+            {
+                foreach (var child in Children)
+                {
+                    calculatedChildSize = true;
+                    child.UpdateFormatting(new Vector2(width,height));
+                    childLow.X = Math.Min(childLow.X, child.Offset.X);
+                    childLow.Y = Math.Min(childLow.Y, child.Offset.Y);
+                    childHigh.X = Math.Max(childHigh.X, child.Offset.X + child.Size.X + (child.Margin.Left ?? 0) + (child.Margin.Right ?? 0));
+                    childHigh.Y = Math.Max(childHigh.Y, child.Offset.Y + child.Size.Y + (child.Margin.Top ?? 0) + (child.Margin.Bottom ?? 0));
+                }
+            }
+            var childSize = calculatedChildSize ? childHigh - childLow : new Vector2(width, height);
+
             // Horizontal Alignment
             switch (alignment.X)
             {
@@ -263,12 +280,15 @@ namespace MonoVarmint.Widgets
                     left = Margin.Left ?? 0;
                     break;
                 case Alignment.Left:
+                    if (SpecifiedSize.Item1 == null) width = childSize.X;
                     left = Margin.Left ?? 0;
                     break;
                 case Alignment.Center:
+                    if (SpecifiedSize.Item1 == null) width = childSize.X;
                     left = (maxSizeExtent.X - width - (Margin.Left ?? 0) - (Margin.Right ?? 0)) / 2 + (Margin.Left ?? 0);
                     break;
                 case Alignment.Right:
+                    if (SpecifiedSize.Item1 == null) width = childSize.X;
                     left = maxSizeExtent.X - width - (Margin.Right ?? 0);
                     break;
                 default:
@@ -288,12 +308,15 @@ namespace MonoVarmint.Widgets
                     top = Margin.Top ?? 0;
                     break;
                 case Alignment.Top:
+                    if (SpecifiedSize.Item2 == null) height = childSize.Y;
                     top = Margin.Top ?? 0;
                     break;
                 case Alignment.Center:
+                    if (SpecifiedSize.Item2 == null) height = childSize.Y;
                     top = (maxSizeExtent.Y - height - (Margin.Top ?? 0) - (Margin.Bottom ?? 0)) / 2 + (Margin.Top ?? 0);
                     break;
                 case Alignment.Bottom:
+                    if (SpecifiedSize.Item2 == null) height = childSize.Y;
                     top = maxSizeExtent.Y - height - (Margin.Bottom ?? 0);
                     break;
                 default:
@@ -303,13 +326,6 @@ namespace MonoVarmint.Widgets
             Size = new Vector2(width, height);
             Offset = new Vector2(left, top);
 
-            if(updateChildren)
-            {
-                foreach (var child in Children)
-                {
-                    child.UpdateFormatting(this.Size);
-                }
-            }
         }
     }
 }

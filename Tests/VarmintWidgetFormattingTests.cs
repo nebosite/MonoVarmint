@@ -20,11 +20,11 @@ namespace MonoVarmint.Tools.Tests
         public void Format_Label_Autosizes_ToText()
         {
             var layoutText = @"
-<TestWidget MyAlignment=""Stretch,Stretch"" >
-    <Grid Name=""TheGrid"">
-        <Label Name=""TheLabel"" Content=""Hi"" />
-    </Grid>
-</TestWidget>";
+                <TestWidget MyAlignment=""Stretch,Stretch"" >
+                    <Grid Name=""TheGrid"">
+                        <Label Name=""TheLabel"" Content=""Hi"" />
+                    </Grid>
+                </TestWidget>";
             var target = (TestWidget)TestUtils.LoadFromText(this, layoutText, "(root)");
             var label = (VarmintWidgetLabel) target.FindWidgetByName("TheLabel");
 
@@ -42,20 +42,6 @@ namespace MonoVarmint.Tools.Tests
             Assert.AreEqual(new Vector2(.5f, .2f), label.Size);
             Assert.AreEqual(new Vector2(2.25f, 3.9f), label.Offset);
 
-        }
-
-        [TestMethod]
-        public void Format_NoMargins_NoSize_Stretch_FillsToMax()
-        {
-            var root = new TestWidget() { };
-            root.UpdateFormatting(new Vector2(1.1f, 2.2f));
-            Assert.AreEqual(new Vector2(1.1f, 2.2f), root.Size);
-
-            var grid = new VarmintWidgetGrid() { };
-            root.AddChild(grid);
-            root.Prepare(null);
-            root.UpdateFormatting(new Vector2(10, 20));
-            Assert.AreEqual(new Vector2(10, 20), grid.Size);
         }
 
         [TestMethod]
@@ -289,16 +275,32 @@ namespace MonoVarmint.Tools.Tests
             Assert.AreEqual(new Vector2(0,6), image.Offset);
         }
 
+        [TestMethod]
+        public void Format_NonStretchedAlignments_SizeToChildren_WhenSizeIsMissing()
+        {
+            var mockRenderer = new MockRenderer(10, 20);
+            mockRenderer.MeasureTextReturn = new Vector2(1, 1);
+            var layoutText = @"
+                <Grid ContentAlignment=""Left,Top"">
+                    <Grid Name=""CheckMe"">
+                        <Grid Size=""5,4"" Margin=""1"">
+                            <Grid Size=""2,2"">
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
+                ";
+            var target = (VarmintWidgetGrid)TestUtils.LoadFromText(mockRenderer, layoutText, "(root)");
+            var checkMe = target.FindWidgetByName("CheckMe");
+            target.Prepare(null);
+            target.UpdateFormatting(new Vector2(20, 40));
+            Assert.AreEqual(new Vector2(20, 40), target.Size);
+            Assert.AreEqual(new Vector2(7, 6), checkMe.Size);
+        }
+
 
         /*
-              <Image
-        Name="TextLogo"
-        Margin="0,.26"
-        Size=".8,.24"
-        ContentAlignment="Left,"
-        Content="TextLogo">
-        <Label Content="{Version}" ForegroundColor="#C94242" FontSize=".05" Size =".2,.04" Margin=".325,.195" ContentAlignment="Center" />
-      </Image>
+
 
         Align is specified as one or two values.  E.g.:   Left |  Left,Stretch | ,Center			
         Size is specified as one or two values:  x,y			

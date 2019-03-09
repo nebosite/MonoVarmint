@@ -45,14 +45,12 @@ namespace MonoVarmint.Widgets
 
     public enum Alignment
     {
-        Stretch = 0,
-        Low = 1,
-        Left = 1,
-        Top = 1,
-        Center = 2,
-        High = 3,
-        Right = 3,
-        Bottom = 3,
+        Stretch,
+        Left,
+        Top,
+        Center,
+        Right,
+        Bottom,
     };
 
     public enum TouchMoveType
