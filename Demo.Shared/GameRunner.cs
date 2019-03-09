@@ -41,6 +41,7 @@ namespace Demo.Shared
 
             _controller.OnGameLoaded += () =>
             {
+                _controller.LoadGlyph("Images/Button1");
                 _controller.LoadGlyph("Images/Mountains");
                 _controller.LoadGlyph("Images/Trees");
                 _controller.LoadGlyph("Images/Ground");

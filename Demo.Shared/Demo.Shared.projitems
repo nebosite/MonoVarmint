@@ -17,6 +17,7 @@
     <MonoGameContentReference Include="$(MSBuildThisFileDirectory)Content\Content.mgcb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Content\Images\NineSlices.vwml" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Layout\GameScreen.vwml" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Layout\MainScreen.vwml" />
   </ItemGroup>
@@ -28,10 +29,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)Content\Images\Bunny.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Images\Button1.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Images\Ground.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Images\Monster.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Images\Mountains.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Images\Trees.png" />
+    <Content Include="$(MSBuildThisFileDirectory)Content\Readme_Content.txt" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Sounds\Cowbell.wav" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Sounds\Jump.wav" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Sounds\Thump.wav" />

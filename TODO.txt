@@ -2,6 +2,8 @@
 	[ ] Demo game screen crashes trying to load sound
 	[ ] Demo main screeen should just have a list of things to see
 	[ ] Domo should have a button to turn debugging mode on and off
+	[ ] We should probably have a thing called OnLoadContent where the caller hooks in their own content pipeline
+	[ ] Would be nice to have a smoother way to load content
 
 	[ ] Formatting update:
 		[x] Refactor widget to have alignment tuple

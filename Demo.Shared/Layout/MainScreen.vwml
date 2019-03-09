@@ -47,19 +47,19 @@
     </Slider>
     <Label Size=".5,.1" FontSize=".1" Content="{MyAdjustedSliderValue}" />
   <StackPanel
-    FontSize=".2"
+    FontSize=".1"
     Margin=",.1"
     Orientation="Horizontal">
     <!--- There are two ways to do button conent you can specify text or a widget-->
     <Button
       Name="PlayButton"
-      Content="Play"
       Size =".4,.2"
       Margin=",,.1"
-      HasBorder="true"
-      BackgroundColor="Yellow"
-      OnTap="PlayButtonOnTap"
-        />
+      OnTap="PlayButtonOnTap">
+      <Image  Content="Button1Sliced" MyAlignment="Stretch">
+        <Label Content="Play" />      
+      </Image>
+    </Button>
     <Button
       Name="PlayButton"
       Size =".4,.2"

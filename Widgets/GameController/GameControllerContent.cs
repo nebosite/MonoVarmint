@@ -14,6 +14,7 @@ namespace MonoVarmint.Widgets
     {
         private readonly Dictionary<string, SpriteFont> _fontsByName = new Dictionary<string, SpriteFont>();
         private readonly Dictionary<string, Texture2D> _glyphsByName = new Dictionary<string, Texture2D>();
+        private readonly Dictionary<string, SlicedTexture> _slicedGlyphsByName = new Dictionary<string, SlicedTexture>();
         private readonly Dictionary<string, VarmintSprite> _spritesByName = new Dictionary<string, VarmintSprite>();
         
         private readonly Dictionary<string, SoundEffect> _soundEffectsByName = new Dictionary<string, SoundEffect>();
@@ -61,6 +62,17 @@ namespace MonoVarmint.Widgets
             _debugContentHolder = _debugScreen.FindWidgetByName("_debug_contentslot_");
             SetScreen("_default_screen_", null);
             OnGameLoaded?.Invoke();
+
+            foreach(var sliceItem in _widgetSpace.NineSlices)
+            {
+                sliceItem.Prepare(null);
+                if (sliceItem.Content == null || !_glyphsByName.ContainsKey(sliceItem.Content.ToString()))
+                {
+                    throw new ApplicationException($"NineSlice item '{sliceItem.Name}' did not specify a valid glyph name ({sliceItem.Content}) in the Content property. ");
+                }
+                _slicedGlyphsByName[sliceItem.Name] = sliceItem.GetSlicedTexture(_glyphsByName[sliceItem.Content.ToString()]);
+            }
+
         }
 
         //-----------------------------------------------------------------------------------------------
@@ -86,6 +98,7 @@ namespace MonoVarmint.Widgets
         {
             _fontsByName.Clear();
             _glyphsByName.Clear();
+            _slicedGlyphsByName.Clear();
             _spritesByName.Clear();
             _songsByName.Clear();
             _soundEffectsByName.Clear();

@@ -50,6 +50,11 @@ namespace MonoVarmint.Widgets
                         Right = Left;
                         Bottom = Top;
                     }
+                    else if (parts.Length == 3)
+                    {
+                        Right = Parse(2);
+                        Bottom = Top;
+                    }
                     else
                     {
                         Right = Parse(2);

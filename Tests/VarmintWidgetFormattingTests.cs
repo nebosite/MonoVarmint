@@ -264,23 +264,41 @@ namespace MonoVarmint.Tools.Tests
         }
 
 
+        [TestMethod]
+        public void Format_ImageAlignment_Works()
+        {
+            var mockRenderer = new MockRenderer(10, 20);
+            mockRenderer.MeasureTextReturn = new Vector2(1, 1);
+            var layoutText = @"
+                <Grid>
+                    <Image
+                        Name=""TextLogo""
+                        Margin = ""0,6""
+                        Size = ""6,2""
+                        ContentAlignment = ""Left,""
+                        Content = ""TextLogo"" >
+                        <Label Content=""foo"" />
+                    </Image> 
+                </Grid>
+                ";
+            var target = (VarmintWidgetGrid)TestUtils.LoadFromText(mockRenderer, layoutText, "(root)");
+            var image = target.FindWidgetByName("TextLogo");
+            target.Prepare(null);
+            target.UpdateFormatting(new Vector2(20, 40));
+            Assert.AreEqual(new Vector2(6, 2), image.Size);
+            Assert.AreEqual(new Vector2(0,6), image.Offset);
+        }
+
 
         /*
-         * 
-        Formatting rules:
-        Margins		Size specified		Align		New Size Behavior
-DONE: 0				na			Stretch		Fill to max
-            0				na			*			Fill to children, limited by max and position accordingly
-            0				y			Stretch		Error - cannot specify both Size and Align==Stretch
-            0				y			*			Fill to Size, limited by max and position accordingly
-            1				na			Stretch		Fill to max - margin, position by margin
-            1				na			*			Fill to children, limited by max - margin and position accordingly
-            1				y			Stretch		Error - cannot specify both Size and Align==Stretch
-            1				y			*			Fill to Size, limited by max - margin, positioned as if size = size + margin
-            2				na			Stretch		Fill to max - margin, position by margin
-            2				na			*			Fill to children, limited by max - margin and position accordingly
-            2				y			Stretch		Error - cannot specify both Size and Align==Stretch
-            2				y			*			Fill to Size, limited by max - margin, positioned as if size = size + margin
+              <Image
+        Name="TextLogo"
+        Margin="0,.26"
+        Size=".8,.24"
+        ContentAlignment="Left,"
+        Content="TextLogo">
+        <Label Content="{Version}" ForegroundColor="#C94242" FontSize=".05" Size =".2,.04" Margin=".325,.195" ContentAlignment="Center" />
+      </Image>
 
         Align is specified as one or two values.  E.g.:   Left |  Left,Stretch | ,Center			
         Size is specified as one or two values:  x,y			

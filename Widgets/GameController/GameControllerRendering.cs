@@ -391,10 +391,71 @@ namespace MonoVarmint.Widgets
 
         public void DrawGlyph(string glyphName, Vector2 offset, Vector2 size, Color color, float rotation, Vector2 origin)
         {
-            if (!_glyphsByName.ContainsKey(glyphName)) throw new ApplicationException("Can't find glyph named '" + glyphName + "'");
-            Texture2D texture = _glyphsByName[glyphName];
-            DrawGlyph(texture, offset, size, color, rotation, origin);
+            if(_slicedGlyphsByName.ContainsKey(glyphName))
+            {
+                var sliceInfo = _slicedGlyphsByName[glyphName];
+                var upperLeftCorner = sliceInfo.SliceDimensions[0, 0];
+                var center = sliceInfo.SliceDimensions[1,1];
+                var lowerRightCorner = sliceInfo.SliceDimensions[2, 2];
+
+                for (int x = 0; x < 3; x++)
+                {
+                    var width = 0f;
+                    var xoffset = 0f;
+                    switch(x)
+                    {
+                        case 0: width = upperLeftCorner.OnScreenWidth; xoffset = 0;  break;
+                        case 1: width = size.X - upperLeftCorner.OnScreenWidth - lowerRightCorner.OnScreenWidth; xoffset = upperLeftCorner.OnScreenWidth; break;
+                        case 2: width = lowerRightCorner.OnScreenWidth; xoffset = size.X - lowerRightCorner.OnScreenWidth; break;
+                    }
+                    if (width == 0) continue;
+                    for (int y = 0; y < 3; y++)
+                    {
+                        var height = 0f;
+                        var yoffset = 0f;
+                        switch (y)
+                        {
+                            case 0: height = upperLeftCorner.OnScreenHeight; yoffset = 0;  break;
+                            case 1: height = size.Y - upperLeftCorner.OnScreenHeight - lowerRightCorner.OnScreenHeight; yoffset = upperLeftCorner.OnScreenHeight; break;
+                            case 2: height = lowerRightCorner.OnScreenHeight; yoffset = size.Y - lowerRightCorner.OnScreenHeight; break;
+                        }
+                        if (height == 0) continue;
+
+                        var sliceValue = sliceInfo.SliceDimensions[x, y];
+
+                        var sliceSize = new Vector2(width, height);
+                        var sliceOffset = new Vector2(xoffset, yoffset) + offset;
+                        var sourceRectangle = new Rectangle(sliceValue.X, sliceValue.Y, sliceValue.Width, sliceValue.Height);
+                        DrawSlice(sliceInfo.Texture, sliceOffset, sliceSize, color, sourceRectangle);
+                    }
+                }
+            }
+            else if(_glyphsByName.ContainsKey(glyphName))
+            {
+                var texture = _glyphsByName[glyphName];
+                DrawGlyph(texture, offset, size, color, rotation, origin);
+            }
+            else throw new ApplicationException("Can't find glyph or NinceSlice named '" + glyphName + "'");
+            
         }
+
+        public void DrawSlice(Texture2D texture, Vector2 offset, Vector2 size, Color color, Rectangle sourceRectangle)
+        {
+            offset -= DrawOffset;
+            Vector2 scale = size * _backBufferWidth / new Vector2(sourceRectangle.Width, sourceRectangle.Height);
+
+            _spriteBatch.Draw(
+                texture: texture,
+                position: offset * _backBufferWidth,
+                sourceRectangle: sourceRectangle,
+                color: color,
+                rotation: 0f,
+                origin: Vector2.Zero,
+                scale: scale,
+                effects: SpriteEffects.None,
+                layerDepth: 0);
+        }
+
 
         public void DrawGlyph(Texture2D texture, Vector2 offset, Vector2 size, Color color, float rotation, Vector2 origin)
         {

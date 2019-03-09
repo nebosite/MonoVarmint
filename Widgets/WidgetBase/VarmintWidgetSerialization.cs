@@ -79,6 +79,7 @@ namespace MonoVarmint.Widgets
                 {
                     throw new ApplicationException("Widget node '" + typeName + "' is not a VarmintWidget. (Make sure your shortcut attribute does not match a real type.");
                 }
+
                 CachedWidgetTypes[typeName] = probableMatch;
                 return probableMatch;
             }

@@ -16,6 +16,7 @@ namespace MonoVarmint.Widgets
     public class VarmintWidgetSpace
     {
         public Dictionary<string, VarmintWidgetStyle> StyleLibrary => _styleLibrary;
+        public List<VarmintWidgetNineSlice> NineSlices = new List<VarmintWidgetNineSlice>();
 
         private Dictionary<string, VarmintWidgetStyle> _styleLibrary = new Dictionary<string, VarmintWidgetStyle>();
         private Dictionary<string, VarmintWidget.LayoutItem> _controlLibrary = new Dictionary<string, VarmintWidget.LayoutItem>();
@@ -105,7 +106,11 @@ namespace MonoVarmint.Widgets
             else
             {
                 var screen = VarmintWidget.HydrateLayout(_injector, layout, _controlLibrary);
-                _screensByName[screen.Name] = screen;
+                if(layout.VwmlTag == "NineSlice")
+                {
+                    NineSlices.Add(screen as VarmintWidgetNineSlice);
+                }
+                else _screensByName[screen.Name] = screen;
             }
         }
 

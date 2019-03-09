@@ -234,8 +234,6 @@ namespace MonoVarmint.Widgets
             _visualTree.AdvanceAnimations(gameTime);
             base.Draw(gameTime);
 
-            //Debug.WriteLine("AAA---------------------- BEGIN ------------------------");
-            //Debug.WriteLine("AAA_spriteBatch.Begin();");
             _spriteBatch.Begin();
             GraphicsDevice.Clear(GlobalBackgroundColor);
             BeginClipping(DrawOffset, ScreenSize);
@@ -268,19 +266,7 @@ namespace MonoVarmint.Widgets
                 throw new ApplicationException("There was an unmatched BeginClipping call.");
             }
 
-#if WINDOWS
-            if(VarmintWidget.VisualDebuggingEnabled)
-            {
-                //var mouseState = Mouse.GetState();
-                //var debugSize = new Vector2(.2, .1);
-                //DrawBox(new Vector2())
-
-                //_visualTree.HitTest();
-            }
-#endif
-            //Debug.WriteLine("AAA_spriteBatch.End();");
             _spriteBatch.End();
-            //Debug.WriteLine("AAA---------------------- END ------------------------");
         }
 
         //-----------------------------------------------------------------------------------------------
