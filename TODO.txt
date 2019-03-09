@@ -1,4 +1,9 @@
 
+	[ ] Simplify widget space
+		[ ] Read all layouts first
+		[ ] Hydrate as needed
+		[ ] Is it necessary to apply styles on every frame?
+		[ ] Widget add child should put the lookup in the widget space
 	[ ] Demo game screen crashes trying to load sound
 	[ ] Demo main screeen should just have a list of things to see
 	[ ] Domo should have a button to turn debugging mode on and off

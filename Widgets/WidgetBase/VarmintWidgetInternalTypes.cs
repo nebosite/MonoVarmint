@@ -36,16 +36,23 @@ namespace MonoVarmint.Widgets
             if (y == Alignment.Right) y = Alignment.Bottom;
             Y = y;
         }
+
+        public override string ToString()
+        {
+            return $"{X},{Y}";
+        }
     }
 
     public enum Alignment
     {
         Stretch = 0,
+        Low = 1,
         Left = 1,
         Top = 1,
         Center = 2,
+        High = 3,
         Right = 3,
-        Bottom = 4,
+        Bottom = 3,
     };
 
     public enum TouchMoveType

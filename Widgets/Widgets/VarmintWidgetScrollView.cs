@@ -77,17 +77,17 @@ namespace MonoVarmint.Widgets
         //--------------------------------------------------------------------------------------
         //
         //--------------------------------------------------------------------------------------
-        public override void AddChild(VarmintWidget widget, bool suppressChildUpdate = false)
+        public override void AddChild(VarmintWidget widget)
         {
-            _innerContent.AddChild(widget, suppressChildUpdate);
+            _innerContent.AddChild(widget);
         }
 
         //--------------------------------------------------------------------------------------
         //
         //--------------------------------------------------------------------------------------
-        public override void RemoveChild(VarmintWidget childToRemove, bool suppressChildUpdate = false)
+        public override void RemoveChild(VarmintWidget childToRemove)
         {
-            _innerContent.RemoveChild(childToRemove, suppressChildUpdate);
+            _innerContent.RemoveChild(childToRemove);
         }
 
         //--------------------------------------------------------------------------------------
@@ -205,15 +205,15 @@ namespace MonoVarmint.Widgets
                 Size = new Vector2(ExtremeRight - ExtremeLeft, ExtremeBottom - ExtremeTop);
             }
 
-            public override void AddChild(VarmintWidget widget, bool suppressChildUpdate = false)
+            public override void AddChild(VarmintWidget widget)
             {
-                base.AddChild(widget, suppressChildUpdate);
+                base.AddChild(widget);
                 RecalculateExtremes();
             }
 
-            public override void RemoveChild(VarmintWidget childToRemove, bool suppressChildUpdate = false)
+            public override void RemoveChild(VarmintWidget childToRemove)
             {
-                base.RemoveChild(childToRemove, suppressChildUpdate);
+                base.RemoveChild(childToRemove);
                 RecalculateExtremes();
             }
 

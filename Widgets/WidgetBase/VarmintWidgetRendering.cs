@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace MonoVarmint.Widgets
 {
@@ -155,6 +156,12 @@ namespace MonoVarmint.Widgets
         public void UpdateFormatting(Vector2 maxSizeExtent)
         {
             UpdateFormatting_Internal(maxSizeExtent);
+#if DEBUG
+            if (Size.X * Size.Y <= 0)
+            {
+                Debug.WriteLine($"Size Warning: {Name} was set to a zero size ({Size}).");
+            }
+#endif
         }
 
         //--------------------------------------------------------------------------------------

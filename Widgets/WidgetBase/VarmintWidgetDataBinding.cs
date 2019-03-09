@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -7,9 +8,16 @@ namespace MonoVarmint.Widgets
     public partial class VarmintWidget
     {
         private List<Action> _bindingReadActions = new List<Action>();
-        private readonly Dictionary<string, Action> _bindingPostActions = new Dictionary<string, Action>();
+        private Dictionary<string, Action> _bindingPostActions = new Dictionary<string, Action>();
 
-        protected void PostBackProperty(string propertyName)
+        //--------------------------------------------------------------------------------------
+        /// <summary>
+        /// If your custom control changes a property that could be bound and you want that 
+        /// change to go back to the bound object, you will need to call this from 
+        /// the Property setter.
+        /// </summary>
+        //--------------------------------------------------------------------------------------
+        protected void PushValueToBinding(string propertyName)
         {
             if (!_bindingPostActions.ContainsKey(propertyName)) return;
             _bindingPostActions[propertyName]();
@@ -41,6 +49,7 @@ namespace MonoVarmint.Widgets
             BindingContext = newContext;
 
             _bindingReadActions = new List<Action>();
+            _bindingPostActions = new Dictionary<string, Action>();
             foreach (var bindingPair in _bindingTemplates)
             {
                 if (bindingPair.Key == BindingContextPropertyName) continue;
@@ -87,6 +96,12 @@ namespace MonoVarmint.Widgets
                         _bindingReadActions.Add(() =>
                         {
                             var newValue = sourcePropertyInfo.GetValue(BindingContext);
+                            if (targetPropertyInfo.Name == "Size")
+                            {
+                                var size = (Vector2)newValue;
+                                SpecifiedSize = new Tuple<float?, float?>(size.X, size.Y);
+                            }
+
                             targetPropertyInfo.SetValue(this, newValue);
                         });
 
@@ -98,7 +113,7 @@ namespace MonoVarmint.Widgets
                     }
                     else
                     {
-                        System.Diagnostics.Debug.WriteLine("WARNING: Binding object is NULL");
+                        throw new ApplicationException($"BindingContext is NULL on {this.GetType().Name} named {Name}");
                     }
                 }
 

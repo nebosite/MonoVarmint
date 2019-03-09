@@ -68,14 +68,10 @@ namespace MonoVarmint.Widgets
         /// AddChild
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public virtual void AddChild(VarmintWidget widget, bool suppressChildUpdate = false)
+        public virtual void AddChild(VarmintWidget widget)
         {
             _children.Add(widget);
             widget.Parent = this;
-            //if (ChildrenAffectFormatting && !suppressChildUpdate)
-            //{
-            //    UpdateFormatting(Parent?.Size ?? Size);
-            //}
         }
 
         //--------------------------------------------------------------------------------------
@@ -83,14 +79,10 @@ namespace MonoVarmint.Widgets
         /// InsertChild
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public virtual void InsertChild(VarmintWidget widget, bool suppressChildUpdate = false)
+        public virtual void InsertChild(VarmintWidget widget)
         {
             _children.Insert(0, widget);
             widget.Parent = this;
-            //if (ChildrenAffectFormatting && !suppressChildUpdate)
-            //{
-            //    UpdateFormatting(Parent?.Size ?? Size);
-            //}
         }
 
         //--------------------------------------------------------------------------------------
@@ -98,13 +90,10 @@ namespace MonoVarmint.Widgets
         /// RemoveChild
         /// </summary>
         //--------------------------------------------------------------------------------------
-        public virtual void RemoveChild(VarmintWidget childToRemove, bool suppressChildUpdate = false)
+        public virtual void RemoveChild(VarmintWidget childToRemove)
         {
             _children.Remove(childToRemove);
-            //if (ChildrenAffectFormatting && !suppressChildUpdate)
-            //{
-            //    UpdateFormatting(Parent?.Size ?? Size);
-            //}
+            childToRemove.Parent = null;
         }
 
         //--------------------------------------------------------------------------------------
@@ -115,10 +104,6 @@ namespace MonoVarmint.Widgets
         public virtual void ClearChildren()
         {
             _children.Clear();
-        //    if (ChildrenAffectFormatting)
-        //    {
-        //        UpdateFormatting(Parent?.Size ?? Size);
-        //    }
         }
 
     }

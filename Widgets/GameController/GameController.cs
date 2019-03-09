@@ -297,14 +297,6 @@ namespace MonoVarmint.Widgets
         }
 
         //--------------------------------------------------------------------------------------
-        // 
-        //--------------------------------------------------------------------------------------
-        public void AddVwmlContent(string replaceName, Stream vwmlStream)
-        {
-            _widgetSpace.AddContent(replaceName, vwmlStream);
-        }
-
-        //--------------------------------------------------------------------------------------
         // SetScreen - call this to change the visual tree to a screen you have defined in
         // a .vwml file
         //--------------------------------------------------------------------------------------

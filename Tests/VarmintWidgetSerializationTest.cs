@@ -174,20 +174,15 @@ namespace MonoVarmint.Tools.Tests
                 </TestWidget>";
             var bindToMe = new BindingThing();
 
-            var style = TestUtils.LoadFromText(this, styleText, "Fooz");
-            var globalStyle = TestUtils.LoadFromText(this, globalStyleText, "Freee");
-            var target = TestUtils.LoadFromText(this, layoutText, "StyleTest");
+            var widgetSpace = new VarmintWidgetSpace(new MockRenderer(100,100));
+            widgetSpace.AddContent("Fooz", styleText);
+            widgetSpace.AddContent("Freee", globalStyleText);
+            widgetSpace.AddContent("StyleTest", layoutText);
+
+            var target = widgetSpace.FindWidgetByName("StyleTest");
             target.BindingContext = bindToMe;
-            var styleLibrary = new Dictionary<string, VarmintWidgetStyle>();
-            foreach (var styleItem in style.FindWidgetsByType<VarmintWidgetStyle>())
-            {
-                styleLibrary.Add(styleItem.Name, styleItem);
-            }
-            foreach (var styleItem in globalStyle.FindWidgetsByType<VarmintWidgetStyle>())
-            {
-                styleLibrary.Add(styleItem.Name, styleItem);
-            }
-            target.Prepare(styleLibrary);
+            target.Prepare(widgetSpace.StyleLibrary);
+            target.UpdateFormatting(new Vector2(100, 100));
 
             Assert.AreEqual("StyleTest", target.Name);
             Assert.AreEqual(Color.Blue, target.ForegroundColor);

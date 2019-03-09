@@ -63,7 +63,7 @@ namespace MonoVarmint.Widgets
                 if (_value < 0) _value = 0;
                 if (_value > 1) _value = 1;
                 FixThumbOffset();
-                PostBackProperty("Value");
+                PushValueToBinding(nameof(Value));
             }
         }
 

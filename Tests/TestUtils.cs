@@ -34,11 +34,9 @@ namespace MonoVarmint.Tools.Tests
     {
         public static VarmintWidget LoadFromText(IVarmintWidgetInjector injector, string vwml, string defaultName)
         {
-            using (var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(vwml)))
-            {
-                var layout = VarmintWidget.PreloadFromVwml(memoryStream, defaultName);
-                return VarmintWidget.HydrateLayout(injector, layout, new Dictionary<string, VarmintWidget.LayoutItem>());
-            }
+            var widgetSpace = new VarmintWidgetSpace(injector);
+            widgetSpace.AddContent(defaultName, vwml);
+            return (widgetSpace.FindWidgetByName(defaultName));
         }
     }
 }
