@@ -23,7 +23,7 @@ namespace MonoVarmint.Widgets
 
         //--------------------------------------------------------------------------------------
         /// <summary>
-        /// Render
+        /// UpdateFormatting_Internal
         /// </summary>
         //--------------------------------------------------------------------------------------
         protected override void UpdateFormatting_Internal(Vector2 updatedSize, bool updateChildren = true)

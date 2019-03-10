@@ -20,6 +20,7 @@ namespace MonoVarmint.Widgets
             SetCustomRender(Render);
         }
 
+
         //--------------------------------------------------------------------------------------
         /// <summary>
         /// Render
