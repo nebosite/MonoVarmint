@@ -35,8 +35,14 @@
     <Content Include="$(MSBuildThisFileDirectory)Content\Images\Mountains.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Images\Trees.png" />
     <Content Include="$(MSBuildThisFileDirectory)Content\Readme_Content.txt" />
-    <Content Include="$(MSBuildThisFileDirectory)Content\Sounds\Cowbell.wav" />
-    <Content Include="$(MSBuildThisFileDirectory)Content\Sounds\Jump.wav" />
-    <Content Include="$(MSBuildThisFileDirectory)Content\Sounds\Thump.wav" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Content\Sounds\Cowbell.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Content\Sounds\Jump.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Content\Sounds\Thump.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
